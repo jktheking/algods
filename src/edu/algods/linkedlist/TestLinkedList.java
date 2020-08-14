@@ -4,11 +4,11 @@ public class TestLinkedList {
 
 	public static void main(String[] args) {
 		// testInsert();
-		// testInsertAfter();
+		testInsertAfter();
 
 		//testInsertBefore();
 		
-		testRemove();
+		//testRemove();
 	}
 
 	public static void testInsert() {

@@ -1,6 +1,9 @@
 package edu.algods.linkedlist;
 
-class LinkedList<T extends Comparable<T>> implements List<T> {
+import java.util.HashSet;
+import java.util.Set;
+
+class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestions<T> {
 
 	private int size = 0;
 	private Node<T> root;
@@ -16,10 +19,24 @@ class LinkedList<T extends Comparable<T>> implements List<T> {
 		root = current;
 	}
 
+	
+
+	@Override
+	public void insert(Node<T> current) {
+		size++;
+		current.setNext(root);
+		root = current;
+	}
+
+	
+	
 	@Override
 	public int size() {
 		return size;
 	}
+	
+	
+	
 
 	@Override
 	public boolean remove(T data) {
@@ -55,6 +72,10 @@ class LinkedList<T extends Comparable<T>> implements List<T> {
 
 	@Override
 	public String traverse() {
+		Node<T> circularNode = detectLoopUsingHashingTechnique();
+		if(circularNode != null) {
+			return loopTraversalForCircular(circularNode);
+		}
 		return loopTraversal();
 	}
 
@@ -68,6 +89,29 @@ class LinkedList<T extends Comparable<T>> implements List<T> {
 		}
 		return links.toString();
 	}
+	
+	
+	private String loopTraversalForCircular(Node<T> circularNode) {
+		
+		int circularCounter = 0;
+		
+		StringBuilder links = new StringBuilder("root-->");
+		for (Node<T> node = root; circularCounter<2; node = node.getNext()) {
+			
+			links.append(node);
+			if (circularCounter<2) {
+				links.append("-->");
+			}
+
+			if(node == circularNode) {
+				circularCounter++;
+			}
+		}
+		return links.toString();
+	}
+	
+	
+	
 
 	@Override
 	public String traverseRecursively() {
@@ -142,5 +186,75 @@ class LinkedList<T extends Comparable<T>> implements List<T> {
 		}
 		return false;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * */
+	@Override
+	public Node<T> findNthNodeInSingleScanFromEndWithoutUsingSizeOfList(int n) {
+		
+		Node<T> tempRef;
+		Node<T> solutionRef = root;
+		int i;
+		
+		//move the tempRef by n position(considering positions not index).
+		for(tempRef = root, i=0; i<n; i++, tempRef = tempRef.getNext()) {
+			if(tempRef==null) {
+				throw new RuntimeException("nth position  is greater than the size of the linkedList");
+			}
+			
+		}
+		
+		while(tempRef!=null) {
+			tempRef = tempRef.getNext();
+			solutionRef = solutionRef.getNext();
+		}
+
+		return solutionRef;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * */
+	@Override
+	public Node<T> findNthNodeFromEndUsingSizeOfList(int n) {
+		
+		if(size < n) {
+			throw new RuntimeException("nth position is greater than the size of the linkedList");
+		}
+		
+		Node<T> start = root;
+		int nthNodeFromEnd = size - n + 1;
+		for(int i = 0; i< nthNodeFromEnd - 1; i++, start = start.getNext());
+		return start;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * */
+	@Override
+	public Node<T> detectLoopUsingHashingTechnique() {
+		
+		Set<Node<T>> set = new HashSet<>();
+		
+		Node<T> start = root;
+		
+		while(start != null) {
+			set.add(start);
+			start = start.getNext();
+			if(set.contains(start)) break;
+		}
+		
+		return start;
+	}
+
+
+
+	@Override
+	public Node<T> detectLoopUsingFloydCycleFinding() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
