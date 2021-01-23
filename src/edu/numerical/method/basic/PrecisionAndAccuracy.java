@@ -68,6 +68,7 @@ public class PrecisionAndAccuracy {
         
         //so, summation of 0.1 +0.1+ 0.1 is not equal to 0.3
          System.out.println((0.1+0.1+0.1)==0.3);
+   
        
 	}
 }

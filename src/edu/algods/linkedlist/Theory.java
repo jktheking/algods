@@ -18,7 +18,14 @@ package edu.algods.linkedlist;
 public class Theory {
 
 	public static void main(String[] args) {
-		Long.hashCode(12L);
+		System.out.println(Long.SIZE);
+		System.out.println(Long.hashCode(12L));
+		System.out.println(Integer.hashCode(12));
+		
+		
+		System.out.println("".hashCode());
+		System.out.println("long max:"+ Long.MAX_VALUE);
+		System.out.println("long max hascode"+ Long.hashCode(Long.MAX_VALUE));
 		
 	}
 }

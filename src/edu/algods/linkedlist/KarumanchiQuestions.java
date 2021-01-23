@@ -72,4 +72,13 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	 * 
 	 * */
 	Node<T> detectLoopUsingFloydCycleFinding();
+	
+	
+	/**
+	 * Problem 14:
+	 * Detect length of the Loop
+	 * */
+	int findLenghtOfTheLoopUsingFloydCycleFinding();
+	
+	
 }

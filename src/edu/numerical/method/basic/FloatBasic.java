@@ -4,7 +4,7 @@ package edu.numerical.method.basic;
  * 
  * 3.4523*10^5
  * 
- * Here : 3.4523 = Mantisa 10 = base 5 = exponent
+ * Here : 3.4523 = Mantisa; 10 = base;  5 = exponent
  * 
  * Best apporach is to keep the mantisa in the range of 0.5 to 1
  * -------------------------------------------------------------------
