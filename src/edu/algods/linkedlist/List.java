@@ -8,6 +8,10 @@ public interface List<T extends Comparable<T>> {
 	
 	void insert(Node<T> node);
 	
+    void insertAtEnd(T data);
+	
+	void insertAtEnd(Node<T> node);
+	
 	int size();
 	
 	boolean remove(T data);
@@ -20,5 +24,5 @@ public interface List<T extends Comparable<T>> {
 	
 	boolean insertBefore(T search, T data);
 	
-
+   Node<T> getRootNode();
 }

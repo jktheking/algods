@@ -2,7 +2,8 @@ package edu.algods.linkedlist;
 
 public interface KarumanchiQuestions<T extends Comparable<T>> {
 
-	/**<pre>
+	/**
+	 * <pre>
 	 * Problem-2 Find nth node from the end of a Linked List.
 	 * Problem-5 Can we solve Problem-2 in one scan?
 	 * 
@@ -18,67 +19,166 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	 *  ----------------------------> n position by tempRef
 	 *  ------------>solutionRef      -------------> tempRef at end
 	 *  
-	 *  SolutionNode = L-n +1 
+	 *  SolutionNode = L-n +1
 	 * </pre>
-	 * */
-	
-	Node<T> findNthNodeInSingleScanFromEndWithoutUsingSizeOfList(int n); 
-	
+	 */
+
+	Node<T> findNthNodeInSingleScanFromEndWithoutUsingSizeOfList(int n);
+
 	/**
-	 * SolutionNode = L-n +1; 
-	 * */
-	Node<T> findNthNodeFromEndUsingSizeOfList(int n); 
-	
-	
+	 * SolutionNode = L-n +1;
+	 */
+	Node<T> findNthNodeFromEndUsingSizeOfList(int n);
+
 	/***
-	 * Problem-6 Check whether the given linked list is either NULL-terminated or ends in a cycle.
+	 * Problem-6 Check whether the given linked list is either NULL-terminated or
+	 * ends in a cycle.
 	 * 
 	 * Problem-7 Can we use the hashing technique for solving Problem-6?
-	 * */
+	 */
 	Node<T> detectLoopUsingHashingTechnique();
-	
+
 	/***
 	 * <Pre>
 	 * Problem-9 Can we solve the Problem-6 in O(n)? Using memory less approach
 	 * 
-	 * QA: Why  do slow and fast pointers meet each other when there is a loop ? 
+	 * QA: Why do slow and fast pointers meet each other when there is a loop ?
 	 * 
-	 * QB :But how does starting the slow pointer from the beginning of the linked list while keeping the fast pointer at the meeting place, and 
-	 * then moving both one step at a time, make them meet at the starting point of the cycle? 
+	 * QB :But how does starting the slow pointer from the beginning of the linked
+	 * list while keeping the fast pointer at the meeting place, and then moving
+	 * both one step at a time, make them meet at the starting point of the cycle?
 	 * 
-	 * Solution assumptions for mathematical induction: 
+	 * Solution assumptions for mathematical induction:
 	 * 
-	 * 1.  Length from root_node(head) to loop_start_node = M
-	 * 2.  Length of Loop = L
-	 * 3.  Length of loop_start_node  to meeting_point_node = K
+	 * 1. Length from root_node(head) to loop_start_node = M 2. Length of Loop = L
+	 * 3. Length of loop_start_node to meeting_point_node = K
 	 * 
-	 * proof :
-	 *  Distance travelled by slow pointer till metting_point = M + K
-	 *  Distance travelled by fast pointer till meeting_point = M+nL+K(visualized in diagram), where n is loop count
-	 *  
-	 *  Since loop represents periodic movement, loop count(n) can be ignored.
-	 *  
-	 *   Distanace travelled by fast pointer is = 2*(distance travelled by slow pointer)
-	 *     M + nL + K  = 2*(M+K)
-	 *     Let's ignore n,
-	 *     M+L+k = 2*(M+K)
-	 *     After solving it,  M = L-K,
-	 *     
-	 *    If fast pointer starts at meeting_point_node and travels one step at a time, it will cover L-K = M distance, 
-	 *    and if slow pointer starts at root_node and travels one step at a time, will cover M distance so both will meet at
-	 *    loop_start_node.
+	 * proof : Distance travelled by slow pointer till metting_point = M + K
+	 * Distance travelled by fast pointer till meeting_point = M+nL+K(visualized in
+	 * diagram), where n is loop count
 	 * 
+	 * Since loop represents periodic movement, loop count(n) can be ignored.
+	 * 
+	 * Distanace travelled by fast pointer is = 2*(distance travelled by slow
+	 * pointer) M + nL + K = 2*(M+K) Let's ignore n, M+L+k = 2*(M+K) After solving
+	 * it, M = L-K,
+	 * 
+	 * If fast pointer starts at meeting_point_node and travels one step at a time,
+	 * it will cover L-K = M distance, and if slow pointer starts at root_node and
+	 * travels one step at a time, will cover M distance so both will meet at
+	 * loop_start_node.
 	 * 
 	 * 
-	 * */
+	 * 
+	 */
 	Node<T> detectLoopUsingFloydCycleFinding();
+
+	/**
+	 * Problem 14: Detect length of the Loop
+	 */
+	int findLenghtOfTheLoopUsingFloydCycleFinding();
+
+	/**
+	 * Problem 15: Insert a node in a sorted linked list.
+	 */
+	boolean insertInSortedLinkedList(T data);
+
+	/**
+	 * Problem 16.A
+	 * 
+	 * Remove the element from original list one by one and prepare a reversed list
+	 * by placing the new element at beginning of reversed list
+	 */
+	void reverseLinkList();
+
+	/**
+	 * Problem 16.B
+	 */
+	void reverseLinkListRecursively();
+
+	/**
+	 * Problem 17.A Suppose there are two singly linked lists both of which
+	 * intersect at some point and become a single linked list. The head or start
+	 * pointers of both the lists are known, but the intersecting node is not known.
+	 * Also, the number of nodes in each of the lists before they intersect is
+	 * unknown and may be different in each list. List1 may have n nodes before it
+	 * reaches the intersection point, and List2 might have m nodes before it
+	 * reaches the intersection point where m and n may be m = n,m < n or m > n.
+	 * Give an algorithm for finding the merging point.
+	 * 
+	 * SolutionA: is to compare every node pointer in the first list with every
+	 * other node pointer in the second list by which the matching node pointers
+	 * will lead us to the intersecting node. But, the time complexity in this case
+	 * will be O(mn) which will be high.
+	 * 
+	 * SolutionB: keep the smaller list in hash-set, and iterate the bigger list and
+	 * check contains at each node.
+	 */
+	void findIntersectionNodeOfTwoListUsingBruteForce(Node<T> startB);
+
+	/**
+	 * Problem 20
+	 */
+	void findIntersectionNodeOfTowListUsingStack(Node<T> startB);
+
+	/**
+	 * TODO: Problem 21 to 22 Searching Technique
+	 */
+	void findIntersectionNodeUsingSearchTechnique();
+
+	/**
+	 * Problem 23
+	 */
+	void findIntersectionNodeUsingDistanceDiffTechnique(List<T> listB);
+
+	/**
+	 * Problem 24 to 27
+	 */
+	Node<T> middleElementOfLinkedList();
+
+	/**
+	 * Problem 28
+	 */
+	void printListFromEndUsingRecursion();
+
+	/**
+	 * Problem 29: for even 2x pointer will point to NULL at end.
+	 * 
+	 */
+	void isLinkedListEven();
+
+	/**
+	 * Problem 31 Iterative
+	 */
+	List<T> mergeTwoSortedList(List<T> a, List<T> b);
+
+	/**
+	 * Problem 31 Recursively
+	 */
+	void mergeTwoSortedListRecursively(List<T> a, List<T> b);
+
+	/**
+	 * Problem-32 Reverse the linked list in pairs. If you have a linked list that
+	 * holds 1 → 2 → 3 → 4 → X, then after the function has been called the linked
+	 * list would hold 2 → 1 → 4 → 3 → X.
+	 */
+	void reverseListInPairRecursively();
+	
+	/**
+	 * Problem-32 Reverse the linked list in pairs. If you have a linked list that
+	 * holds 1 → 2 → 3 → 4 → X, then after the function has been called the linked
+	 * list would hold 2 → 1 → 4 → 3 → X.
+	 */
+	void reverseListInPairIteratively();
+	
+	/**TODO: PROBLEM 33 and PROBLEM 34*/
 	
 	
 	/**
-	 * Problem 14:
-	 * Detect length of the Loop
+	 * Problem 35 : use slow and fast-pointer to figure out the mid node.
+	 * 
 	 * */
-	int findLenghtOfTheLoopUsingFloydCycleFinding();
 	
-	
+	void splitCircularListIntoTwoEqualCircularList();
+
 }
