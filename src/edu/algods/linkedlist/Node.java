@@ -2,8 +2,9 @@ package edu.algods.linkedlist;
 
 public class Node<T extends Comparable<T>> {
 	
-	private final T data;
+	private T data;
 	private Node<T> next;
+	private Node<T> randomNext;
 	
 	Node(T data){
 		this.data = data;
@@ -17,14 +18,25 @@ public class Node<T extends Comparable<T>> {
 		this.next = next;
 	}
 	
+	public T getData() {
+		return data;
+	}
+
+	public Node<T> getRandomNext() {
+		return randomNext;
+	}
+
+	public void setRandomNext(Node<T> randomNext) {
+		this.randomNext = randomNext;
+	}
+
 	@Override
 	public String toString() {
 		return data.toString();
 	}
 
-	public T getData() {
-		return data;
+	public void setData(T data) {
+		this.data = data;
 	}
-
 
 }

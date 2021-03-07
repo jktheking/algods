@@ -180,5 +180,139 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	 * */
 	
 	void splitCircularListIntoTwoEqualCircularList();
+	
+	
+	/**
+	 * Problem 37: check if the linked list is palindrome or not
+	 *For even 2x pointer will point to NULL at end.
+	 * 	
+	 * */
 
+	void isListPalindrome();
+	
+	/**
+	 * Problem-38: For a given K value (K > 0) reverse blocks of K nodes in a list.
+	 * Example: Input: 1 2 3 4 5 6 7 8 9 10. Output for different K values:
+	 * For K = 2: 2 1 4 3 6 5 8 7 10 9
+	 * For K = 3: 3 2 1 6 5 4 9 8 7 10
+	 * For K = 4: 4 3 2 1 8 7 6 5 9 10
+	 * */
+	void reverseInBlockOfKNodes(int k);
+	
+	
+	/**
+	 * Problem 40: Joseph Circle
+	 * */
+	void getJosephPoint(int eliminationPosition);
+	
+	/**
+	 * Problem 41: 
+	 * */
+	void cloneListWithRandomPointer();
+	
+	
+	/**
+	 * Problem 43:
+	 * */
+	void deleteGivenNodeUsingIteration(Node<T> node);
+	
+	/**
+	 * Problem 43: By shifting the data, 
+	 * first shift the data of next node to current node, now delete the next node
+	 * */
+	void deleteGivenNodeWithoutUsingIteration(Node<T> node);
+	
+	/**
+	 * Problem 46: Given a singly linked list, write a function to find the last
+	 * element from the beginning whose n%k == 0, where n is the number of elements in the list
+	 * and k is an integer constant. For example, if n = 19 and k = 3 then we should return 18th node.
+	 * 
+	 * Note: For this problem the value of n is not known in advance.
+	 * */
+	Node<T> findLastModularNode(int modularConstant_K);
+	
+	/**
+	 * Problem 48: logic think link list as block of k nodes 
+	 * if k=3, and n=14  Ceil of(14/3) = 5
+	 * ------------------------------------------|
+	 *|1,2,3    4,5,6   7,8,9    10,11,12   13,14|
+	 * ------------------------------------------|
+	 * Here we have 5 blocks and each block contains k element i.e. 3
+	 * 
+	 * Q*K+ R = n; Since we are taking ceil we can ignore R so Q*K = n
+	 * 
+	 * we have to find the Q ?
+	 * 
+	 * Solution1 : increment the Q by one after each block(k node) traversal.
+	 * 
+	 * 
+	 * */
+	Node<T> findCeiledFractionalNodeUsingPointerIncrement(int k);
+	
+	
+	/**
+	 * Problem 48: logic think link list as block of k nodes 
+	 * if k=3, and n=14  Ceil of(14/3) = 5
+	 * ------------------------------------------|
+	 *|1,2,3    4,5,6   7,8,9    10,11,12   13,14|
+	 * ------------------------------------------|
+	 * Here we have 5 blocks and each block contains k element i.e. 3
+	 * 
+	 * Q*K+ R = n; Since we are taking ceil we can ignore R so Q*K = n
+	 * 
+	 * we have to find the Q ?
+	 * 
+	 * Solution2 : 1st block represent first modulo when i%k==0, 
+	 *             2nd block represent 2nd   modulo when i%k==0
+	 *         
+	 * Similarly,  nth block represent nth modulo  when i%k==0
+	 * 
+	 * */
+	Node<T> findCeiledFractionalNodeUsingModuloDivison(int k);
+	
+	
+	/**
+	 * X*X=List length
+	 * 1*1=1
+	 * 2*2=4
+	 * 3*3=9
+	 * 4*4=16
+	 * 5*5=25
+	 * till
+	 * X*X is either the exact match or greater than the list length
+	 * 
+	 * */
+	Node<T> findSquareRootNode();
+	
+	
+	/**
+	 * Problem-53 Given two linked lists, each list node with one integer digit, add these two
+	 * linked lists. The result should be stored in the third linked list. Also note that the head node
+	 * contains the most significant digit of the number.
+	 * */
+	List<Integer> summationForEqualSizedList(List<Integer> digitList1, List<Integer> digitList2);
+	
+	/**
+	 * Problem-53 Given two linked lists, each list node with one integer digit, add these two
+	 * linked lists. The result should be stored in the third linked list. Also note that the head node
+	 * contains the most significant digit of the number.
+	 * */
+	List<Integer> summationForUnEqualSizedList(List<Integer> digitList1, List<Integer> digitList2);
+	
+	/**
+	 * Problem-55 Given a list, List1 = {A1, A2, . . . An–1; An) with data, reorder it to {A1,An,A2,An–1} without using any extra space.
+	 * 
+	 * Solution:
+	 * Half the list using Flyod algorithm i.e. slow and fast pointer
+	 * Reverse the second half
+	 * merge inplace
+	 * */
+	List<T> listReorder();
+	
+	/**
+	 * Problem-56 Given two sorted linked lists, given an algorithm for the printing common elements of them.
+	 * 
+	 * Efficient solution: apply merge on two sorted list.
+	 * */
+	List<T> getCommonElementList(List<T> list1, List<T> list2);
 }

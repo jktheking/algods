@@ -1,7 +1,9 @@
 package edu.algods.linkedlist;
 
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestions<T> {
@@ -497,7 +499,9 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			Node<T> temp = originalList;
 			originalList = originalList.getNext();
 
+			// kind of insert before: temp is getting inserted before the reversedList
 			temp.setNext(reversedList);
+
 			reversedList = temp;
 
 		}
@@ -805,31 +809,392 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 		Node<T> refSpeed1X = root;
 		Node<T> refSpeed2X = root;
-		//find middle element : refSpeed1X will reach to middle element
-		while(refSpeed2X.getNext()!= root && refSpeed2X.getNext().getNext()!=root ) {
+		// find middle element : refSpeed1X will reach to middle element
+		while (refSpeed2X.getNext() != root && refSpeed2X.getNext().getNext() != root) {
 			refSpeed2X = refSpeed2X.getNext().getNext();
 			refSpeed1X = refSpeed1X.getNext();
 		}
 
-		 if(refSpeed2X.getNext().getNext()==root) {
-			 refSpeed2X = refSpeed2X.getNext();
+		if (refSpeed2X.getNext().getNext() == root) {
+			refSpeed2X = refSpeed2X.getNext();
 		}
-		
-	
+
 		Node<T> list2StartRef = refSpeed1X.getNext();
-		
-		
+
 		refSpeed1X.setNext(root);
 		refSpeed2X.setNext(list2StartRef);
-		
-		
-        List<T> list1 = new LinkedList<>();
-        list1.insertAtEnd(root);
-        System.out.println(list1.traverse());
-        
-        List<T> list2 = new LinkedList<>();
-        list2.insertAtEnd(list2StartRef);
-        System.out.println(list2.traverse());
 
+		List<T> list1 = new LinkedList<>();
+		list1.insertAtEnd(root);
+		System.out.println(list1.traverse());
+
+		List<T> list2 = new LinkedList<>();
+		list2.insertAtEnd(list2StartRef);
+		System.out.println(list2.traverse());
+
+	}
+
+	@Override
+	public void isListPalindrome() {
+
+		Node<T> slowRef = root;
+		Node<T> fastRef = root;
+
+		// fastRef.getNext().getNext() != null : takes care of even.
+		while (fastRef.getNext() != null && fastRef.getNext().getNext() != null) {
+			fastRef = fastRef.getNext().getNext();
+			slowRef = slowRef.getNext();
+
+		}
+
+		// this is just to figure out if the list is even or odd
+		if (fastRef.getNext() == null) {
+			System.out.println("linked list is odd!!!");
+		} else if (fastRef.getNext().getNext() == null) {
+			System.out.println("linked list is even!!!");
+		}
+
+		Node<T> reversed2ndHalf = reverseLinkedListRecursively(slowRef.getNext());
+		Node<T> firstHalf = root;
+		boolean isPalindrome = true;
+		while (reversed2ndHalf != null) {
+			if (firstHalf.getData().compareTo(reversed2ndHalf.getData()) != 0) {
+				isPalindrome = false;
+				break;
+			}
+			firstHalf = firstHalf.getNext();
+			reversed2ndHalf = reversed2ndHalf.getNext();
+		}
+		System.out.println("palindrome:" + isPalindrome);
+	}
+
+	@Override
+	public void reverseInBlockOfKNodes(int k) {
+		if (k == 0) {
+			return;
+		}
+
+		final int blockCount = size / k;
+		if (k == 1 || blockCount < 1) {
+			return;
+		}
+
+		int blockNodeCounter = 1;
+		int blockCounter = 1;
+		Node<T> reversedList = null;
+		Node<T> originalList = root;
+
+		Node<T> currentBlockStart = null;
+		Node<T> previousBlockStart = null;
+
+		while (originalList != null) {
+
+			if (blockNodeCounter == 1) {
+				currentBlockStart = originalList;
+			}
+
+			if (blockCounter > blockCount) {
+				break;
+			}
+
+			Node<T> temp = originalList;
+			originalList = originalList.getNext();
+
+			temp.setNext(reversedList);
+			reversedList = temp;
+
+			if (blockNodeCounter == k) {
+				blockCounter++;
+				blockNodeCounter = 1;
+
+				// when it's the first block reversal
+				if (previousBlockStart == null) {
+					root = reversedList;
+				} else {
+					previousBlockStart.setNext(reversedList);
+				}
+
+				previousBlockStart = currentBlockStart;
+				reversedList = null;
+			} else {
+				blockNodeCounter++;
+			}
+
+		}
+
+		// means last block is smaller than block size
+		if (size % k > 0) {
+			previousBlockStart.setNext(currentBlockStart);
+		}
+
+	}
+
+	/**
+	 * For eliminationPosition = 1, has not been taken care.
+	 */
+	@Override
+	public void getJosephPoint(int eliminationPosition) {
+		if (eliminationPosition <= 1) {
+			return;
+		}
+		Node<T> currentNode = root;
+		while (currentNode.getNext() != currentNode) {
+			for (int i = 1; i < eliminationPosition - 1; i++)
+				currentNode = currentNode.getNext();
+
+			System.out.println("dropped node:" + currentNode.getNext());
+			currentNode.setNext(currentNode.getNext().getNext());
+			currentNode = currentNode.getNext();
+		}
+
+		System.out.println("current Node:" + currentNode.getData());
+	}
+
+	@Override
+	public void cloneListWithRandomPointer() {
+
+		Map<Node<T>, Node<T>> keyOriginalValueCloned = new HashMap<>();
+		Node<T> node = root;
+
+		// create the new cloned list with next pointer and prepare the map
+		Node<T> previousClonedNode = null;
+		while (node != null) {
+			Node<T> clonedNode = new Node<T>(node.getData());
+			if (previousClonedNode != null) {
+				previousClonedNode.setNext(clonedNode);
+			}
+			keyOriginalValueCloned.put(node, clonedNode);
+
+			previousClonedNode = clonedNode;
+			node = node.getNext();
+
+		}
+
+		keyOriginalValueCloned.forEach((nodde, clonedNode) -> {
+			clonedNode.setRandomNext(keyOriginalValueCloned.get(nodde.getRandomNext()));
+		});
+
+		Node<T> printCloned = keyOriginalValueCloned.get(root);
+		while (printCloned != null) {
+			System.out.println("cloned-->next: " + printCloned + "cloned-->random: " + printCloned.getRandomNext());
+			printCloned = printCloned.getNext();
+		}
+	}
+
+	@Override
+	public void deleteGivenNodeUsingIteration(Node<T> deleteNode) {
+
+		Node<T> node = root;
+
+		// deletNode == root node
+		if (deleteNode == node) {
+			root = node.getNext();
+		}
+
+		while (node != null) {
+			if (deleteNode == node.getNext()) {
+				node.setNext(node.getNext().getNext());
+			}
+
+			node = node.getNext();
+		}
+
+	}
+
+	@Override
+	public void deleteGivenNodeWithoutUsingIteration(Node<T> deleteNodePointer) {
+
+		if (deleteNodePointer.getNext() != null) {
+			deleteNodePointer.setData(deleteNodePointer.getNext().getData());
+			deleteNodePointer.setNext(deleteNodePointer.getNext().getNext());
+		} else {
+			System.out.println("node cannot be deleted as the next node is null");
+		}
+
+	}
+
+	@Override
+	public Node<T> findLastModularNode(int modularConstant_K) {
+
+		Node<T> node = root;
+		Node<T> modularNode = null;
+		int n = 1;
+		while (node != null) {
+
+			if (n % modularConstant_K == 0)
+				modularNode = node;
+
+			n++;
+			node = node.getNext();
+		}
+
+		return modularNode;
+	}
+
+	@Override
+	public Node<T> findCeiledFractionalNodeUsingPointerIncrement(int k) {
+
+		if (k == 0)
+			return null;
+
+		Node<T> divisionBlockNode = root;
+		int i = 1;
+
+		for (Node<T> node = root; node.getNext() != null; node = node.getNext()) {
+
+			if (i == k) {
+
+				divisionBlockNode = divisionBlockNode.getNext();
+
+				i = 1;
+
+				continue;
+			}
+
+			i++;
+		}
+
+		return divisionBlockNode;
+	}
+
+	@Override
+	public Node<T> findCeiledFractionalNodeUsingModuloDivison(int k) {
+
+		if (k == 0)
+			return null;
+
+		Node<T> divisionBlockNode = root;
+		int i = 1;
+
+		for (Node<T> node = root; node.getNext() != null; node = node.getNext()) {
+
+			if (i % k == 0)
+				divisionBlockNode = divisionBlockNode.getNext();
+
+			i++;
+		}
+
+		return divisionBlockNode;
+	}
+
+	@Override
+	public Node<T> findSquareRootNode() {
+		Node<T> squareRootNode = null;
+		Node<T> node = root;
+
+		for (int length = 1, squareRoot = 1; node != null; node = node.getNext()) {
+
+			if (squareRoot * squareRoot == length) {
+				squareRootNode = squareRootNode == null ? root : squareRootNode.getNext();
+				squareRoot++;
+			}
+			length++;
+		}
+		return squareRootNode;
+	}
+
+	@Override
+	public List<Integer> summationForEqualSizedList(List<Integer> digitList1, List<Integer> digitList2) {
+
+		Node<Integer> node1 = digitList1.getRootNode();
+		Node<Integer> node2 = digitList2.getRootNode();
+
+		List<Integer> resultList = new LinkedList<>();
+
+		int carry = summationForEqualSizedList(node1, node2, resultList);
+		if (carry != 0) {
+			resultList.insert(carry);
+		}
+
+		return resultList;
+	}
+
+	private int summationForEqualSizedList(Node<Integer> node1, Node<Integer> node2, List<Integer> resultList) {
+
+		if (node1 == null && node2 == null)
+			return 0;
+
+		// recursive call
+		int carry = summationForEqualSizedList(node1.getNext(), node2.getNext(), resultList);
+
+		int sum = node1.getData().intValue() + node2.getData().intValue() + carry;
+
+		System.out.println();
+		System.out.print(String.format("%d +  %d + %d = %d", node1.getData().intValue(), node2.getData().intValue(),
+				carry, sum));
+
+		int resultDigit = 0;
+		if (sum > 9) {
+			resultDigit = sum - 10;
+			carry = 1;
+		} else {
+			resultDigit = sum;
+			carry = 0;
+
+		}
+		System.out.print(String.format("::> resultDigit:%d, carry:%d", resultDigit, carry));
+		System.out.println();
+
+		resultList.insert(resultDigit);
+		return carry;
+
+	}
+
+	@Override
+	public List<Integer> summationForUnEqualSizedList(List<Integer> digitList1, List<Integer> digitList2) {
+
+		List<Integer> shortList = digitList1.size() < digitList2.size() ? digitList1 : digitList2;
+		final int diff = Math.abs(digitList1.size() - digitList2.size());
+
+		for (int i = 0; i < diff; i++)
+			shortList.insert(0);
+
+		return summationForEqualSizedList(digitList1, digitList2);
+
+	}
+
+	@Override
+	public List<T> listReorder() {
+		Node<T> middleElement = middleElementOfLinkedList();
+		Node<T> secondHalf = middleElement.getNext();
+		middleElement.setNext(null);
+		Node<T> reveresedNode = reverseLinkedListRecursively(secondHalf);
+
+		List<T> resultList = new LinkedList<>();
+
+		for (Node<T> node = root; node != null; node = node.getNext()) {
+			
+			resultList.insertAtEnd(new Node<T>(node.getData()));
+			if (reveresedNode != null) {
+				resultList.insertAtEnd(new Node<T>(reveresedNode.getData()));
+				reveresedNode = reveresedNode.getNext();
+			}
+			
+
+		}
+
+		return resultList;
+	}
+
+	@Override
+	public List<T> getCommonElementList(List<T> list1, List<T> list2) {
+		
+		Node<T> node1 = list1.getRootNode();
+		Node<T> node2 = list2.getRootNode();
+		List<T> resultList = new LinkedList<>();
+		
+		while(node1 != null && node2 != null) {
+			if(node1.getData().compareTo(node2.getData())==0) {
+		       resultList.insertAtEnd(node1.getData());
+				node1 = node1.getNext();
+				node2 = node2.getNext();
+				
+			}else if(node1.getData().compareTo(node2.getData())<0){
+				node1 = node1.getNext();
+			}else {
+				node2=node2.getNext();
+			}
+		}
+		return resultList;
 	}
 }
