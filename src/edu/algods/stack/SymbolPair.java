@@ -14,14 +14,12 @@ public  enum SymbolPair {
 	private final String open;
 	private final String close;
 
-	private static final Map<String, SymbolPair> symbolPartToSymbolPairEmnumMap = getSymbolPartToSymbolPairs();
+	private static final Map<String, SymbolPair> symbolPartToSymbolPairEmnumMap = preparePartToSymbolPairMap();
 
 	SymbolPair(String open, String close) {
 		this.open = open;
 		this.close = close;
-
 	}
-	
 
 	public String getOpen() {
 		return open;
@@ -39,17 +37,16 @@ public  enum SymbolPair {
 	public boolean isClose(String input) {
 		return close.equals(input);
 	}
-
-	public static Set<String> getSymbols() {
-		return Arrays.stream(values()).flatMap(symbol -> Stream.of(symbol.getOpen(), symbol.getClose()))
-				.collect(Collectors.toSet());
-	}
-
-	public static Map<String, SymbolPair> getSymbolPartToSymbolPairs() {
+	
+	private static Map<String, SymbolPair> preparePartToSymbolPairMap() {
 		return Arrays.stream(values()).flatMap(
 				symbol -> Stream.of(Map.entry(symbol.getOpen(), symbol), Map.entry(symbol.getClose(), symbol)))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+	}
+
+	public static Set<String> getSymbols() {
+		return symbolPartToSymbolPairEmnumMap.keySet();
 	}
 
 	public static SymbolPair partOf(String part) {

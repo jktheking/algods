@@ -24,6 +24,7 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	 * 
 	 * c) At end of input, if the stack is not empty report an error
 	 * 
+	 * 
 	 */
 	boolean checkIfSymbolsAreBalanced(String expression);
 

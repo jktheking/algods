@@ -12,8 +12,8 @@ public class KarumanchiTest {
 	
 	
 	private static void checkIfSymbolsAreBalanced() {
-		StackKarumanchiQuestions<String> stackQuestions = new StackKarumanchiSolutions<>(true);
-		final String expression = "( ( a + b * { x + y } ) + < a - b > )";
+		StackKarumanchiQuestions<String> stackQuestions = new StackKarumanchiSolutions<>(false);
+		final String expression = "( ( a + b * { x + y } ) + <  a - b > )";
 		System.out.println("\nis given expression balanced ? : "+stackQuestions.checkIfSymbolsAreBalanced(expression));
 		
 		
