@@ -14,7 +14,9 @@ public class KarumanchiTest {
 		// insertInSortedLinkedList();
 
 		// reverseLinkList();
-		// reverseLinkListRecursively();
+		   //reverseLinkListRecursively();
+		
+		reverseLinkedListWithAlternateRecurssion();
 
 		// findIntersectionNodeOfTwoListUsingBruteForce();
 		// findIntersectionNodeOfTwoListUsingStack();
@@ -49,7 +51,7 @@ public class KarumanchiTest {
 		//summationForEqualSizedList();
 		//summationForUnEqualSizedList();
 		//listReorder();
-		getCommonElementList();
+		//getCommonElementList();
 	}
 
 	private static void findNthNodeFromEnd() {
@@ -186,6 +188,23 @@ public class KarumanchiTest {
 		System.out.println(integerList.traverse());
 		questions.reverseLinkListRecursively();
 		System.out.println(integerList.traverse());
+		
+	}
+	
+	
+	private static void reverseLinkedListWithAlternateRecurssion() {
+		LinkedList<Integer> integerList = new LinkedList<>();
+		integerList.insert(15);
+		integerList.insert(11);
+		integerList.insert(9);
+		integerList.insert(8);
+		integerList.insert(7);
+		integerList.insert(5);
+		KarumanchiQuestions<Integer> questions = integerList;
+		System.out.println(integerList.traverse());
+		questions.reverseLinkedListWithAlternateRecurssion();
+		System.out.println(integerList.traverse());
+		
 	}
 
 	private static void findIntersectionNodeOfTwoListUsingBruteForce() {

@@ -2,6 +2,7 @@ package edu.algods.stack;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,12 +52,20 @@ public  enum SymbolPair {
 
 	public static SymbolPair partOf(String part) {
 		SymbolPair symbolPair = symbolPartToSymbolPairEmnumMap.get(part);
-		if (part == null) {
+		if (symbolPair == null) {
 			throw new IllegalArgumentException(
 					"Hey part, who are you I don't know ? Please come to me with your ID.. " + part);
 		}
 		return symbolPair;
 	}
+	
+	
+	
+	public static Optional<SymbolPair> getIfPresent(String part) {
+		return Optional.ofNullable(symbolPartToSymbolPairEmnumMap.get(part));
+		
+	}
+	
 
 	public static boolean isSymbol(String part) {
 		return symbolPartToSymbolPairEmnumMap.containsKey(part);

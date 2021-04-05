@@ -1,5 +1,6 @@
 package edu.algods.stack;
 
+import java.util.Arrays;
 import java.util.EmptyStackException;
 
 public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
@@ -42,7 +43,7 @@ public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
 	 * ===============================================
 	 * We call amortized time of a push operation is the average time taken by a push over the series of operations, that is, T(n)/n.
 	 * Incremental Strategy: 
-	 * The amortized time (average time per operation) of a push operation is O(n) [O(n2)/n].
+	 * The amortized time (average time per operation) of a push operation is O(n) [O(2n)/n] =O(1).
 	 * Doubling Strategy: 
 	 * In this method, the amortized time of a push operation is O(1) [O(n)/n].
 	 * 
@@ -109,6 +110,13 @@ public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
 		if (isEmpty())
 			throw new EmptyStackException();
 		return arr[elmentCount - 1];
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ArrayBackedStack [arr=").append(Arrays.toString(arr)).append("]");
+		return builder.toString();
 	}
 
 }

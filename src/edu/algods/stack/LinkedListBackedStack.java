@@ -2,6 +2,8 @@ package edu.algods.stack;
 
 import java.util.EmptyStackException;
 
+import edu.algods.linkedlist.Node;
+
 public class LinkedListBackedStack<T extends Comparable<T>> implements Stack<T> {
 	
 	private int size;
@@ -63,6 +65,31 @@ public class LinkedListBackedStack<T extends Comparable<T>> implements Stack<T> 
 	public T peek() {
 		if(isEmpty()) throw new EmptyStackException();
 		return root.getData();
+	}
+	
+	
+
+	public String traverseRecursively() {
+		StringBuilder links = new StringBuilder("root-->");
+		recursiveTraversal(links, root);
+		return links.toString();
+	}
+
+	private void recursiveTraversal(StringBuilder links, SNode<T> node) {
+		if (node == null) {
+			return;
+		}
+		links.append(node);
+		if (node.getNext() != null) {
+			links.append("-->");
+		}
+		recursiveTraversal(links, node.getNext());
+
+	}
+
+	@Override
+	public String toString() {
+		return traverseRecursively();
 	}
 
 }
