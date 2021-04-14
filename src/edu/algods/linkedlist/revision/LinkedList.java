@@ -751,28 +751,28 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 */
 	private Node<T> reverseListInPairRecursively(Node<T> currentNode) {
-		//base case
-		if(currentNode== null) {
+		// base case
+		if (currentNode == null) {
 			return null;
 		}
-		
-		//base case
-		//reverse of single node is the node itself
-		if(currentNode.getNext()==null) {
-		
+
+		// base case
+		// reverse of single node is the node itself
+		if (currentNode.getNext() == null) {
+
 			return currentNode;
 		}
-		
+
 		Node<T> nextPair = currentNode.getNext().getNext();
-		
+
 		Node<T> revPair = currentNode.getNext();
 		revPair.setNext(currentNode);
 		currentNode.setNext(null);
-		
+
 		Node<T> solPair = reverseListInPairRecursively(nextPair);
-		
+
 		revPair.getNext().setNext(solPair);
-		
+
 		return revPair;
 
 	}
@@ -783,21 +783,20 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	public void reverseListInPairIteratively() {
 		Node<T> current = root;
 		root = current.getNext();
-	
+
 		Node<T> next2next = null;
-		
-		while(current!= null && current.getNext()!=null) {
-			
+
+		while (current != null && current.getNext() != null) {
+
 			next2next = current.getNext().getNext();
-			
-			 Node<T> next = current.getNext();
-			 next.setNext(current);
-			
-			 current = next2next;
-			
+
+			Node<T> next = current.getNext();
+			next.setNext(current);
+
+			current = next2next;
+
 		}
-		
-		
+
 	}
 
 	@Override
@@ -853,6 +852,8 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		Node<T> reversed2ndHalf = reverseLinkedListRecursively(slowRef.getNext());
 		Node<T> firstHalf = root;
 		boolean isPalindrome = true;
+		// in case of odd, first half will have one extra element i.e middle element,
+		// so while condition is on reversed2ndHalf
 		while (reversed2ndHalf != null) {
 			if (firstHalf.getData().compareTo(reversed2ndHalf.getData()) != 0) {
 				isPalindrome = false;
@@ -870,8 +871,9 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			return;
 		}
 
-		final int blockCount = size / k;
-		if (k == 1 || blockCount < 1) {
+		final int noOfBlocks = size / k;
+		//if k is greater than size than noOfBlocks is less than 1
+		if (k == 1 || noOfBlocks < 1) {
 			return;
 		}
 
@@ -889,13 +891,13 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 				currentBlockStart = originalList;
 			}
 
-			if (blockCounter > blockCount) {
+			if (blockCounter > noOfBlocks) {
 				break;
 			}
 
 			Node<T> temp = originalList;
 			originalList = originalList.getNext();
-
+            //insert before based reversal
 			temp.setNext(reversedList);
 			reversedList = temp;
 

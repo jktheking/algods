@@ -21,14 +21,14 @@ public class KarumanchiTest {
 
 		// findIntersectionNodeUsingDistanceDiffTechnique();
 
-		// middleElementOfLinkedList();
+		 middleElementOfLinkedList();
 		// printListFromEndUsingRecursion();
 
 		// isLinkedListEven();
 		// mergeTwoSortedList();
 		// reverseListInPairRecursively();
 
-		reverseListInPairIteratively();
+		//reverseListInPairIteratively();
 
 		// splitCircularListIntoTwoEqualCircularList();
 
@@ -274,6 +274,7 @@ public class KarumanchiTest {
 
 	private static void middleElementOfLinkedList() {
 		LinkedList<Integer> integerList = new LinkedList<>();
+		integerList.insert(16);
 		integerList.insert(15);
 		integerList.insert(11);
 		integerList.insert(9);

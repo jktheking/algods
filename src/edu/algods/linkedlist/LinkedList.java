@@ -479,8 +479,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		}
 		Node<T> ref = root;
 		Node<T> previousRef = null;
-		for (; ref != null && ref.getData().compareTo(data) <= 0; previousRef = ref, ref = ref.getNext())
-			;
+		for (; ref != null && ref.getData().compareTo(data) <= 0; previousRef = ref, ref = ref.getNext());
 		newNode.setNext(ref);
 		previousRef.setNext(newNode);
 
@@ -596,8 +595,12 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 *
 	 * Induction STEP :
 	 * 
-	 * if we insert 'a' at end of output_list means we are done.. Two approaches: 1.
-	 * iterate the outputlist and append 'a' at end 2nd approach : keep the
+	 * if we insert 'a' at end of output_list means we are done.. 
+	 * Two approaches: 
+	 * 
+	 * 1.iterate the outputlist and append 'a' at end 
+	 * 
+	 * 2nd approach : keep the
 	 * reference of 'a' and 'b' and then set b.next(a)
 	 * 
 	 * secondNode.setNext(firstNode)
@@ -663,6 +666,8 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 * 
 	 */
+	
+	//// pass reference to A,B,C,D,E
 	private void reverseLinkedListWithAlternateRecurssion(Node<T> current) {
 
 		if (current == null)
@@ -802,9 +807,12 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			fast = fast.getNext().getNext();
 		}
 
+		
+		//even=> num%2==0
 		if (fast == null) {
 			System.out.println("EVEN");
 		} else {
+			//odd=> num%2==1
 			System.out.println("ODD");
 		}
 
@@ -867,32 +875,32 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 * MergedNode = null; 
 	 * 
-	 * SolutionNode = null;
+	 * recursionOutput = null;
 	 * 
 	 * if(A1<=B1) {
 	 * 
-	 * MergedNode = A1;
+	 * MergeCandidate = A1;
 	 * 
-	 * SolNod = mergeRec(A-1,B) = 2,3,5,8,9,11
+	 * recursionOutput = mergeRec(A-1,B) = 2,3,5,8,9,11
 	 * 
 	 * }else{
 	 * 
-	 * MergedNode = B1;
+	 * MergeCandidate = B1;
 	 *
-	 * SolNod = mergeRec(A,B-1) = 2,3,5,8,9,11
+	 * recursionOutput = mergeRec(A,B-1) = 2,3,5,8,9,11
 	 * 
 	 * }
 	 * 
-	 * INDUCTION STEP: mergeNode.Next(SolNod);
+	 * INDUCTION STEP: MergeCandidate.Next(recursionOutput);
 	 * 
-	 * mergeNode;
+	 * MergeCandidate;
 	 * 
 	 * 
 	 */
 	private Node<T> recurseAndMergeTwoSortedList1(Node<T> a, Node<T> b) {
 
-		Node<T> mergedNode = null;
-		Node<T> solutionNode = null;
+		Node<T> mergeCandidate = null;
+		Node<T> recursionOutput = null;
 
 		// return remaining b
 		if (a == null)
@@ -903,21 +911,21 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			return a;
 
 		if (a.getData().compareTo(b.getData()) <= 0) {
-			mergedNode = new Node<>(a.getData());
-			solutionNode = recurseAndMergeTwoSortedList1(a.getNext(), b);
+			mergeCandidate = new Node<>(a.getData());
+			recursionOutput = recurseAndMergeTwoSortedList1(a.getNext(), b);
 		} else {
-			mergedNode = new Node<>(b.getData());
-			solutionNode = recurseAndMergeTwoSortedList1(a, b.getNext());
+			mergeCandidate = new Node<>(b.getData());
+			recursionOutput = recurseAndMergeTwoSortedList1(a, b.getNext());
 
 		}
-		mergedNode.setNext(solutionNode);
-		return mergedNode;
+		mergeCandidate.setNext(recursionOutput);
+		return mergeCandidate;
 	}
 
 
 	private Node<T> recurseAndMergeTwoSortedList2(Node<T> a, Node<T> b) {
 
-		Node<T> result = null;
+		Node<T> mergeCandidate = null;
 
 		// return remaining b
 		if (a == null)
@@ -928,16 +936,16 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			return a;
 
 		if (a.getData().compareTo(b.getData()) <= 0) {
-			result = new Node<>(a.getData());
-			result.setNext(recurseAndMergeTwoSortedList2(a.getNext(), b));
+			mergeCandidate = new Node<>(a.getData());
+			mergeCandidate.setNext(recurseAndMergeTwoSortedList2(a.getNext(), b));
 
 		} else {
-			result = new Node<>(b.getData());
-			result.setNext(recurseAndMergeTwoSortedList2(a, b.getNext()));
+			mergeCandidate = new Node<>(b.getData());
+			mergeCandidate.setNext(recurseAndMergeTwoSortedList2(a, b.getNext()));
 
 		}
 
-		return result;
+		return mergeCandidate;
 	}
 
 	@Override
@@ -953,14 +961,14 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 * 
 	 * SUBSTITUTION:
-	 * pair =;
+	 * pair =1->2;
 	 * 
-	 * revPair=reverse the current pair
+	 * revPair=reverse the current pair //2->1
 	 * 
 	 * sol = reverseListInPairRecursively(3 → 4 → X) = 4-3-X;
 	 * 
 	 * 
-	 * Induction: revPair.next.next(sol)
+	 * Induction: revPair.next.setNext(sol)
 	 * 
 	 * return revPair;
 	 * 
@@ -1031,6 +1039,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 			next.setNext(currentNode);
 
+			//linking between pairs e.g (2--1)->(4--3)
 			if (next2next == null || next2next.getNext() == null) {
 				currentNode.setNext(next2next);
 			} else {
@@ -1055,6 +1064,8 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			refSpeed1X = refSpeed1X.getNext();
 		}
 
+		
+		//in case of even fast-pointer will not point to end node
 		if (refSpeed2X.getNext().getNext() == root) {
 			refSpeed2X = refSpeed2X.getNext();
 		}

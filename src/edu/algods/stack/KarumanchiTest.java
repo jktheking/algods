@@ -1,5 +1,6 @@
 package edu.algods.stack;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class KarumanchiTest {
@@ -33,14 +34,24 @@ public class KarumanchiTest {
 		// findingSpanUsingStack();
 
 		// findImmediateGreaterInRightUsingRecursion();
-		//findISLAndISRUsingSingleStack();
-		findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates();
-		//maxAreaHistogramUsingBruteForce();
-		//maxAreaHistogramUsingJudgeAlgo1();
-		
-		//maxAreaHistogramUsingImmediateSmallerInLeftAndRight();
-		
-		//removeAdjacentDuplicates();
+		// findISLAndISRUsingSingleStack();
+		// findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates();
+		// maxAreaHistogramUsingBruteForce();
+		// maxAreaHistogramUsingJudgeAlgo1();
+
+		// maxAreaHistogramUsingImmediateSmallerInLeftAndRight();
+
+		// removeAdjacentDuplicates();
+
+		// printAllPossibleSubGridsForMatrix();
+
+		// findMaxAreaInBinaryMatrixBruteForce();
+
+		// findTotalRainWaterTrappedOverHistogram();
+
+		 getMinFromMinOpStackUsingExtraSpace();
+
+		//getMinFromMinOpStackUsingConstantSpace();
 	}
 
 	private static void checkIfSymbolsAreBalanced() {
@@ -167,77 +178,76 @@ public class KarumanchiTest {
 		System.out.println(Arrays.toString(questions.findingSpanUsingStack(input2)));
 	}
 
-	
 	private static void findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates() {
-		
-		int[] illegalInput1 =  new int[] {2,4,4,5 }; //4,4 consecutive duplicate
-		int[] illegalInput2 =  new int[] { 3,4,5,3 }; //3,3 effectively consecutive duplicate
-		int[] illegalInput3 =  new int[] { 2,4,5,3,2}; //2,2 effectively consecutive duplicate
-		
-		int[] legalInput1 =  new int[] { 3, 2, 5, 6, 1, 7}; //no duplicates
-		int[] legalInput2 =  new int[] { 2,4,5,3,1,2 }; //2,2 are duplicate but not effectively consecutive; so it is legal
-		
+
+		int[] illegalInput1 = new int[] { 2, 4, 4, 5 }; // 4,4 consecutive duplicate
+		int[] illegalInput2 = new int[] { 3, 4, 5, 3 }; // 3,3 effectively consecutive duplicate
+		int[] illegalInput3 = new int[] { 2, 4, 5, 3, 2 }; // 2,2 effectively consecutive duplicate
+
+		int[] legalInput1 = new int[] { 3, 2, 5, 6, 1, 7 }; // no duplicates
+		int[] legalInput2 = new int[] { 2, 4, 5, 3, 1, 2 }; // 2,2 are duplicate but not effectively consecutive; so it
+															// is legal
+
 		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
-		
+
 		System.out.println("---------------------------ILLEAGAL1------------------------------------");
 		int[][] illegalSolArr1 = questions.findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(illegalInput1);
-		System.out.println("solLeft:"+Arrays.toString(illegalSolArr1[0]));
-		System.out.println("solRight:"+Arrays.toString(illegalSolArr1[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(illegalSolArr1[0]));
+		System.out.println("solRight:" + Arrays.toString(illegalSolArr1[1]));
+
 		System.out.println("---------------------------ILLEAGAL2------------------------------------");
 		int[][] illegalSolArr2 = questions.findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(illegalInput2);
-		System.out.println("solLeft:"+Arrays.toString(illegalSolArr2[0]));
-		System.out.println("solRight:"+Arrays.toString(illegalSolArr2[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(illegalSolArr2[0]));
+		System.out.println("solRight:" + Arrays.toString(illegalSolArr2[1]));
+
 		System.out.println("---------------------------ILLEAGAL3-------------------------------------");
 		int[][] illegalSolArr3 = questions.findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(illegalInput3);
-		System.out.println("solLeft:"+Arrays.toString(illegalSolArr3[0]));
-		System.out.println("solRight:"+Arrays.toString(illegalSolArr3[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(illegalSolArr3[0]));
+		System.out.println("solRight:" + Arrays.toString(illegalSolArr3[1]));
+
 		System.out.println("----------------------------LEAGAL1-------------------------------------");
 		int[][] legalSolArr1 = questions.findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(legalInput1);
-		System.out.println("solLeft:"+Arrays.toString(legalSolArr1[0]));
-		System.out.println("solRight:"+Arrays.toString(legalSolArr1[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(legalSolArr1[0]));
+		System.out.println("solRight:" + Arrays.toString(legalSolArr1[1]));
+
 		System.out.println("------------------------------LEAGAL2-----------------------------------");
 		int[][] legalSolArr2 = questions.findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(legalInput2);
-		System.out.println("solLeft:"+Arrays.toString(legalSolArr2[0]));
-		System.out.println("solRight:"+Arrays.toString(legalSolArr2[1]));
+		System.out.println("solLeft:" + Arrays.toString(legalSolArr2[0]));
+		System.out.println("solRight:" + Arrays.toString(legalSolArr2[1]));
 		System.out.println("-----------------------------------------------------------------");
-		
-		
+
 	}
-	
+
 	private static void findISLAndISRUsingSingleStack() {
-		int[] input1 =  new int[] { 3, 2, 5, 6, 1, 4, 4 };
-		int[] input2 =  new int[] { 1, 2, 3, 4 , 1, 2, 3, 4 };
-		int[] input3 =  new int[] { 2, 4 , 3, 4, 1, 1 };
-		int[] input4 =  new int[] { 4 , 2, 3, 2, 1, 1 };
-		int[] input5 =  new int[] { 4 , 2, 3, 1, 2, 0 };
+		int[] input1 = new int[] { 3, 2, 5, 6, 1, 4, 4 };
+		int[] input2 = new int[] { 1, 2, 3, 4, 1, 2, 3, 4 };
+		int[] input3 = new int[] { 2, 4, 3, 4, 1, 1 };
+		int[] input4 = new int[] { 4, 2, 3, 2, 1, 1 };
+		int[] input5 = new int[] { 4, 2, 3, 1, 2, 0 };
 		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
 		int[][] solArr1 = questions.findISLAndISRUsingSingleStack(input1);
-		System.out.println("solLeft:"+Arrays.toString(solArr1[0]));
-		System.out.println("solRight:"+Arrays.toString(solArr1[1]));
+		System.out.println("solLeft:" + Arrays.toString(solArr1[0]));
+		System.out.println("solRight:" + Arrays.toString(solArr1[1]));
 		System.out.println("-----------------------------------------------------------------");
 		int[][] solArr2 = questions.findISLAndISRUsingSingleStack(input2);
-		System.out.println("solLeft:"+Arrays.toString(solArr2[0]));
-		System.out.println("solRight:"+Arrays.toString(solArr2[1]));
+		System.out.println("solLeft:" + Arrays.toString(solArr2[0]));
+		System.out.println("solRight:" + Arrays.toString(solArr2[1]));
 		System.out.println("-----------------------------------------------------------------");
 		int[][] solArr3 = questions.findISLAndISRUsingSingleStack(input3);
-		System.out.println("solLeft:"+Arrays.toString(solArr3[0]));
-		System.out.println("solRight:"+Arrays.toString(solArr3[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(solArr3[0]));
+		System.out.println("solRight:" + Arrays.toString(solArr3[1]));
+
 		System.out.println("-----------------------------------------------------------------");
 		int[][] solArr4 = questions.findISLAndISRUsingSingleStack(input4);
-		System.out.println("solLeft:"+Arrays.toString(solArr4[0]));
-		System.out.println("solRight:"+Arrays.toString(solArr4[1]));
-		
+		System.out.println("solLeft:" + Arrays.toString(solArr4[0]));
+		System.out.println("solRight:" + Arrays.toString(solArr4[1]));
+
 		System.out.println("-----------------------------------------------------------------");
 		int[][] solArr5 = questions.findISLAndISRUsingSingleStack(input5);
-		System.out.println("solLeft:"+Arrays.toString(solArr5[0]));
-		System.out.println("solRight:"+Arrays.toString(solArr5[1]));
+		System.out.println("solLeft:" + Arrays.toString(solArr5[0]));
+		System.out.println("solRight:" + Arrays.toString(solArr5[1]));
 	}
-	
+
 	private static void maxAreaHistogramUsingBruteForce() {
 
 		int[] histogram1 = new int[] { 3, 2, 5, 6, 1, 4, 4 }; // output : 10
@@ -251,32 +261,121 @@ public class KarumanchiTest {
 
 	private static void maxAreaHistogramUsingJudgeAlgo1() {
 
-		int[] histogram1 = new int[] {1,2,3,4,2,3,5,5,1,7}; 
-		
+		int[] histogram1 = new int[] { 1, 2, 3, 4, 2, 3, 5, 5, 1, 7 };
+
 		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
 		System.out.println(questions.maxAreaHistogramUsingJudgeAlgo1(histogram1));
 	}
-	
+
 	private static void maxAreaHistogramUsingImmediateSmallerInLeftAndRight() {
 
 		int[] histogram1 = new int[] { 2, 2, 6, 6, 7, 2, 198 }; // output : 198
 		int[] histogram2 = new int[] { 4, 3, 2, 1, 4, 3, 2 }; // output : 7
-		int[] histogram3 = new int[] {3, 2, 5, 6, 1, 4, 4}; //
+		int[] histogram3 = new int[] { 3, 2, 5, 6, 1, 4, 4 }; //
 		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
 		System.out.println(questions.maxAreaHistogramUsingImmediateSmallerInLeftAndRight(histogram3));
 //		System.out.println(questions.maxAreaHistogramUsingJudgeAlgo1(histogram2));
 //		System.out.println(questions.maxAreaHistogramUsingJudgeAlgo1(histogram3));
 	}
-	
+
 	private static void removeAdjacentDuplicates() {
 		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
 		System.out.println(questions.removeAdjacentDuplicates1("maissiassippi"));
 		System.out.println(questions.removeAdjacentDuplicates1("mississippi"));
 		System.out.println(questions.removeAdjacentDuplicates1("careermonk"));
-		
+
 		System.out.println(questions.removeAdjacentDuplicatesUsingStack2("maissiassippi"));
 		System.out.println(questions.removeAdjacentDuplicatesUsingStack2("mississippi"));
 		System.out.println(questions.removeAdjacentDuplicatesUsingStack2("careermonk"));
-		
+
 	}
+
+	private static void printAllPossibleSubGridsForMatrix() {
+
+		String[][] matrix = new String[][] { { "A1", "A2", "A3" }, { "B1", "B2", "B3" }, { "C1", "C2", "C3" },
+				{ "D1", "D2", "D3" } };
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+		questions.printAllPossibleSubGridsForMatrix(matrix);
+	}
+
+	private static void findMaxAreaInBinaryMatrixBruteForce() {
+		int[][] matrix = new int[][] { { 1, 1, 0, 0, 1, 0 }, { 0, 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1, 0 },
+				{ 0, 0, 1, 1, 0, 0 } };
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+		System.out.println("maxArea:" + questions.findMaxAreaInBinaryMatrixBruteForce(matrix));
+
+	}
+
+	private static void findTotalRainWaterTrappedOverHistogram() {
+		// int[] input = {3, 0, 2, 0, 4};
+		int[] input = { 9, 2, 4, 7, 5, 4, 3 };
+
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+		System.out.println(
+				"findTotalRainWaterTrappedOverHistogram1 :" + questions.findTotalRainWaterTrappedOverHistogram1(input));
+		System.out.println("findTotalRainWaterTrappedOverHistogramUsingTwoPointer2 :"
+				+ questions.findTotalRainWaterTrappedOverHistogramUsingTwoPointer2(input));
+		System.out.println("findTotalRainWaterTrappedOverHistogramUsingIGRandIGL3 :"
+				+ questions.findTotalRainWaterTrappedOverHistogramUsingIGRandIGL3(input));
+		System.out.println("findTotalRainWaterTrappedOverHistogramJudge4: "
+				+ questions.findTotalRainWaterTrappedOverHistogramJudge4(input));
+		System.out.println("findTotalRainWaterTrappedOverHistogramJudge5: "
+				+ questions.findTotalRainWaterTrappedOverHistogramJudge5(input));
+
+	}
+
+	private static void getMinFromMinOpStackUsingExtraSpace() {
+
+		Stack<BigDecimal> minOpStackUsingExtraSpace = new MinOpSupportedStackUsingExtraSpace<>();
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(9));
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(5));
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(3));
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(3));
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(2));
+
+		System.out.println(minOpStackUsingExtraSpace);
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+		System.out.println("minElement:" + questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace));
+
+		while (!minOpStackUsingExtraSpace.isEmpty()) {
+			
+			System.out.print(" popped element:" + minOpStackUsingExtraSpace.pop());
+			BigDecimal minElement = minOpStackUsingExtraSpace.isEmpty() ? null :  questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace);
+			System.out.print(" minElement:" + minElement);
+			System.out.println();
+		}
+
+		System.out.println(minOpStackUsingExtraSpace);
+		minOpStackUsingExtraSpace.push(BigDecimal.valueOf(7));
+		System.out.println(minOpStackUsingExtraSpace);
+		System.out.println(" minElement:" + questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace));
+
+	}
+
+	private static void getMinFromMinOpStackUsingConstantSpace() {
+
+		Stack<BigDecimal> minOpStackUsingConstantSpace = new MinOpSupportedStackUsingConstantSpace();
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(9));
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(5));
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(3));
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(3));
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(2));
+
+		System.out.println(minOpStackUsingConstantSpace);
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+		System.out.println("minElement:" + questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingConstantSpace));
+
+		while (!minOpStackUsingConstantSpace.isEmpty()) {
+			System.out.println("popped element:" + minOpStackUsingConstantSpace.pop() + " minElement:"
+					+ questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingConstantSpace));
+		}
+
+		System.out.println(minOpStackUsingConstantSpace);
+		minOpStackUsingConstantSpace.push(BigDecimal.valueOf(7));
+		System.out.println(minOpStackUsingConstantSpace);
+		System.out
+				.println(" minElement:" + questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingConstantSpace));
+
+	}
+
 }

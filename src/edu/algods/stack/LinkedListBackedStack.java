@@ -2,8 +2,6 @@ package edu.algods.stack;
 
 import java.util.EmptyStackException;
 
-import edu.algods.linkedlist.Node;
-
 public class LinkedListBackedStack<T extends Comparable<T>> implements Stack<T> {
 	
 	private int size;
@@ -90,6 +88,12 @@ public class LinkedListBackedStack<T extends Comparable<T>> implements Stack<T> 
 	@Override
 	public String toString() {
 		return traverseRecursively();
+	}
+	
+	@Override
+	public T getMin() {
+
+		throw new UnsupportedOperationException("LinkedListBackedStack doesnot support this operation");
 	}
 
 }

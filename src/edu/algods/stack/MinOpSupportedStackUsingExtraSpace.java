@@ -3,52 +3,35 @@ package edu.algods.stack;
 import java.util.Arrays;
 import java.util.EmptyStackException;
 
-public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
+public class MinOpSupportedStackUsingExtraSpace<T extends Comparable<T>> implements Stack<T> {
 
 	private int elmentCount;
 	private T[] arr;
 
+	// MinOperation stack keeps the min of main stack
+	private final Stack<T> minOperationSupportingStack = new ArrayBackedStack<>();
+
 	private static final int DEFAULT_CAPACITY = 13;
 
 	@SuppressWarnings("unchecked")
-	public ArrayBackedStack() {
+	public MinOpSupportedStackUsingExtraSpace() {
 		super();
 		this.arr = (T[]) new Comparable[DEFAULT_CAPACITY];
 	}
 
 	@SuppressWarnings("unchecked")
-	public ArrayBackedStack(int initialCapacity) {
+	public MinOpSupportedStackUsingExtraSpace(int initialCapacity) {
 		super();
 		this.arr = (T[]) new Comparable[initialCapacity < DEFAULT_CAPACITY ? DEFAULT_CAPACITY : initialCapacity];
 	}
 
-	/**
-	 * O(n) resize operation occurs by doubling so : 2^(resize operations count) =
-	 * capacity of array
-	 * 
-	 * How many copy operations are there if capacity is n and if we take initial
-	 * capacity as 1:
-	 * 
-	 * n+ n/2 + n/4 + n/8 + ... + 4 + 2 + 1; now take the n as common :
-	 * 
-	 * n+ n/2 + n/4 + n/8 + ... + 4 + 2 + 1 = n(1 + 1/2 + 1/4 + +1/8 +...+4/n +2/n
-	 * +1/n ) = n(1+ (1)) since : 1/2 + 1/4 + +1/8 +...+4/n +2/n +1/n = 1 approx =
-	 * 2n
-	 * 
-	 * 
-	 * So, resize operation is O(n)
-	 * 
-	 * Book Section : 4.5 and 4.6 =============================================== We
-	 * call amortized time of a push operation is the average time taken by a push
-	 * over the series of operations, that is, T(n)/n. Incremental Strategy: The
-	 * amortized time (average time per operation) of a push operation is O(n)
-	 * [O(2n)/n] =O(1). Doubling Strategy: In this method, the amortized time of a
-	 * push operation is O(1) [O(n)/n].
-	 * 
-	 * 
-	 */
 	@Override
 	public void push(T data) {
+
+		if (minOperationSupportingStack.isEmpty() || data.compareTo(minOperationSupportingStack.peek()) <= 0) {
+			// we need to push the duplicate min as well
+			minOperationSupportingStack.push(data);
+		}
 
 		if (elmentCount == arr.length) {
 			resize(2 * elmentCount);
@@ -67,13 +50,9 @@ public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
 
 	}
 
-	/**
-	 * 
-	 * downsize strategy : if array is 75% empty then downsize it so that new array
-	 * is 50% empty.
-	 */
 	@Override
 	public T pop() {
+
 		if (isEmpty())
 			throw new EmptyStackException();
 
@@ -88,6 +67,11 @@ public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
 		// capacity in multiple of DEFAULT_CAPACITY
 		if (elmentCount > DEFAULT_CAPACITY && elmentCount == arr.length / 4) {
 			resize(arr.length / 2);
+		}
+
+		// need to maintain the minstack as well
+		if (minOperationSupportingStack.peek().compareTo(data) == 0) {
+			minOperationSupportingStack.pop();
 		}
 
 		return data;
@@ -118,9 +102,8 @@ public class ArrayBackedStack<T extends Comparable<T>> implements Stack<T> {
 	}
 
 	@Override
-	public T getMin() {
-
-		throw new UnsupportedOperationException("ArrayBackedStack doesnot support this operation");
+	public T getMin() throws EmptyStackException {
+		return minOperationSupportingStack.peek();
 	}
 
 }

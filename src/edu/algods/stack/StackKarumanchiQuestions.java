@@ -1,5 +1,7 @@
 package edu.algods.stack;
 
+import java.math.BigDecimal;
+
 public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 
 	<S extends Comparable<S>> Stack<S> newStackInstance();
@@ -340,8 +342,9 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	 * This algorithm will work for Non-Effectively_Consecutive_Duplicates
 	 * [2,4,5,3,1,2] as well.
 	 * 
-	 * Note: In case of Consecutive_Duplicate and Effectively_Consecutive_Duplicate, each duplicate element will share the same 
-	 * Immediate_Smaller_In_Left & Immediate_Smaller_In_Right. 
+	 * Note: In case of Consecutive_Duplicate and Effectively_Consecutive_Duplicate,
+	 * each duplicate element will share the same Immediate_Smaller_In_Left &
+	 * Immediate_Smaller_In_Right.
 	 * 
 	 * 
 	 * 
@@ -399,5 +402,115 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	String removeAdjacentDuplicatesUsingStack1(String input);
 
 	String removeAdjacentDuplicatesUsingStack2(String input);
+
+	/**
+	 * Refer Karumanchi Algo book : Page 507 : 6.53 Maximum size sub-matrix with
+	 * all1's
+	 * 
+	 * Let's go through the calculations for row:
+	 * 
+	 * If given matrix is 1X1 : total sub-grid=1
+	 * 
+	 * If given matrix is 2X1 : total sub-grids= 2*(1X1) + 1(1X2)) = 3
+	 * 
+	 * If given matrix is 3X1 : total sub-grids= 3*(1X1) + 2(1X2)) + 1(1X3)= 6
+	 * 
+	 * Similarly, for mX1, we have m + (m-1) + (m-2) + ...+2+1 = m(m+1)/2 sub-grids
+	 * 
+	 * Let's follow the same calculations for columns: <br>
+	 * If given matrix in 1X1 :total sub-grid=1 <br>
+	 * If given matrix is 1X2 : total sub-grids= 2*(1X1) + 1(2X1)) = 3 <br>
+	 * Similarly, for 1Xn, we have n + (n-1) + (n-2) + ...+2+1 = n(n+1)/2 sub-grids
+	 * <br>
+	 * 
+	 * So for mXn matrix we will have total sub-grids = [m(m+1)/2]*[n(n+1)/2] =
+	 * m(m+1)*n(n+1)/4
+	 * 
+	 * 
+	 * How to proceed with counting: Let's say we have 4X1 matrix(i.e. column
+	 * vector), start at index 0 as first-grid-> A1; 2nd-grid-> A1,B1; 3rd-grid->
+	 * A1,B1,C1; 4th-grid-> A1,B1,C1,D1; 5th-grid-> B1; 6th-gird->B1,C1;
+	 * 7th-grid->B1,C1,D1; 8th-grid->C1; 9th-grid->C1,D1; 10th-grid->D1<br>
+	 * Now let's say two new columns are introduced.: we do the above row-wise
+	 * activity for the two new columns,<br>
+	 * 2nd column first-grid-> A2; 2nd-grid-> A2,B2; 3rd-grid-> A2,B2,C2; 4th-grid->
+	 * A2,B2,C2,D2; 5th-grid-> B2; 6th-gird->B2,C2; 7th-grid->B2,C2,D2;
+	 * 8th-grid->C2; 9th-grid->C2,D2; 10th-grid->D2 <br>
+	 * 3rd column first-grid-> A3; 2nd-grid-> A3,B3; 3rd-grid-> A3,B3,C3; 4th-grid->
+	 * A3,B3,C3,D3; 5th-grid-> B3; 6th-gird->B3,C3; 7th-grid->B3,C3,D3;
+	 * 8th-grid->C3; 9th-grid->C3,D3; 10th-grid->D3<br>
+	 * 
+	 * Now Grid formation using columns: 1s-grid ->col1; 2nd-Grid -> col1,col2;
+	 * 3rd-Grid ->col1,col2,col3 ; 4th-Grid-> col2; 5th-Grid->col2,col3;
+	 * 6th-Grid->col3;
+	 * 
+	 * Since already we have considered columns as individually, so now we need to
+	 * consider the 2-columns and 3-columns at a time for gird formation:<br>
+	 * e.g. of 2 grids at a time: 2nd-Grid -> col1,col2;<br>
+	 * 
+	 * first-grid-> A1A2; 2nd-grid-> A1A2,B1B2; 3rd-grid-> A1A2,B1B2,C1C2;
+	 * 4th-grid-> A1A2,B1B2,C1C2,D1D2; 5th-grid-> B1B2; 6th-gird->B1B2,C1C2;
+	 * 7th-grid->B1B2,C1C2,D1D2; 8th-grid->C1C2; 9th-grid->C1C2,D1D2;
+	 * 10th-grid->D1D2 <br>
+	 * 
+	 * 
+	 */
+	void printAllPossibleSubGridsForMatrix(String[][] matrix);
+
+	int findMaxAreaInBinaryMatrixBruteForce(int[][] matrix);
+
+	int findMaxAreaInBinaryMatrixUsingMAH(int[][] matrix);
+
+	
+	int findTotalRainWaterTrappedOverHistogram1(int[] histogram);
+	
+	int findTotalRainWaterTrappedOverHistogramUsingTwoPointer2(int[] histogram);
+
+	/**
+	 * 
+	 * We will exploit immediate_greater_in_right and immediate_greater_in_left to
+	 * calculate TotalRainWaterTrappedOverHistogram.
+	 * 
+	 * Here Strategy is to calculate area relative to each bar over calculated
+	 * width.<br>
+	 * 
+	 * Height = Math.min(histogram[IGR_index], histogram[IGL_index]) - histogram[i]
+	 * <br>
+	 * Width=(IGR_index - IGL_index -1) <br>
+	 * 
+	 * Here, Height is distributed over each Width(i.e if width is 3, then calculated height is
+	 * considered over each of the 3 histograms)
+	 * 
+	 * Area=Width*Height
+	 * 
+	 * Note: when we are at the first element or at last element, then there is no
+	 * IGL for first and no IGR for last, so we can consider element itself as IGL
+	 * or IGR. In such scenario: calculated-area be always zero. Let's say we are at
+	 * first element and IGL = element_itself, Now Height =
+	 * Math.min(histogram[IGR_index], histogram[IGL_index]) - histogram[i] <br>
+	 * Now, Math.min(element_itself, IGR_of_element) is the element_itself. So,
+	 * Height= 0. Thus area is zero. Similarly, for last element area will be zero.
+	 * 
+	 * Conclusion: For any element whose IGL is -1 index OR IGR is histogram.length
+	 * index, area will always be ZERO.
+	 * 
+	 * 
+	 */
+	int findTotalRainWaterTrappedOverHistogramUsingIGRandIGL3(int[] histogram);
+
+	/**
+	 * We can calculate the rain-water trapping using judge algorithm, which
+	 * exploits immediate_greater_in_right and immediate_greater_in_left using
+	 * single stack.
+	 * 
+	 * 
+	 */
+	int findTotalRainWaterTrappedOverHistogramJudge4(int[] histogram);
+
+	int findTotalRainWaterTrappedOverHistogramJudge5(int[] histogram);
+	
+	BigDecimal getMinFromMinOpStackUsingExtraSpace(Stack<BigDecimal> minOpStackUsingExtraSpace);
+	
+	BigDecimal getMinFromMinOpStackUsingConstantSpace(Stack<BigDecimal> minOpStackUsingConstantSpace);
 
 }

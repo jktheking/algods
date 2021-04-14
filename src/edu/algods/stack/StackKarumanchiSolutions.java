@@ -1,5 +1,6 @@
 package edu.algods.stack;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -638,7 +639,6 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 		return result;
 	}
 
-	
 	@Override
 	public int[][] findISLAndISRUsingSingleStackExcludingConsecutiveDuplicates(int[] input) {
 		System.out.println("solLeft:" + Arrays.toString(findIndexOfImmediateSmallerInLeftUsingStack(input)));
@@ -650,7 +650,8 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 		Stack<Integer> indexStack = newStackInstance();
 		for (int i = 0; i < input.length; i++) {
 
-			//since there is no consecutive duplicates in input so no need for >= condition.
+			// since there is no consecutive duplicates in input so no need for >=
+			// condition.
 			while (!indexStack.isEmpty() && input[indexStack.peek().intValue()] > input[i]) {
 				int poppedElementIndex = indexStack.pop();
 				// set the immediate smaller right array
@@ -666,23 +667,21 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 
 		}
 
-	
 		while (!indexStack.isEmpty()) {
 
 			int poppedElementIndex = indexStack.pop();
 
 			int immidateSmallerInRightForPoppedElemnt = input.length;
 			solutionArr[1][poppedElementIndex] = immidateSmallerInRightForPoppedElemnt;
-			
+
 			int immidateSmallerInLeftForPoppedElemnt = indexStack.isEmpty() ? -1 : indexStack.peek();
 			solutionArr[0][poppedElementIndex] = immidateSmallerInLeftForPoppedElemnt;
-			
+
 		}
 
 		return solutionArr;
 	}
-	
-	
+
 	@Override
 	public int[][] findISLAndISRUsingSingleStack(int[] input) {
 		System.out.println("solLeft:" + Arrays.toString(findIndexOfImmediateSmallerInLeftUsingStack(input)));
@@ -697,7 +696,8 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 			// this can be anything to record the equal element's index
 			Stack<Integer> equalElementIndexStack = newStackInstance();
 
-			//here condition cannot be >=, otherwise it will break the ISR for consecutive duplicates
+			// here condition cannot be >=, otherwise it will break the ISR for consecutive
+			// duplicates
 			while (!indexStack.isEmpty() && input[indexStack.peek().intValue()] > input[i]) {
 
 				int poppedElementIndex = indexStack.pop();
@@ -1029,6 +1029,431 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 		return String.valueOf(chars, 0, stackPointer + 1);
 	}
 
+	@Override
+	public int findMaxAreaInBinaryMatrixBruteForce(int[][] matrix) {
+		int m = matrix.length;
+		if (m == 0) {
+			return 0;
+		}
+		int n = matrix[0].length;
+		int maxArea = 0;
+
+		for (int mFrom = 0; mFrom < m; mFrom++) {
+			for (int mTo = mFrom; mTo < m; mTo++) {
+
+				for (int nFrom = 0; nFrom < n; nFrom++) {
+					for (int nTo = nFrom; nTo < n; nTo++) {
+
+						if (isValid(matrix, nFrom, nTo, mFrom, mTo)) {
+							int currArea = (nTo - nFrom + 1) * (mTo - mFrom + 1);
+							maxArea = Math.max(maxArea, currArea);
+						}
+					}
+				}
+			}
+		}
+		return maxArea;
+	}
+
+	private boolean isValid(int[][] matrix, int nFrom, int nTo, int mFrom, int mTo) {
+		for (int i = mFrom; i <= mTo; i++) {
+			for (int j = nFrom; j <= nTo; j++) {
+				if (matrix[i][j] != 1) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	// time complexity of the print algorithm: m^2*n^2 for sub-grid count, and then
+	// for each sub-grid in worst case(when sub-grid size is m*n), we are traversing
+	// m*n to print the sub-grid.
+	// so total time-complexity is (m^2*n^2)*m*n = m^3*n^3
+	public void printAllPossibleSubGridsForMatrix(String[][] matrix) {
+		// As we have seen in loop complexity, loop of type where inner-index depends on
+		// outer index follows the arithmetic series: 1+2+..+n = n(n+1)/2
+
+		final int m = matrix.length;
+		final int n = matrix[0].length;
+		System.out.println("total expected sub-grid:" + (m * (m + 1) * n * (n + 1)) / 4);
+		int subGridCounter = 0;
+		for (int fromRow = 0; fromRow < m; fromRow++) {
+			for (int toRow = fromRow; toRow < m; toRow++) {
+				for (int fromCol = 0; fromCol < n; fromCol++) {
+					for (int toCol = fromCol; toCol < n; toCol++) {
+
+						System.out.println("subGridCounter :" + ++subGridCounter);
+						// statement placed here will be executed => [m(m+1)/2]*[n(n+1)/2] =
+						// m(m+1)*n(n+1)/4 times; means starting of each sub-grid will land here
+						// each sub-grid will be of dimension row:(fromRow,ToRow+1) col:(fromCol,
+						// toCol+1)
+
+						// let's print each sub-grid
+						System.out.print("[");
+						for (int i = fromRow; i < toRow + 1; i++) {
+							System.out.print("[");
+							for (int j = fromCol; j < toCol + 1; j++) {
+								System.out.print(matrix[i][j]);
+								if (j != toCol)
+									System.out.print(",");
+							}
+							System.out.print("]");
+							if (i != toRow)
+								System.out.println();
+						}
+						System.out.print("]");
+						System.out.println();
+					}
+
+				}
+
+			}
+		}
+
+	}
+
+	/**
+	 *
+	 * If we don't want to change the original matrix then we have two options:
+	 * 
+	 * 1. Create a new matrix : Here Space complexity : O(m*n)
+	 * 
+	 * 2. Revert the histogram matrix back to original matrix : Space Complexity:
+	 * O(1) <br>
+	 * --strategy 1: iterate the matrix and change the number greater than 0 to 1.
+	 * --strategy 2: iterate the matrix from last row and subtract next-row from
+	 * current-row.
+	 * 
+	 * Time-Complexity : <br>
+	 * 1. Judge-Algo takes :O(n), we call Judge-Algo for each row; so it is rows
+	 * times O(n). That is: O(m*n)<br>
+	 * 
+	 * 2. Histogram creation takes : O(m*n)
+	 * 
+	 * So, total time-complexity : 2*(m*n) i.e. O(mn)
+	 * 
+	 * 
+	 * 
+	 */
+	@Override
+	public int findMaxAreaInBinaryMatrixUsingMAH(int[][] matrix) {
+
+		final int m = matrix.length;
+		final int n = matrix[0].length;
+
+		// initialize the maxArea with first row
+		int maxArea = maxAreaHistogramUsingJudgeAlgo2(matrix[0]);
+		for (int i = 1; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				// this statement will take O(m*n) time
+				if (matrix[i][j] != 0) {
+					matrix[i][j] += matrix[i - 1][j];
+				}
+			}
+
+			// this statement will take O(m*n) time
+			maxArea = Math.max(maxArea, maxAreaHistogramUsingJudgeAlgo2(matrix[i]));
+		}
+
+		return maxArea;
+	}
+
+	/**
+	 * In this approach our target is to calculate area of water trapped over each
+	 * of the histogram.
+	 * 
+	 * Two pointer and 2 extra array approach:
+	 * 
+	 * One array for : Max In Left Another array for Max in Right.
+	 * 
+	 * TimeComplexity : O(2n) = O(n)
+	 * 
+	 * Space Complexity : Because of two extra array O(2n) = O(n)
+	 * 
+	 */
+	@Override
+	public int findTotalRainWaterTrappedOverHistogram1(int[] histogram) {
+
+		final int HISTOGRAM_WIDTH = 1;
+		int[] maxInLeftArr = new int[histogram.length];
+		int[] maxInRightArr = new int[histogram.length];
+
+		for (int i = 0, j = histogram.length - 1; i < histogram.length; i++, j--) {
+			maxInLeftArr[i] = i == 0 ? histogram[i] : Math.max(histogram[i], maxInLeftArr[i - 1]);
+			maxInRightArr[j] = j == (histogram.length - 1) ? histogram[j]
+					: Math.max(histogram[j], maxInRightArr[j + 1]);
+		}
+
+		int totalRainWaterTrapped = 0;
+		for (int i = 0; i < histogram.length; i++) {
+			int height = (Math.min(maxInLeftArr[i], maxInRightArr[i]) - histogram[i]);
+
+			totalRainWaterTrapped += height * HISTOGRAM_WIDTH;
+		}
+
+		return totalRainWaterTrapped;
+	}
+
+	/**
+	 * Approach: At every index , The amount of rain water stored is the difference
+	 * between current index height and minimum of lef_ max_height and right_max_height
+	 * 
+	 * TimeComplexity : O(2n) = O(n)
+	 * 
+	 * Space Complexity : O(1)
+	 * 
+	 */
+	@Override
+	public int findTotalRainWaterTrappedOverHistogramUsingTwoPointer2(int[] histogram) {
+
+		final int HISTOGRAM_WIDTH = 1;
+		// we take two pointers left and right
+		int left = 1;
+		int right = histogram.length - 2;
+
+		// we have initialized the leftMax with first element and rightMax with last
+		// element.
+		int leftMax = histogram[0];
+		int rightMax = histogram[histogram.length - 1];
+
+		int totalTrappedWater = 0;
+
+		while (left <= right) {
+
+			if (leftMax <= rightMax) {
+				// since assumed leftMax is less than rightMax so, Math.min(leftMax, rightMax)
+				// will always give leftMax.
+				// and height = leftMax -histogram[i]. As, it is assumed leftMax so histogram[i]
+				// may be greater than leftMax
+				// so height may be negative, which will give -ve area, means invalid area. So
+				// we need to replace invalid area with ZERO
+
+				totalTrappedWater += Math.max(0, HISTOGRAM_WIDTH * (leftMax - histogram[left]));
+				leftMax = Math.max(leftMax, histogram[left]);
+
+				left++;
+
+			} else {
+
+				// since assumed rightMax is less than leftMax so, Math.min(leftMax, rightMax)
+				// will always give rightMax.
+				// and height = rightMax -histogram[i]. As, it is assumed rightMax so
+				// histogram[i] may be greater than rightMax.
+				// So height may be negative, which will give -ve area, means invalid area.
+				// So we need to replace invalid area with ZERO
+
+				totalTrappedWater += Math.max(0, HISTOGRAM_WIDTH * (rightMax - histogram[right]));
+				rightMax = Math.max(rightMax, histogram[right]);
+
+				right--;
+			}
+
+		}
+
+		return totalTrappedWater;
+	}
+
+	/**
+	 * Here we calculate the area relative to the given bar over all the bars which
+	 * falls inside the range of calculated width.
+	 * 
+	 * Time-complexity : O(n)
+	 * 
+	 * Space-complexity : O(n)
+	 * 
+	 */
+	@Override
+	public int findTotalRainWaterTrappedOverHistogramUsingIGRandIGL3(int[] histogram) {
+
+		int[] IGL = findIndexOfImmediateGreaterInLeftUsingStack(histogram);
+		int[] IGR = findIndexOfImmediateGreaterInRightUsingStack(histogram);
+
+		int totalRainWaterTrapped = 0;
+
+		for (int i = 0; i < histogram.length; i++) {
+
+			int width = IGR[i] - IGL[i] - 1;
+			// When IGR_index is histogram.length or IGL_index is -1 then we should use
+			// current histogram as the IGR_Height and IGL_Height respectively.
+			int IGR_Height = (IGR[i] == histogram.length) ? histogram[i] : histogram[IGR[i]];
+			int IGL_Height = (IGL[i] == -1) ? histogram[i] : histogram[IGL[i]];
+
+			int height = Math.min(IGR_Height, IGL_Height) - histogram[i];
+
+			totalRainWaterTrapped += width * height;
+		}
+
+		return totalRainWaterTrapped;
+	}
+
+	private int[] findIndexOfImmediateGreaterInLeftUsingStack(int[] input) {
+
+		int[] result = new int[input.length];
+
+		Stack<Integer> stack = newStackInstance();
+
+		for (int i = 0; i < input.length; i++) {
+
+			while (!stack.isEmpty() && input[stack.peek().intValue()] <= input[i]) {
+				stack.pop();
+			}
+			result[i] = stack.isEmpty() ? -1 : stack.peek();
+
+			stack.push(i);
+		}
+
+		return result;
+	}
+
+	private int[] findIndexOfImmediateGreaterInRightUsingStack(int[] input) {
+
+		int[] result = new int[input.length];
+
+		Stack<Integer> stack = newStackInstance();
+
+		for (int i = input.length - 1; i >= 0; i--) {
+
+			while (!stack.isEmpty() && input[stack.peek().intValue()] <= input[i]) {
+				stack.pop();
+			}
+			result[i] = stack.isEmpty() ? input.length : stack.peek();
+
+			stack.push(i);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Here we calculate the area relative to the popped bar over all the bars which
+	 * falls inside the range of calculated width.
+	 * 
+	 * Judge stack: will keep elements in decreasing order. TimeComplexity : = O(n)
+	 * Space Complexity : because of stack O(n)
+	 * 
+	 */
+	@Override
+	public int findTotalRainWaterTrappedOverHistogramJudge4(int[] histogram) {
+
+		Stack<Integer> judgeStack = newStackInstance();
+		int totalRainWaterTrapped = 0;
+
+		int i = 0;
+		for (; i < histogram.length; i++) {
+
+			while (!judgeStack.isEmpty() && histogram[judgeStack.peek()] < histogram[i]) {
+
+				// lets calculate the area with respect to popped element for calculated width.
+				int poppedIndex = judgeStack.pop();
+
+				int GREATER_IN_RIGHT = i;
+				int GREATER_IN_LEFT = judgeStack.isEmpty() ? -1 : judgeStack.peek();
+
+				int width = GREATER_IN_RIGHT - GREATER_IN_LEFT - 1;
+
+				int GREATER_HEIGHT_IN_RIGHT = histogram[i];
+				int GREATER_HEIGHT_IN_LEFT = judgeStack.isEmpty() ? histogram[poppedIndex]
+						: histogram[judgeStack.peek()];
+
+				// As GREATER_HEIGHT_IN_RIGHT is always greater than popped_element, so when the
+				// stack.isEmpty()
+				// Math.min will always give histogram[poppedIndex], which in turn gives height
+				// as ZERO and thus area calculation is ZERO. So, Ideally we should ignore the
+				// area calculation when stack is empty
+				int height = Math.min(GREATER_HEIGHT_IN_RIGHT, GREATER_HEIGHT_IN_LEFT) - histogram[poppedIndex];
+
+				totalRainWaterTrapped += width * height;
+
+			}
+
+			judgeStack.push(i);
+		}
+
+		// When we reached at the end of histogram i.e i reached to the size of
+		// histogram, we consider the GREATER_HEIGHT_IN_RIGHT as popped_element.
+		// Because judge stack keeps the element in decreasing order, so
+		// GREATER_HEIGHT_IN_LEFT will always be greater than or
+		// equal to popped_element and Math.min(GREATER_HEIGHT_IN_RIGHT,
+		// GREATER_HEIGHT_IN_LEFT) will always give GREATER_HEIGHT_IN_RIGHT
+		// i.e.popped_element, means height is ZERO
+		// Thus area calculated is always zero. So no need to keep this while loop.
+		while (!judgeStack.isEmpty()) {
+
+			int poppedIndex = judgeStack.pop();
+
+			int GREATER_IN_RIGHT = i;
+			int GREATER_IN_LEFT = judgeStack.isEmpty() ? -1 : judgeStack.peek();
+
+			int width = GREATER_IN_RIGHT - GREATER_IN_LEFT - 1;
+
+			// when we reached at the end of histogram i.e i reached to the size of
+			// histogram
+			// in such case we will consider popped-element as GREATER_HEIGHT_IN_RIGHT
+			int GREATER_HEIGHT_IN_RIGHT = histogram[poppedIndex];
+			int GREATER_HEIGHT_IN_LEFT = judgeStack.isEmpty() ? histogram[poppedIndex] : histogram[judgeStack.peek()];
+
+			int height = Math.min(GREATER_HEIGHT_IN_RIGHT, GREATER_HEIGHT_IN_LEFT) - histogram[poppedIndex];
+
+			totalRainWaterTrapped += width * height;
+
+		}
+		return totalRainWaterTrapped;
+	}
+
+	/**
+	 * Here we calculate the area relative to the popped bar over all the bars which
+	 * falls inside the range of calculated width.
+	 * 
+	 * 
+	 * Judge stack: will keep elements in decreasing order. TimeComplexity : = O(n)
+	 * Space Complexity : because of stack O(n)
+	 * 
+	 */
+	@Override
+	public int findTotalRainWaterTrappedOverHistogramJudge5(int[] histogram) {
+
+		Stack<Integer> judgeStack = newStackInstance();
+		int totalRainWaterTrapped = 0;
+
+		for (int i = 0; i < histogram.length; i++) {
+
+			while (!judgeStack.isEmpty() && histogram[judgeStack.peek()] < histogram[i]) {
+
+				// let's calculate the area with respect to popped element for calculated width.
+				int poppedIndex = judgeStack.pop();
+
+				// As GREATER_HEIGHT_IN_RIGHT is always greater than popped_element, so when the
+				// stack.isEmpty()
+				// Math.min will always give histogram[poppedIndex], which in turn gives height
+				// as ZERO and thus area calculation is ZERO. So, Ideally we should ignore the
+				// area calculation when stack is empty
+				if (judgeStack.isEmpty())
+					break;
+
+				int width = i - judgeStack.peek() - 1;
+				int height = Math.min(histogram[i], histogram[judgeStack.peek()]) - histogram[poppedIndex];
+
+				totalRainWaterTrapped += width * height;
+
+			}
+
+			judgeStack.push(i);
+		}
+
+		return totalRainWaterTrapped;
+	}
+
+	@Override
+	public BigDecimal getMinFromMinOpStackUsingExtraSpace(Stack<BigDecimal> minOpStackUsingExtraSpace) {
+		return minOpStackUsingExtraSpace.getMin();
 	
+	}
+
+	@Override
+	public BigDecimal getMinFromMinOpStackUsingConstantSpace(Stack<BigDecimal> minOpStackUsingConstantSpace) {
+			return minOpStackUsingConstantSpace.getMin();
+	}
 
 }
