@@ -10,6 +10,7 @@ public interface Stack<T extends Comparable<T>> {
 	
 	int size();
 	
+	//only supported in specific implementation.
 	T getMin();
 	
 	boolean isEmpty();
