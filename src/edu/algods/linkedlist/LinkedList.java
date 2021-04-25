@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestions<T> {
 
 	private int size = 0;
@@ -479,7 +478,8 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		}
 		Node<T> ref = root;
 		Node<T> previousRef = null;
-		for (; ref != null && ref.getData().compareTo(data) <= 0; previousRef = ref, ref = ref.getNext());
+		for (; ref != null && ref.getData().compareTo(data) <= 0; previousRef = ref, ref = ref.getNext())
+			;
 		newNode.setNext(ref);
 		previousRef.setNext(newNode);
 
@@ -595,13 +595,11 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 *
 	 * Induction STEP :
 	 * 
-	 * if we insert 'a' at end of output_list means we are done.. 
-	 * Two approaches: 
+	 * if we insert 'a' at end of output_list means we are done.. Two approaches:
 	 * 
-	 * 1.iterate the outputlist and append 'a' at end 
+	 * 1.iterate the outputlist and append 'a' at end
 	 * 
-	 * 2nd approach : keep the
-	 * reference of 'a' and 'b' and then set b.next(a)
+	 * 2nd approach : keep the reference of 'a' and 'b' and then set b.next(a)
 	 * 
 	 * secondNode.setNext(firstNode)
 	 * 
@@ -666,7 +664,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 * 
 	 */
-	
+
 	//// pass reference to A,B,C,D,E
 	private void reverseLinkedListWithAlternateRecurssion(Node<T> current) {
 
@@ -807,12 +805,11 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			fast = fast.getNext().getNext();
 		}
 
-		
-		//even=> num%2==0
+		// even=> num%2==0
 		if (fast == null) {
 			System.out.println("EVEN");
 		} else {
-			//odd=> num%2==1
+			// odd=> num%2==1
 			System.out.println("ODD");
 		}
 
@@ -873,7 +870,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 *
 	 * SUBSTITUTION STEP: Call with one less Element
 	 * 
-	 * MergedNode = null; 
+	 * MergedNode = null;
 	 * 
 	 * recursionOutput = null;
 	 * 
@@ -922,7 +919,6 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		return mergeCandidate;
 	}
 
-
 	private Node<T> recurseAndMergeTwoSortedList2(Node<T> a, Node<T> b) {
 
 		Node<T> mergeCandidate = null;
@@ -953,15 +949,13 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		root = reverseListInPairRecursively(root);
 
 	}
-	
-	
+
 	/*
-	 * HYPOTHESIS:
-	 * reverseListInPairRecursively(1 → 2 → 3 → 4 → X) = root-->2-1-4-3-X;
+	 * HYPOTHESIS: reverseListInPairRecursively(1 → 2 → 3 → 4 → X) =
+	 * root-->2-1-4-3-X;
 	 * 
 	 * 
-	 * SUBSTITUTION:
-	 * pair =1->2;
+	 * SUBSTITUTION: pair =1->2;
 	 * 
 	 * revPair=reverse the current pair //2->1
 	 * 
@@ -976,35 +970,35 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * 
 	 * 
 	 * 
-	 * */
+	 */
 	private Node<T> reverseListInPairRecursively(Node<T> currentNode) {
-		//base case
-		if(currentNode== null) {
+		// base case
+		if (currentNode == null) {
 			return null;
 		}
-		
-		//base case
-		//reverse of single node is the node itself
-		if(currentNode.getNext()==null) {
-		
+
+		// base case
+		// reverse of single node is the node itself
+		if (currentNode.getNext() == null) {
+
 			return currentNode;
 		}
-		
+
 		Node<T> nextPair = currentNode.getNext().getNext();
-		
+
 		Node<T> revPair = currentNode.getNext();
 		revPair.setNext(currentNode);
-		//currentNode.setNext(null);
-		
+		// currentNode.setNext(null);
+
 		Node<T> sol = reverseListInPairRecursively(nextPair);
-		
+
 		revPair.getNext().setNext(sol);
-		
+
 		return revPair;
 
 	}
 
-	//optimized one
+	// optimized one
 	private Node<T> reverseListInPairRecursively1(Node<T> currentNode) {
 
 		if (currentNode == null)
@@ -1016,7 +1010,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		Node<T> nextPair = currentNode.getNext().getNext();
 		Node<T> revPair = currentNode.getNext();
 		revPair.setNext(currentNode);
-		
+
 		currentNode.setNext(reverseListInPairRecursively(nextPair));
 
 		return revPair;
@@ -1033,13 +1027,13 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		Node<T> next2next = null;
 
 		while (currentNode != null && currentNode.getNext() != null) {
-	
+
 			Node<T> next = currentNode.getNext();
 			next2next = currentNode.getNext().getNext();
 
 			next.setNext(currentNode);
 
-			//linking between pairs e.g (2--1)->(4--3)
+			// linking between pairs e.g (2--1)->(4--3)
 			if (next2next == null || next2next.getNext() == null) {
 				currentNode.setNext(next2next);
 			} else {
@@ -1050,7 +1044,6 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 		}
 
-		
 	}
 
 	@Override
@@ -1064,8 +1057,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			refSpeed1X = refSpeed1X.getNext();
 		}
 
-		
-		//in case of even fast-pointer will not point to end node
+		// in case of even fast-pointer will not point to end node
 		if (refSpeed2X.getNext().getNext() == root) {
 			refSpeed2X = refSpeed2X.getNext();
 		}
@@ -1121,52 +1113,46 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 	@Override
 	public void reverseInBlockOfKNodes(int k) {
-		if (k == 0) {
+		
+		if (k == 0 || k == 1 || k > size) {
 			return;
 		}
-
-		final int blockCount = size / k;
-		if (k == 1 || blockCount < 1) {
-			return;
-		}
-
+		
 		int blockNodeCounter = 1;
 		int blockCounter = 1;
-		Node<T> reversedList = null;
-		Node<T> originalList = root;
+		Node<T> reversedHead = null;
+		Node<T> head = root;
 
-		Node<T> currentBlockStart = null;
+		Node<T> currentBlockStart = head;
 		Node<T> previousBlockStart = null;
 
-		while (originalList != null) {
+		final int TOTAL_NUMBER_OF_BLOCKS = size / k;
+		while (head != null && blockCounter <= TOTAL_NUMBER_OF_BLOCKS) {
 
-			if (blockNodeCounter == 1) {
-				currentBlockStart = originalList;
-			}
+			Node<T> temp = head;
+			head = head.getNext();
 
-			if (blockCounter > blockCount) {
-				break;
-			}
-
-			Node<T> temp = originalList;
-			originalList = originalList.getNext();
-
-			temp.setNext(reversedList);
-			reversedList = temp;
+			// insert before
+			temp.setNext(reversedHead);
+			reversedHead = temp;
 
 			if (blockNodeCounter == k) {
-				blockCounter++;
-				blockNodeCounter = 1;
 
 				// when it's the first block reversal
 				if (previousBlockStart == null) {
-					root = reversedList;
+					root = reversedHead;
 				} else {
-					previousBlockStart.setNext(reversedList);
+					previousBlockStart.setNext(reversedHead);
 				}
 
+				// re-initialize
 				previousBlockStart = currentBlockStart;
-				reversedList = null;
+				currentBlockStart = head;
+				reversedHead = null;
+				blockNodeCounter = 1;
+
+				blockCounter++;
+
 			} else {
 				blockNodeCounter++;
 			}
@@ -1174,7 +1160,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		}
 
 		// means last block is smaller than block size
-		if (size % k > 0) {
+		if (size % k != 0) {
 			previousBlockStart.setNext(currentBlockStart);
 		}
 
@@ -1184,7 +1170,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * For eliminationPosition = 1, has not been taken care.
 	 */
 	@Override
-	public void getJosephPoint(int eliminationPosition) {
+	public void getJosephusPoint(int eliminationPosition) {
 		if (eliminationPosition <= 1) {
 			return;
 		}
@@ -1201,6 +1187,22 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		System.out.println("current Node:" + currentNode.getData());
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * 
+	 * */
+	@Override
+	void getJosephusPointUsingRecursion(int eliminationPosition) {
+		
+		
+	}
+	
+	
+	
+	
 	@Override
 	public void cloneListWithRandomPointer() {
 

@@ -207,8 +207,10 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	/**
 	 * Problem 40: Joseph Circle
 	 */
-	void getJosephPoint(int eliminationPosition);
+	void getJosephusPoint(int eliminationPosition);
 
+	void getJosephusPointUsingRecursion(int eliminationPosition);
+	
 	/**
 	 * Problem 41:
 	 */

@@ -16,7 +16,7 @@ public class KarumanchiTest {
 		// reverseLinkList();
 		   //reverseLinkListRecursively();
 		
-		reverseLinkedListWithAlternateRecurssion();
+		//reverseLinkedListWithAlternateRecurssion();
 
 		// findIntersectionNodeOfTwoListUsingBruteForce();
 		// findIntersectionNodeOfTwoListUsingStack();
@@ -36,7 +36,7 @@ public class KarumanchiTest {
 
 		// isPalindrome();
 
-		// reverseInBlockOfKNodes();
+		 reverseInBlockOfKNodes();
 
 		// getJosephPoint();
 
@@ -469,7 +469,7 @@ public class KarumanchiTest {
 		integerList.insert(1);
 		KarumanchiQuestions<Integer> questions = integerList;
 		System.out.println(integerList.traverse());
-		questions.reverseInBlockOfKNodes(0);
+		questions.reverseInBlockOfKNodes(2);
 		System.out.println(integerList.traverse());
 	}
 
@@ -503,7 +503,7 @@ public class KarumanchiTest {
 		T.setNext(A);
 		KarumanchiQuestions<Character> questions = charList;
 		System.out.println(charList.traverse());
-		questions.getJosephPoint(1);
+		questions.getJosephusPoint(1);
 
 	}
 

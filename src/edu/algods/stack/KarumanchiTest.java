@@ -20,6 +20,8 @@ public class KarumanchiTest {
 		// evaluatePrefixExpression();
 
 		// reverseStackUsingRecursion();
+		
+		implementStackUsingTwoQueues();
 
 		// findImmediateGreaterInRightUsingBurteForce();
 
@@ -49,9 +51,9 @@ public class KarumanchiTest {
 
 		// findTotalRainWaterTrappedOverHistogram();
 
-		 getMinFromMinOpStackUsingExtraSpace();
+		//getMinFromMinOpStackUsingExtraSpace();
 
-		//getMinFromMinOpStackUsingConstantSpace();
+		// getMinFromMinOpStackUsingConstantSpace();
 	}
 
 	private static void checkIfSymbolsAreBalanced() {
@@ -117,6 +119,32 @@ public class KarumanchiTest {
 		System.out.println(inputStack.toString());
 		questions.reverseStackUsingRecursion(inputStack);
 		System.out.println(inputStack.toString());
+	}
+
+	private static void implementStackUsingTwoQueues() {
+
+		StackKarumanchiQuestions<String> questions = new StackKarumanchiSolutions<>(true);
+
+		Stack<String> stack = questions.implementStackUsingTwoQueues();
+		stack.push("A");
+		stack.push("B");
+		stack.push("C");
+		stack.push("D");
+		System.out.println("stack:" + stack);
+		System.out.println("pop one element:" + stack.pop());
+		System.out.println("stack:" + stack + " size:" + stack.size());
+		System.out.println("push two elements E and F");
+		stack.push("E");
+		stack.push("F");
+		System.out.println("stack:" + stack + " size:" + stack.size());
+		System.out.println("peek:" + stack.peek());
+		System.out.println("pop one element:" + stack.pop());
+
+		System.out
+				.println("pop four element:" + stack.pop() + "," + stack.pop() + "," + stack.pop() + "," + stack.pop());
+		System.out.println("stack:" + stack + " size:" + stack.size());
+		System.out.println("stack.isEmpty():" + stack.isEmpty());
+
 	}
 
 	private static void findImmediateGreaterInRightUsingBurteForce() {
@@ -338,9 +366,10 @@ public class KarumanchiTest {
 		System.out.println("minElement:" + questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace));
 
 		while (!minOpStackUsingExtraSpace.isEmpty()) {
-			
+
 			System.out.print(" popped element:" + minOpStackUsingExtraSpace.pop());
-			BigDecimal minElement = minOpStackUsingExtraSpace.isEmpty() ? null :  questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace);
+			BigDecimal minElement = minOpStackUsingExtraSpace.isEmpty() ? null
+					: questions.getMinFromMinOpStackUsingExtraSpace(minOpStackUsingExtraSpace);
 			System.out.print(" minElement:" + minElement);
 			System.out.println();
 		}

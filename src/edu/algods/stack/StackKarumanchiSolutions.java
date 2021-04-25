@@ -1,10 +1,13 @@
 package edu.algods.stack;
 
 import java.math.BigDecimal;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackKarumanchiQuestions<T> {
@@ -1198,7 +1201,8 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 
 	/**
 	 * Approach: At every index , The amount of rain water stored is the difference
-	 * between current index height and minimum of lef_ max_height and right_max_height
+	 * between current index height and minimum of lef_ max_height and
+	 * right_max_height
 	 * 
 	 * TimeComplexity : O(2n) = O(n)
 	 * 
@@ -1448,12 +1452,102 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 	@Override
 	public BigDecimal getMinFromMinOpStackUsingExtraSpace(Stack<BigDecimal> minOpStackUsingExtraSpace) {
 		return minOpStackUsingExtraSpace.getMin();
-	
+
 	}
 
 	@Override
 	public BigDecimal getMinFromMinOpStackUsingConstantSpace(Stack<BigDecimal> minOpStackUsingConstantSpace) {
-			return minOpStackUsingConstantSpace.getMin();
+		return minOpStackUsingConstantSpace.getMin();
+	}
+
+	/**
+	 * Algo:
+	 * 
+	 * Push operation : offer incoming elements to the queue which is not-empty.
+	 * 
+	 * Pop operation : poll all the elements but last from the non-empty queue and
+	 * offer them to empty-queue.
+	 * 
+	 */
+	@Override
+	public Stack<T> implementStackUsingTwoQueues() {
+
+		return new Stack<T>() {
+
+			final Queue<T> q1 = new ArrayDeque<>();
+			final Queue<T> q2 = new ArrayDeque<>();
+
+			@Override
+			public void push(T data) {
+
+				if (isEmpty()) {
+					q1.offer(data);
+					return;
+				}
+
+				if (!q1.isEmpty())
+					q1.offer(data);
+
+				if (!q2.isEmpty())
+					q2.offer(data);
+			}
+
+			@Override
+			public T pop() {
+				if (isEmpty())
+					throw new EmptyStackException();
+
+				Queue<T> empty = q1.isEmpty() ? q1 : q2;
+				Queue<T> nonEmpty = q1.isEmpty() ? q2 : q1;
+
+				final int nonEmptySizeMinusOne = nonEmpty.size() - 1;
+				for (int i = 0; i < nonEmptySizeMinusOne; i++)
+					empty.offer(nonEmpty.poll());
+
+				return nonEmpty.poll();
+			}
+
+			@Override
+			public T peek() {
+				if (isEmpty())
+					throw new EmptyStackException();
+
+				Queue<T> empty = q1.isEmpty() ? q1 : q2;
+				Queue<T> nonEmpty = q1.isEmpty() ? q2 : q1;
+
+				final int nonEmptySizeMinusOne = nonEmpty.size() - 1;
+				for (int i = 0; i < nonEmptySizeMinusOne; i++)
+					empty.offer(nonEmpty.poll());
+
+				T data = nonEmpty.poll();
+
+				empty.offer(data);
+
+				return data;
+			}
+
+			@Override
+			public int size() {
+				// size of one of the queue is always ZERO
+				return q1.size() + q2.size();
+			}
+
+			@Override
+			public T getMin() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return q1.isEmpty() && q2.isEmpty();
+			}
+
+			@Override
+			public String toString() {
+				return "{q1=" + q1.toString() + ",q2=" + q2.toString() + "}";
+			}
+		};
+
 	}
 
 }

@@ -221,6 +221,13 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	void reverseStackUsingRecursion(Stack<T> input);
 
 	/**
+	 * 
+	 * Problem-13 Show how to implement one stack efficiently using two queues.
+	 * Analyze the running time of the stack operations.
+	 */
+	Stack<T> implementStackUsingTwoQueues();
+
+	/**
 	 * Problem 22: STOCK_SPAN
 	 * 
 	 * Prerequisite : Find immediate greater value in right - brute-force
@@ -461,9 +468,8 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 
 	int findMaxAreaInBinaryMatrixUsingMAH(int[][] matrix);
 
-	
 	int findTotalRainWaterTrappedOverHistogram1(int[] histogram);
-	
+
 	int findTotalRainWaterTrappedOverHistogramUsingTwoPointer2(int[] histogram);
 
 	/**
@@ -478,8 +484,8 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	 * <br>
 	 * Width=(IGR_index - IGL_index -1) <br>
 	 * 
-	 * Here, Height is distributed over each Width(i.e if width is 3, then calculated height is
-	 * considered over each of the 3 histograms)
+	 * Here, Height is distributed over each Width(i.e if width is 3, then
+	 * calculated height is considered over each of the 3 histograms)
 	 * 
 	 * Area=Width*Height
 	 * 
@@ -508,9 +514,9 @@ public interface StackKarumanchiQuestions<T extends Comparable<T>> {
 	int findTotalRainWaterTrappedOverHistogramJudge4(int[] histogram);
 
 	int findTotalRainWaterTrappedOverHistogramJudge5(int[] histogram);
-	
+
 	BigDecimal getMinFromMinOpStackUsingExtraSpace(Stack<BigDecimal> minOpStackUsingExtraSpace);
-	
+
 	BigDecimal getMinFromMinOpStackUsingConstantSpace(Stack<BigDecimal> minOpStackUsingConstantSpace);
 
 }
