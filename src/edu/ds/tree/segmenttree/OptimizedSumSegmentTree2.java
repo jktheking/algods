@@ -113,19 +113,21 @@ public class OptimizedSumSegmentTree2 implements SegmentTree<Integer> {
 	 * Since tl is even so next node is odd, so parent of tl+1 node => parent = (tl+1-1)/2 = tl/2 
 	 * For odd child formula => 2*parent + 1 = child  i.e; parent =(child -1)/2; now substitute child with tl+1.
 	 * 
-	 * WHEN 'tl' is odd then no need to
-	 * include the value of tl-node in query-sum, and go to the parent of 'tl' node.
+	 * WHEN 'tl' is odd then no need to include the value of tl-node in query-sum, and go to the parent of 'tl' node.
 	 * 
-	 * WHEN 'tr' is even: Since tr is exclusive in query range, so if tr is even
-	 * then we should include the (tr-1)th node value in query-sum and go to the
-	 * parent node of (tr-1). WHEN 'tr' is odd : then no need to include the value
-	 * of (tr-1)th node in query-sum, and go to the parent of 'tr' node.
+	 * WHEN 'tr' is even:
+	 * Since tr is exclusive in query range, so if tr is even  then we should include the (tr-1)th node value in query-sum and go to the
+	 * parent node of (tr-1). 
+	 * WHEN 'tr' is odd : then no need to include the value of (tr-1)th node in query-sum, and go to the parent of 'tr' node.
 	 * 
 	 * </pre>
 	 * 
 	 * 
-	 * tree_array_index = input_array_index + (input.length - 1) or tree_array_index
-	 * = input_array_index + root_tr
+	 * tree_array_index = input_array_index + (input.length - 1) 
+	 * 
+	 * or tree_array_index = input_array_index + root_tr
+	 * 
+	 * Time Complexity = O(logn)
 	 *
 	 */
 	@Override
