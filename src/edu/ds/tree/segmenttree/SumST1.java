@@ -13,25 +13,27 @@ import edu.algo.algointro.BitwiseUtils;
  * 
  * 
  */
-public class SumSegmentTree1 implements SegmentTree<Integer> {
+public class SumST1 implements SegmentTree<Integer>, SegmentTree.SumSegmentTree<Integer> {
 
 	/**
 	 * BFS indexed segment tree.
 	 * 
 	 */
 	private final int[] tree;
+	// represents right range of root-node of segment tree
 	private final int root_tr;
+	// represents left range of root-node of segment tree
 	private final int root_tl = 0;
 	private final int bfsIndexStart = 0;
 
-	SumSegmentTree1(int[] elements, boolean isFull) {
+	SumST1(int[] elements, boolean isFull) {
 		int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
-		tree = new int[2*powerOf2InputSize -1];
+		tree = new int[2 * powerOf2InputSize - 1];
 		if (isFull) {
-			root_tr = powerOf2InputSize -1;
-			buildFullSumSegmentTree(elements,powerOf2InputSize);
+			root_tr = powerOf2InputSize - 1;
+			buildFullSumSegmentTree(elements, powerOf2InputSize);
 		} else {
-			root_tr = elements.length -1;
+			root_tr = elements.length - 1;
 			buildSumSegmentTree(elements, tree, bfsIndexStart, root_tl, root_tr);
 		}
 
@@ -77,7 +79,8 @@ public class SumSegmentTree1 implements SegmentTree<Integer> {
 	 * We do not save the node's segment explicitly, rather it is getting calculated
 	 * on the fly using the root-node's segment.
 	 * 
-	 * This recursion employ the bottom-up approach.
+	 * This recursion employ the bottom-up approach to store the calculated sum at
+	 * bfsIndex.
 	 * 
 	 * @param input    :represents input array
 	 * @param tree     :represents segment tree
@@ -88,6 +91,23 @@ public class SumSegmentTree1 implements SegmentTree<Integer> {
 	 *                 segment-tree.
 	 * 
 	 *                 Time complexity : O(n)
+	 * 
+	 *                 <pre>
+	 *   Hypothesis :
+	 *   buildSumSegmentTree(bfsIndex, tl, tr)  gives sum of segment[tl,tr] and stored at bfsIndex.
+	 *   
+	 *   Substitution :
+	 *   tm = (tl + tr) / 2;
+	 *   
+	 *   sum_of_left_child = buildSumSegmentTree(2 * bfsIndex + 1, tl, tm)
+	 *   sum_of_right_child = buildSumSegmentTree(2 * bfsIndex + 2, tm + 1, tr)
+	 *   
+	 *   Induction:
+	 *   tree[bfsIndex] = sum_of_left_child + sum_of_right_child;
+	 * 
+	 *                 </pre>
+	 * 
+	 * 
 	 */
 	private int buildSumSegmentTree(int input[], int tree[], int bfsIndex, int tl, int tr) {
 		if (tl == tr) {
@@ -135,12 +155,14 @@ public class SumSegmentTree1 implements SegmentTree<Integer> {
 	 */
 	private int rangeQuery(int ql, int qr, int tl, int tr, int bfsIndex) {
 
-		// CASE 1 : If node-segment lies completely outside the query-segment
+		// CASE 1 : If node-segment lies completely outside the query-segment;
+		// terminates the recursion
 		if (tr < ql || qr <= tl) {
 			return 0;
 		}
 
-		// CASE 2 : If node-segment lies completely inside the query-segment
+		// CASE 2 : If node-segment lies completely inside the query-segment; terminates
+		// the recursion
 		if (ql <= tl && tr < qr) {
 			return tree[bfsIndex];
 		}
@@ -186,6 +208,128 @@ public class SumSegmentTree1 implements SegmentTree<Integer> {
 		StringBuilder builder = new StringBuilder();
 		builder.append("SumSegmentTree [tree=").append(Arrays.toString(tree)).append("]");
 		return builder.toString();
+	}
+
+	/**
+	 * The task is as follows: for a given value x we have to quickly find smallest
+	 * index i such that the sum of the first i elements of the array a[] is greater
+	 * or equal to x (assuming that the array a[] only contains non-negative
+	 * values).
+	 * 
+	 * 
+	 * index getRightBoundOfRangeUsingRecursion()
+	 * 
+	 */
+	@Override
+	public int getRightBoundOfRange(Integer data) {
+
+		if (tree[0] < data) {
+			throw new IllegalArgumentException("given value is out of range of tree sum.");
+
+		}
+		return getRightBoundOfRangeUsingRecursion(data, bfsIndexStart, root_tl, root_tr);
+	}
+
+	/**
+	 * 
+	 * https://cp-algorithms.com/data_structures/segment_tree.html
+	 * 
+	 * 
+	 * TimeComplexity : logn
+	 * 
+	 * Also @see: Counting the number of zeros, searching for the k-th zero. In this
+	 * problem, segment tree is built on number of zeros such that rangeQuery is for
+	 * the number of zeros in a given range. And its opposite is to find the right
+	 * bound of range for the k-th zero.
+	 * 
+	 */
+	private int getRightBoundOfRangeUsingRecursion(int givenSum, int bfsIndex, int tl, int tr) {
+
+		if (tl == tr) {
+			return tl;
+		}
+
+		int tm = (tl + tr) / 2;
+		// data is contained in left segment
+		if (tree[2 * bfsIndex + 1] >= givenSum) {
+			return getRightBoundOfRangeUsingRecursion(givenSum, (2 * bfsIndex + 1), tl, tm);
+		} else {
+			// go to right segment, and subtract the sum of left segment
+			return getRightBoundOfRangeUsingRecursion((givenSum - tree[2 * bfsIndex + 1]), (2 * bfsIndex + 2), tm + 1,
+					tr);
+		}
+
+	}
+
+	@Override
+	public int getRightBoundOfRange(Integer data, int ql, int qr) {
+
+		if (tree[0] < data) {
+			throw new IllegalArgumentException("given value is out of range of tree sum.");
+
+		}
+		return getRightBoundOfRangeInQueryRange(ql, qr, root_tl, root_tr, bfsIndexStart, new int[] { data });
+	}
+
+	/**
+	 * 
+	 * Solution is comprised of two Algo:<br>
+	 * 
+	 * ALGO 1: When question is constrained on range, then CASES are on the basis of 
+	 * position of tree-node-range with respect to query-range <br>
+	 * CASE 1: when node range lies completely outside the query range <br>
+	 * CASE 2: when node range lies completely inside the query range <br>
+	 * CASE 3: when node range lies partially inside the query range <br>
+	 * 
+	 * ALGO 2 : CASE 2 from ALGO 1 <br>
+	 * 
+	 * CASE 2: When a tree node lies completely inside the query range. (ql <= tl &&
+	 * tr <= qr)
+	 * 
+	 * CASE 2A: When node-sum is less than the given-sum, then we need to adjust the
+	 * given-sum and terminate the recursion for this branch.
+	 * 
+	 * <pre>
+	 * <code>
+	 * 	 if (tree[bfsIndex] < givenSum[0]) { 
+	 *     	 	givenSum[0]= givenSum[0] - tree[bfsIndex]; 
+	 *     		return INTEGER.MIN; // stops the recursion for this branch 
+	 *      }
+	 *  </code>
+	 * </pre>
+	 * 
+	 * CASE 2B: When node-sum is greater than the given-sum, we need to branch the
+	 * recursion and further check for CASE2A and CASE2B until control reaches to
+	 * leaf node.
+	 * 
+	 * 
+	 * 
+	 */
+	private int getRightBoundOfRangeInQueryRange(int ql, int qr, int tl, int tr, int bfsIndex, int[] givenSum) {
+
+		// if node range lies completely outside the query range
+		if (tr < ql || tl > qr)
+			return Integer.MIN_VALUE;
+
+		// if node range lies completely inside the query range
+		if (ql <= tl && tr <= qr) {
+
+			// when the node-sum is less than given-sum
+			if (tree[bfsIndex] < givenSum[0]) {
+				givenSum[0] = givenSum[0] - tree[bfsIndex];
+				return Integer.MIN_VALUE;
+			}
+
+			if (tl == tr)
+				return tl;
+		}
+
+		int mid = (tl + tr) / 2;
+		int leftSumIndex = getRightBoundOfRangeInQueryRange(ql, qr, tl, mid, 2 * bfsIndex + 1, givenSum);
+		if (leftSumIndex != Integer.MIN_VALUE)
+			return leftSumIndex;
+		return getRightBoundOfRangeInQueryRange(ql, qr, mid + 1, tr, 2 * bfsIndex + 2, givenSum);
+
 	}
 
 }

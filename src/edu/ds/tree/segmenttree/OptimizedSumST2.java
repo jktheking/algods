@@ -13,7 +13,7 @@ import edu.algo.algointro.BitwiseUtils;
  * in tree array.
  * 
  */
-public class OptimizedSumSegmentTree2 implements SegmentTree<Integer> {
+public class OptimizedSumST2 implements SegmentTree<Integer> {
 
 	/**
 	 * BFS indexed segment tree.
@@ -22,7 +22,7 @@ public class OptimizedSumSegmentTree2 implements SegmentTree<Integer> {
 	private final int[] tree;
 	private final int root_tr;
 
-	OptimizedSumSegmentTree2(int[] elements, boolean isFull) {
+	OptimizedSumST2(int[] elements, boolean isFull) {
 		if (isFull) {
 			int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
 			root_tr = powerOf2InputSize - 1;
@@ -105,23 +105,29 @@ public class OptimizedSumSegmentTree2 implements SegmentTree<Integer> {
 	}
 
 	/**
+	 *
 	 * 
 	 * <pre>
+	 * Note :
+	 * For odd indexed child formula :  2*parent_index + 1 = child_index ; 
+	 *  i.e. parent_index =(child_index -1)/2 or parent_index = (int)child_index/2
 	 * 
 	 * WHEN 'tl' is even then we should include the tl-node value in query-sum and
 	 * go to the parent of (tl+1)th node.
 	 * Since tl is even so next node is odd, so parent of tl+1 node => parent = (tl+1-1)/2 = tl/2 
-	 * For odd child formula => 2*parent + 1 = child  i.e; parent =(child -1)/2; now substitute child with tl+1.
+	 *  now substitute child with tl+1.
 	 * 
 	 * WHEN 'tl' is odd then no need to include the value of tl-node in query-sum, and go to the parent of 'tl' node.
 	 * 
 	 * WHEN 'tr' is even:
 	 * Since tr is exclusive in query range, so if tr is even  then we should include the (tr-1)th node value in query-sum and go to the
 	 * parent node of (tr-1). 
+	 * 
 	 * WHEN 'tr' is odd : then no need to include the value of (tr-1)th node in query-sum, and go to the parent of 'tr' node.
 	 * 
 	 * </pre>
 	 * 
+	 
 	 * 
 	 * tree_array_index = input_array_index + (input.length - 1) 
 	 * 
