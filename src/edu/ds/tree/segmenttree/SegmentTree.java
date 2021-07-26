@@ -22,16 +22,27 @@ public interface SegmentTree<T> {
 	void update(T data, int index);
 
 	public static interface SumSegmentTree<T> {
-		
+
 		int getRightBoundOfRange(T data, int ql, int qr);
 
 		int getRightBoundOfRange(T data);
 
 	}
 
+	/**
+	 * We need to find the first greater element than 'data' while traversing the
+	 * given array in given range(ql, qr).
+	 */
 	public static interface MaxSegmentTree<T> {
 		int getFirstGreaterElement(T data, int ql, int qr);
 
+	}
+	
+	/**
+	 * We need to find the smallest element  greater than 'data' in given the given range(ql, qr).
+	 */
+	public static interface MergeSortSegmentTree<T>{
+		int getSmallestGreaterElement(T data, int ql, int qr);
 	}
 
 }
