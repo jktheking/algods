@@ -3,8 +3,13 @@ package edu.ds.tree.segmenttree;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * 
+ * Class to test segment tree
+ * */
 public class App {
 	public static void main(String[] args) {
+		
 
 		// testSumSegmentTree();
 		// System.out.println("--------------------------testOptimizedSumSegmentTree--------------");
@@ -19,6 +24,7 @@ public class App {
 		//testMaxSubSegmentSumWithNegative();
 		
 		//testRangeUpdateAdditionSegmentTree();
+		
 		
 		testRangeUpdateSubtractionSegmentTree();
 
