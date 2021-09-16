@@ -1,0 +1,55 @@
+----------------------
+STANDARD ARCHITECTURE
+----------------------
+
+1)	API Gateway: This component is a front facing component which will handle things like: load balancing, traffic monitoring/metrics, security(access control), log tracing, rate limiting(ddos protection, etc). 
+
+2) IAM (Identity and access management): All authentication and access control will be decided by this component using protocols like oAuth 2.0, OIDC (OpenID Connect). API Gateway as well as microservices will have access to the IAM component.
+
+3) Declarative traffic monitoring, declarative log tracing, declarative rate limiting for communication between microservices, declarative security config(TLS), etc can be done through service mesh like istio. This is because istio provides layer 7 proxy(envoy) as a sidecar to each POD.
+
+4) Infrastructure log aggregation and monitoring: Can be done through prometheus as a time series database and grafana as UI console.
+
+5) Application log tracing and log aggregation using opentracing (jeagertracing) and ELK/EFK (elasticsearch, logstash/fluentd, kibana).
+
+6) Audit management system which will receive data from log aggregation systems 
+
+7) For ISTIO like service mesh observability and management we can use Kiali.
+
+8) Encryption for data at rest we can use AEAD symmetric key algorithms (deterministic and non deterministic). We will use envelop cryptography using KMS(Key management system). Key rotation infrastructure must also be taken care of.
+
+9) Centralized configuration management.
+
+-------------------------------
+MICROSERVICE FUNCTIONAL DESIGN
+-------------------------------
+
+1) microservice to microservice communication will be over TLS considering zero trust security.
+
+
+
+*** Example: Backend functional design for file upload:
+
+1) Code Architecture & Design: Based on clean architecture paradigm where our business logic will not depend on 3rd party library/components rather 3rd party component will depend on our code.
+
+2) Security considerations: We will develop a upload validation pipeline to address: File metadata attacks, File size attacks, File content attacks (ClamAV, AttachmentScanner), File access attacks.
+
+3) File must be uploaded in chunks(each chunk will have a checksum to identify and guarantee its integrity)	 so that it does not overload the server and in case of failures uploads can be resumed without losing precious time.
+
+- Use a whitelist of allowed file types 
+- Limit the size of the filename
+- Limit the size of the file (unexpectedly small files and large files can both be used in denial of service attacks)
+- Limit the directory to which files are uploaded
+- Name the files randomly or using a hash instead of by the user’s input. This will prevent an attacker from scripting access to uploaded files using the file’s name as an attack vector.
+- Simplify error messages. Remove any directory paths and server configurations from error messages that attackers could use.
+- Check the uploaded directory to make sure the read/write/execute user permissions are correct.
+- When decompressing files, check all uncompressed files individually in the same way that all files are checked
+- Validate CORS headers to ensure that they are only enabled for publicly accessible data.
+
+Technology stack: Java, Spring Core, Spring ORM, Spring Data, Spring Security, Spring Boot, Hibernate (JPA), Jersey (JAXRS) Active MQ, Apache Camel, Apache Solr, Redis Distributed Cache, noSQL DB like MongoDB, Google Tink on top of Java Cryptography Extension, Test automation modules developed on teardown principle, Containerization using library like jib, Kubernetes Cluster and ISTIO Service Mesh, CI/CD using Jenkins
+
+*** Front-end design considerations for file upload:
+
+1) Use a Captcha to prevent uploads from bots and scripts
+2) Protect website from Cross Site Request Forgery attacks using CSRF security methods.
+

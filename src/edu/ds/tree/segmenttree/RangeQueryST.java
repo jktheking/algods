@@ -15,7 +15,7 @@ package edu.ds.tree.segmenttree;
  * bound.
  * 
  */
-public interface SegmentTree<T> {
+public interface RangeQueryST<T> {
 
 	T rangeQuery(int left, int right);
 

@@ -3,13 +3,13 @@ package edu.ds.tree.segmenttree;
 import java.util.Arrays;
 
 import edu.algo.algointro.BitwiseUtils;
-import edu.ds.tree.segmenttree.MaxSubSegmentSumWithNegativeST4.Data;
+import edu.ds.tree.segmenttree.MaxSubSegmentSumWithNegativeSTImpl4.Data;
 
 /**
  * @see Kadane's algorithm
  * 
  */
-public class MaxSubSegmentSumWithNegativeST4 implements SegmentTree<Data> {
+public class MaxSubSegmentSumWithNegativeSTImpl4 implements RangeQueryST<Data> {
 
 	/**
 	 * BFS indexed segment tree.
@@ -24,7 +24,7 @@ public class MaxSubSegmentSumWithNegativeST4 implements SegmentTree<Data> {
 
 	private final boolean flatInitialization;
 
-	MaxSubSegmentSumWithNegativeST4(int[] elements, boolean flatInitialization) {
+	MaxSubSegmentSumWithNegativeSTImpl4(int[] elements, boolean flatInitialization) {
 		int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
 		tree = new Data[2 * powerOf2InputSize - 1];
 		root_tr = elements.length - 1;

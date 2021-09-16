@@ -13,7 +13,7 @@ import edu.algo.algointro.BitwiseUtils;
  * 
  * 
  */
-public class SumST1 implements SegmentTree<Integer>, SegmentTree.SumSegmentTree<Integer> {
+public class SumSTImpl1 implements RangeQueryST<Integer>, RangeQueryST.SumSegmentTree<Integer> {
 
 	/**
 	 * BFS indexed segment tree.
@@ -26,7 +26,7 @@ public class SumST1 implements SegmentTree<Integer>, SegmentTree.SumSegmentTree<
 	private final int root_tl = 0;
 	private final int bfsIndexStart = 0;
 
-	SumST1(int[] elements, boolean isFull) {
+	SumSTImpl1(int[] elements, boolean isFull) {
 		int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
 		tree = new int[2 * powerOf2InputSize - 1];
 		if (isFull) {

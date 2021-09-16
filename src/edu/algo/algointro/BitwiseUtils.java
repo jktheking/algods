@@ -68,7 +68,7 @@ public class BitwiseUtils {
 	}
 
 	/**
-	 * x & (x � 1): use to turn off the rightmost 1-bit in a word, producing 0 if
+	 * x & (x - 1): use to turn off the rightmost 1-bit in a word, producing 0 if
 	 * none (e.g., input: 01011000 output: 01010000).
 	 * 
 	 * This can be used to determine if an unsigned integer is a power of 2 or is 0:
@@ -92,7 +92,7 @@ public class BitwiseUtils {
 	/**
 	 * x & (x + 1) : use to turn off the trailing 1�s in a word, producing x if none
 	 * (e.g., input: 10100111 output:10100000) This can be used to determine if an
-	 * unsigned integer is of the form 2^n � 1, 0, or all 1�s: apply the formula
+	 * unsigned integer is of the form 2^n - 1, 0, or all 1�s: apply the formula
 	 * followed by a 0-test on the result.
 	 *
 	 * 

@@ -14,8 +14,8 @@ import edu.algo.algointro.BitwiseUtils;
  * 
  * 
  */
-public class MaxOccurenceST3
-implements SegmentTree<Map.Entry<Integer, Integer>>, SegmentTree.MaxSegmentTree<Integer> {
+public class MaxOccurenceSTImpl3
+implements RangeQueryST<Map.Entry<Integer, Integer>>, RangeQueryST.MaxSegmentTree<Integer> {
 
 	/**
 	 * BFS indexed segment tree.
@@ -29,7 +29,7 @@ implements SegmentTree<Map.Entry<Integer, Integer>>, SegmentTree.MaxSegmentTree<
 	private final int bfsIndexStart = 0;
 
 	@SuppressWarnings("unchecked")
-	MaxOccurenceST3(int[] elements, boolean isFull) {
+	MaxOccurenceSTImpl3(int[] elements, boolean isFull) {
 		int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
 		tree = new Map.Entry[2 * powerOf2InputSize - 1];
 		if (isFull) {

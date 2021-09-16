@@ -274,8 +274,12 @@ public class BinarySearchTree<T extends Comparable<T>> implements BST<T> {
 			 */
 
 			/*
-			 * Node<T> predecessorNode = getPredecessor(node); // preserve the value of
-			 * predecessor in node node.setData(predecessorNode.getData());
+			 * Node<T> predecessorNode = getPredecessor(node);
+			 * 
+			 * preserve the value of predecessor in node
+			 * 
+			 * node.setData(predecessorNode.getData());
+			 * 
 			 * node.setLeft(delete(node.getLeft(), predecessorNode.getData()));
 			 */
 
@@ -613,7 +617,7 @@ public class BinarySearchTree<T extends Comparable<T>> implements BST<T> {
 	}
 
 	private boolean isVisitedParent(BSTNode<T> node, BSTNode<T> previous) {
-		return previous!=null && (node.getLeft() == previous || node.getRight() == previous);
+		return previous != null && (node.getLeft() == previous || node.getRight() == previous);
 	}
 
 	@Override

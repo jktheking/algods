@@ -13,7 +13,7 @@ import edu.algo.algointro.BitwiseUtils;
  * in tree array.
  * 
  */
-public class OptimizedSumST2 implements SegmentTree<Integer> {
+public class OptimizedSumSTImpl2 implements RangeQueryST<Integer> {
 
 	/**
 	 * BFS indexed segment tree.
@@ -22,7 +22,7 @@ public class OptimizedSumST2 implements SegmentTree<Integer> {
 	private final int[] tree;
 	private final int root_tr;
 
-	OptimizedSumST2(int[] elements, boolean isFull) {
+	OptimizedSumSTImpl2(int[] elements, boolean isFull) {
 		if (isFull) {
 			int powerOf2InputSize = getInputArraySizeAsPowerOf2(elements.length);
 			root_tr = powerOf2InputSize - 1;
