@@ -26,7 +26,9 @@ public class App {
 		//testRangeUpdateAdditionSegmentTree();
 		
 		
-		testRangeUpdateSubtractionSegmentTree();
+		//testRangeUpdateSubtractionSegmentTree();
+		
+		testRangeUpdateAdditionRangeQueryMaxSegmentTree();
 
 	}
 
@@ -239,6 +241,47 @@ public class App {
 		System.out.println("query at index 5: "+tree.query(5));
 
 		
+	}
+	
+	
+	private static void testRangeUpdateAdditionRangeQueryMaxSegmentTree() {
+		int[] elements  = new int[] {2, 7, 3, 5, 6, 11, 14};
+		System.out.println("input:"+Arrays.toString(elements));
+		RangeUpdateRangeQueryST<Integer> tree = new RangeUpdateAdditionRangeQueryMaxSTImpl7(elements);
+		System.out.println("-----------------------original tree--------------------");
+		System.out.println(tree);
+		int left = 0;
+		int right = 7;
+		int data = 3;
+		System.out.println("update:" + data +   " for range["+left+","+right+")");
+		tree.update(data, left, right);
+		System.out.println(tree);
+		
+		int ql = 3;
+        int qr = 5;
+        System.out.println("query range[" + ql + "" + ", " + qr + "): " + tree.query(ql, qr));
+		
+		left = 3;
+		right= 7;
+		data=5;
+		System.out.println("update:" + data +   " for range["+left+","+right+")");
+		tree.update(data, left, right);
+		System.out.println(tree);
+		
+		ql = 0;
+        qr = 7;
+		System.out.println("query range[" + ql + "" + ", " + qr + "): " + tree.query(ql, qr));
+		
+		left =2;
+		right=6;
+		data= 1;
+		System.out.println("update:" + data +   " for range["+left+","+right+")");
+		tree.update(data, left, right);
+		System.out.println(tree);
+		
+		ql = 1;
+        qr = 6;
+        System.out.println("query range[" + ql + "" + ", " + qr + "): " + tree.query(ql, qr));
 	}
 	
 }

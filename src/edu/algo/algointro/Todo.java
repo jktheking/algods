@@ -68,5 +68,12 @@ public class Todo {
 	 * */
 	
 	
+	/**
+	 * Segment tree TODO:
+	 * 2d segment tree, persistent segment tree
+	 * frequency count, frequency count with persistent
+	 * 
+	 * 
+	 * */
 
 }
