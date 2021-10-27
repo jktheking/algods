@@ -337,12 +337,13 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	@Override
 	public Node<T> findNthNodeInSingleScanFromEndWithoutUsingSizeOfList(int n) {
 
-		Node<T> tempRef;
+		Node<T> tempRef = root;
 		Node<T> solutionRef = root;
-		int i;
 
 		// move the tempRef by n position(considering positions not index).
-		for (tempRef = root, i = 0; i < n; i++, tempRef = tempRef.getNext()) {
+		while (n > 0) {
+			tempRef = tempRef.getNext();
+
 			if (tempRef == null) {
 				throw new RuntimeException("nth position  is greater than the size of the linkedList");
 			}
@@ -353,7 +354,6 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			tempRef = tempRef.getNext();
 			solutionRef = solutionRef.getNext();
 		}
-
 		return solutionRef;
 	}
 
@@ -403,23 +403,18 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 		Node<T> slowRef = root;
 		Node<T> fastRef = root;
-		do {
 
-			// move fastRef by 2 but safely, if there is no loop fastRef will visit the end
-			// of list first.
-			if (fastRef.getNext() == null || fastRef.getNext().getNext() == null) {
-				System.out.println("there is no loop");
-				return null;
-			}
-
+		while (fastRef != null && fastRef.getNext() != null && slowRef != fastRef) {
+			slowRef = slowRef.getNext();
 			fastRef = fastRef.getNext().getNext();
 
-			slowRef = slowRef.getNext();
+		}
 
-		} while (slowRef != fastRef);
+		if (slowRef != fastRef) {
+			return null;
+		}
 
 		// loop detected, and slowRef and fastRef are at meeting point.
-
 		// move slowRef to start of the list
 		slowRef = root;
 		while (slowRef != fastRef) {
@@ -468,23 +463,38 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		return Integer.MIN_VALUE;
 	}
 
+	/**
+	 * We should consider this problem as merging a node to the sorted list.
+	 * 
+	 * We should compare with the head.getNext() to avoid the extra pointer.
+	 * 
+	 * Comparing with the head.getNext() allows node to be inserted between head and
+	 * head.getNext().
+	 * 
+	 */
 	@Override
-	public boolean insertInSortedLinkedList(T data) {
-		Node<T> newNode = new Node<>(data);
-		// if the list is null or element to be inserted is less than root element
-		if (root == null || root.getData().compareTo(data) >= 0) {
-			insert(newNode);
-			return true;
+	public void insertInSortedLinkedList(T data) {
+
+		Node<T> mergeNode = new Node<>(data);
+
+		if (root == null) {
+			root = mergeNode;
+			return;
 		}
-		Node<T> ref = root;
-		Node<T> previousRef = null;
-		for (; ref != null && ref.getData().compareTo(data) <= 0; previousRef = ref, ref = ref.getNext())
-			;
-		newNode.setNext(ref);
-		previousRef.setNext(newNode);
 
-		return true;
+		// if node to be merged is less than the root node
+		if (data.compareTo(root.getData()) <= 0) {
+			mergeNode.setNext(root);
+			root = mergeNode;
+			return;
+		}
 
+		Node<T> head = root;
+		while (head.getNext() != null && head.getNext().getData().compareTo(data) < 0)
+			head = head.getNext();
+
+		mergeNode.setNext(head.getNext());
+		head.setNext(mergeNode);
 	}
 
 	@Override
@@ -492,20 +502,18 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		if (root == null || root.getNext() == null)
 			return;
 
-		Node<T> reversedList = null;
-		Node<T> originalList = root;
+		Node<T> revListHead = null;
+		Node<T> origListHead = root;
 
-		while (originalList != null) {
-			Node<T> temp = originalList;
-			originalList = originalList.getNext();
-
+		while (origListHead != null) {
+			Node<T> temp = origListHead;
+			origListHead = origListHead.getNext();
 			// kind of insert before: temp is getting inserted before the reversedList
-			temp.setNext(reversedList);
-
-			reversedList = temp;
+			temp.setNext(revListHead);
+			revListHead = temp;
 
 		}
-		root = reversedList;
+		root = revListHead;
 	}
 
 	@Override
@@ -513,66 +521,23 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		root = reverseLinkedListRecursively(root);
 	}
 
-	// Original Input List: 1 2 3 4 5 6
-	//
-	// reverse(1-->2-->3-->4-->5-->6)
-	// | nextNode = 2-->3-->4-->5-->6
-	// | element = 1-->NULL
-	// |
-	// | reverse(2-->3-->4-->5-->6)
-	// | | nextNode = 3-->4-->5-->6
-	// | | element = 2-->NULL
-	// | |
-	// | | reverse(3-->4-->5-->6)
-	// | | | nextNode = 4-->5-->6
-	// | | | element = 3-->NULL
-	// | | |
-	// | | | reverse(4-->5-->6)
-	// | | | | nextNode = 5-->6
-	// | | | | element = 4-->NULL
-	// | | | |
-	// | | | | reverse(5-->6)
-	// | | | | | nextNode = 6-->NULL
-	// | | | | | element = 5 --> NULL
-	// | | | | |
-	// | | | | | reverse(6)
-	// | | | | | | return 6
-	// | | | | | |
-	// | | | | | remainingList = 6
-	// | | | | | nextNode = 6 --> 5
-	// | | | | |
-	// | | | | remainingList = 6 --> 5
-	// | | | | nextNode = 6 --> 5 --> 4
-	// | | | |
-	// | | | remainingList = 6 --> 5
-	// | | | nextNode = 6 --> 5 --> 4 --> 3
-	// | | |
-	// | | remainingList = 6 --> 5
-	// | | nextNode = 6 --> 5 --> 4 --> 3 --> 2
-	// | |
-	// | remainingList = 6 --> 5
-	// | nextNode = 6 --> 5 --> 4 --> 3 --> 2 --> 1
-	// _________________________________________________________________________
-	//
-	// → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → → →
-	// → → → → → → → → →
-	// ↓
-	// Node<T> nextNode = current.getNextNode(); ↓
-	// current.setNextNode(null); ↓
-	// _____ _____ _____ _____ _____ _____ ↓
-	// | | | | | | | | | | | | ↓
-	// | 1 | ---> | 2 | ---> | 3 | ---> | 4 | ---> | 5 | ---> | 6 | ---> NULL ↓
-	// |_____| |_____| |_____| |_____| |_____| |_____| ↓
-	// | /| /| /| /| /| ↓
-	// | / | / | / | / | / | ↓
-	// | / | / | / | / | / | ↓
-	// | / | / | / | / | / | ↓
-	// cur, next cur, next cur, next cur, next cur, next cur ↓
-	// ↓
-	// nextNode.setNextNode(current); ↓
-	// ↓
-	// ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-	// ← ← ← ← ← ← ← ← ← ←
+	//---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ---> ----> 
+	//	|
+	//Node<T> nextNode = current.nextNode;									|
+	//current.next = null);													v
+	// _____		   _____		 _____		    _____		   _____		  _____					|
+	//|     |		  |     |	    |     |		   |     |		  |     |		 |     |				|
+	//|  1  | --->  |  2  |  ---> |  3  |	 --->  |  4  |  --->  |  5  |  --->  |  6  |  ---> NULL		v
+	//|_____|		  |_____|	    |_____|		   |_____|		  |_____|		 |_____|				|
+	//|			 /|			   /|			  /|		     /|				/|						|
+	//|           / | 		  /	|			 / |  			/ |			   / |						v
+	//|		   /  |			 /	|			/  |		   /  |		      /	 |						|
+	//|       /   |       /   |          /   |          /   |          /   |						|
+	//cur, next	  cur, next		cur, next	   cur, next	  cur, next	 	cur						v
+	//	|
+	//nextNode.next = current);												|
+	//	v
+	//<--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <--- <---- 
 
 	// reversedList reference keeps the reference of last node at u-turn
 
@@ -649,6 +614,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	 * BASE: if last element, then assign to root.(root= last_element)
 	 * 
 	 * reverseLinkedListWithAlternateRecurssion([B, C, D,E]) -->SOLSUB: E,D,C,B
+	 * 
 	 * reverseLinkedListWithAlternateRecurssion(current.getNext())
 	 * 
 	 * Induction: diff: if we append A to B then,
@@ -707,8 +673,8 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 	@Override
 	public void findIntersectionNodeOfTowListUsingStack(Node<T> startB) {
-		Deque<Node<T>> stackA = new java.util.LinkedList<>();
-		Deque<Node<T>> stackB = new java.util.LinkedList<>();
+		Deque<Node<T>> stackA = new java.util.ArrayDeque<>();
+		Deque<Node<T>> stackB = new java.util.ArrayDeque<>();
 
 		for (Node<T> nodeA = root; nodeA != null; nodeA = nodeA.getNext())
 			stackA.push(nodeA);
@@ -741,7 +707,7 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 			shorterList = this;
 		}
 
-		final int lengthDiff = Math.abs(this.size - listB.size());
+		final int lengthDiff = longerList.size() - shorterList.size();
 
 		// iterate the bigggerList till diff.
 		Node<T> longerListNode = longerList.getRootNode();
@@ -800,11 +766,12 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 	@Override
 	public void isLinkedListEven() {
 
+		if(root == null) return;
 		Node<T> fast = root;
-		while (fast != null && fast.getNext() != null) {
-			fast = fast.getNext().getNext();
-		}
+				
+		while (fast.getNext() != null && (fast = fast.getNext().getNext())!=null);
 
+		
 		// even=> num%2==0
 		if (fast == null) {
 			System.out.println("EVEN");
@@ -1113,11 +1080,11 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 
 	@Override
 	public void reverseInBlockOfKNodes(int k) {
-		
+
 		if (k == 0 || k == 1 || k > size) {
 			return;
 		}
-		
+
 		int blockNodeCounter = 1;
 		int blockCounter = 1;
 		Node<T> reversedHead = null;
@@ -1187,22 +1154,15 @@ class LinkedList<T extends Comparable<T>> implements List<T>, KarumanchiQuestion
 		System.out.println("current Node:" + currentNode.getData());
 	}
 
-	
-	
-	
 	/**
 	 * 
 	 * 
 	 * */
 	@Override
 	public void getJosephusPointUsingRecursion(int eliminationPosition) {
-		
 
 	}
-	
-	
-	
-	
+
 	@Override
 	public void cloneListWithRandomPointer() {
 

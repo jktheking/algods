@@ -7,7 +7,7 @@ package edu.algo.recursion;
  * Logic: Recursion Using String 
  * 
  *  String currentPermutation : represents the current permutation String
- *  String rest : represents the reminder of the string to be permuted 
+ *  String rest : represents the remainder of the string to be permuted 
  * 
  * Base Condition: 
  * if (no more characters left to re-arrange i.e. rest of the string is empty){

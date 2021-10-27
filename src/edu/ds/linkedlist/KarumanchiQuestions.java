@@ -72,6 +72,7 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	 * loop_start_node.
 	 * 
 	 * 
+	 * We should consider meeting point node as the last node of K.
 	 * 
 	 */
 	Node<T> detectLoopUsingFloydCycleFinding();
@@ -84,7 +85,7 @@ public interface KarumanchiQuestions<T extends Comparable<T>> {
 	/**
 	 * Problem 15: Insert a node in a sorted linked list.
 	 */
-	boolean insertInSortedLinkedList(T data);
+	void insertInSortedLinkedList(T data);
 
 	/**
 	 * Problem 16.A

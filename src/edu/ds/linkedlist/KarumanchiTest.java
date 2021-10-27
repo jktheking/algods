@@ -158,7 +158,7 @@ public class KarumanchiTest {
 		integerList.insert(5);
 		KarumanchiQuestions<Integer> questions = integerList;
 		System.out.println(integerList.traverse());
-		System.out.println(questions.insertInSortedLinkedList(13));
+		questions.insertInSortedLinkedList(13);
 		System.out.println(integerList.traverse());
 	}
 

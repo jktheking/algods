@@ -75,5 +75,29 @@ public class Todo {
 	 * 
 	 * 
 	 * */
+	
+	/**
+	 * coding questions tagged with Goldman sacs
+	 * https://medium.com/@hch.hkcontact/goldman-sachs-top-50-leetcode-questions-q21-pairs-of-songs-with-total-durations-divisible-by-60-4c578f1223f
+	 * 
+	 * ===========leetcode======
+	 * https://leetcode.libaoj.in
+	 * 
+	 * car pooling : https://www.youtube.com/watch?v=NBhsry-_MAo
+	 * 
+	 * Maximum sum non-adjacent elements : https://www.youtube.com/watch?v=VT4bZV24QNo&t=351s
+	 * 
+	 * */
+	
+	/**
+	 * 
+	 * https://www.geeksforgeeks.org/number-swaps-sort-adjacent-swapping-allowed/
+	 * https://codeforces.com/blog/entry/92130
+	 * https://www.youtube.com/watch?v=owZhw-A0yWE
+	 * */
+	
+	/***
+	 * Chinese remainder theorem
+	 * */
 
 }

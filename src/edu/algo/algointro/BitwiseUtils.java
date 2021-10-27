@@ -14,6 +14,11 @@ package edu.algo.algointro;
 public class BitwiseUtils {
 
 	public static void main(String[] args) {
+         
+		int x = 14;
+		System.out.println(Integer.toBinaryString(x));
+		System.out.println("bitCountUsingJava:"+ Integer.bitCount(x));
+		System.out.println("bitCountUsingKernighan:"+ bitCountUsingKernighan(x));
 
 	}
 
@@ -90,9 +95,9 @@ public class BitwiseUtils {
 	}
 
 	/**
-	 * x & (x + 1) : use to turn off the trailing 1�s in a word, producing x if none
+	 * x & (x + 1) : use to turn off the trailing 1's in a word, producing x if none
 	 * (e.g., input: 10100111 output:10100000) This can be used to determine if an
-	 * unsigned integer is of the form 2^n - 1, 0, or all 1�s: apply the formula
+	 * unsigned integer is of the form 2^n - 1, 0, or all 1's: apply the formula
 	 * followed by a 0-test on the result.
 	 *
 	 * 
@@ -318,7 +323,12 @@ public class BitwiseUtils {
 	public static int lowestOneBit(int num) {
 		return num & -num;
 	}
-
+    
+	public static int lowestOneBitMask(int i) {
+		return lowestOneBit(i);
+	}
+	
+	
 	public static int highestOneBit(int num) {
 		return 1 << (31 - numberOfLeadingZeros(num));
 	}
@@ -341,6 +351,23 @@ public class BitwiseUtils {
 		//TODO:
 		
 		return 0;
+	}
+	
+	/**
+	 * 
+	 * 00010010110
+	 * 
+	 * Brain Kernighan algorithm jumps only one set bits starting from LSB.
+	 * 
+	 * */
+	public static int bitCountUsingKernighan(int num) {
+		int count = 0;
+		while(num>0) {
+			num = num - lowestOneBitMask(num); 
+			count++;
+		}
+		return count;
+		
 	}
 	
 	public static int reverse(int x) {
@@ -371,5 +398,8 @@ public class BitwiseUtils {
         // HD, Section 2-7
         return (i >> 31) | (-i >>> 31);
     }
+    
+    
+   
 
 }
