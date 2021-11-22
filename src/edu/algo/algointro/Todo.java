@@ -100,4 +100,8 @@ public class Todo {
 	 * Chinese remainder theorem
 	 * */
 
+	/**
+	 * Graph : ring, bus, star topology
+	 * 
+	 * */
 }

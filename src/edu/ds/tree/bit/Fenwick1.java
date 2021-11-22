@@ -8,8 +8,8 @@ import edu.algo.algointro.BitwiseUtils;
  * Binary Indexed tree implementation using one-based indexing
  * 
  * i' = i - BitwiseUtils.lowestOneBitMask(i) : calculates the next lower-index
- * till which the current index is responsible to hold the sum. Applying this
- * recursively will not yield anything correlated to current index.
+ * till which the current index is responsible to hold the sum. Lower-index i'
+ * does not contain upper-index i for storing the partial sum.
  *
  * i' = i + BitwiseUtils.lowestOneBitMask(i) : calculates the next upper-index
  * which is responsible to include the current element in its sum. Applying this
@@ -24,14 +24,26 @@ import edu.algo.algointro.BitwiseUtils;
  * on input array.
  * 
  * 2. all indexes of type 2^n, are responsible for all the indexes upto this
- * point. It means will contain prefix sum of input-array upto this point.
+ * point starting from 1. It means this index contains prefix sum of input-array
+ * upto this point.
  * 
- * 3. all the even indexes are responsible for upto (lower-index + 1) that comes by
- * dropping the lastSetBit of this index.
+ * 3. all the even indexes are responsible for upto (lower-index + 1) that comes
+ * by dropping the lastSetBit of this index.
+ * 
+ * 
+ * Tree Traversal :
+ * 
+ * Downward Traversal : By dropping lowest-one-bit position. Next index in
+ * traversal will always be even.
+ * 
+ *Upward Traversal : By adding 1 to lowest-one-bit position. Next index in traversal
+ *will always be even.
+ *
+ *Note: Lower-odd-index is contained in immediate upper-even-index.
  * 
  * 
  */
-public class Fenwick1 implements BinaryIndexedTree<Integer> {
+public class Fenwick1 implements BIT<Integer> {
 
 	int[] bit = null;
 
@@ -41,6 +53,12 @@ public class Fenwick1 implements BinaryIndexedTree<Integer> {
 		// buildTreeInNTimeComplexity(input);
 
 	}
+	
+	//Empty fenwick tree
+	public Fenwick1(int length){
+		bit = new int[length + 1];
+	}
+	
 
 	/**
 	 * TimeComplexity : n * (time-complexity-of-pointUpdate) = n*log(n).
@@ -62,8 +80,11 @@ public class Fenwick1 implements BinaryIndexedTree<Integer> {
 		int[] prefixSum = new int[input.length + 1];
 
 		for (int i = 1; i <= input.length; i++) {
-
-			prefixSum[i] = prefixSum[i - 1] + input[i - 1];
+            
+			//for loop starts at 1
+			int ithInput = input[i - 1];
+			
+			prefixSum[i] = prefixSum[i - 1] + ithInput;
 
 			int lower_index = i - BitwiseUtils.lowestOneBitMask(i);
 			bit[i] = prefixSum[i] - prefixSum[lower_index];
@@ -75,7 +96,7 @@ public class Fenwick1 implements BinaryIndexedTree<Integer> {
 	 * {@inheritDoc}
 	 * 
 	 * operation : "index + BitwiseUtils.lowestOneBitMask(index)" helps traverse
-	 * upward on bit-tree stairs. Topmost stair of bit : last-index-of-bit This
+	 * upward on BIT-tree stairs. Topmost stair of BIT : last-index-of-BIT; This
 	 * represents a transitive traversal that traverses up the indexes who are
 	 * responsible for holding the given index.
 	 * 
@@ -114,6 +135,13 @@ public class Fenwick1 implements BinaryIndexedTree<Integer> {
 		 */
 		return bitSum(qr - 1) - bitSum(ql - 1);
 	}
+	
+	
+	@Override
+	public Integer pointQuery(int index) {
+		return bitSum(index);
+	}
+
 
 	/**
 	 * This method takes actual zero-based input array index and zeroBasedIndex is
@@ -146,5 +174,8 @@ public class Fenwick1 implements BinaryIndexedTree<Integer> {
 		builder.append("Fenwick1 [bit=").append(Arrays.toString(bit)).append("]");
 		return builder.toString();
 	}
+
+	
+
 
 }
