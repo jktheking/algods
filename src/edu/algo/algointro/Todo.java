@@ -98,6 +98,9 @@ public class Todo {
 	
 	/***
 	 * Chinese remainder theorem
+	 * 
+	 * https://cp-algorithms.com/algebra/factorization.html
+	 * https://cp-algorithms.com/algebra/primality_tests.html
 	 * */
 
 	/**

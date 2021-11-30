@@ -1,6 +1,5 @@
 package edu.algo.numbertheory;
 
-
 /**
  * links:
  * https://hmkcode.com/calculate-find-all-possible-combinations-of-an-array-using-java/
@@ -100,76 +99,83 @@ public class DoubleCounting {
 
 	private int selectionCounter = 1;
 	private int recursionBranchCounter = 1;
-	
 
 	public static void main(String[] args) {
 
-		 INSTANCE.printPowerSet("12345");
-		//INSTANCE.nCkUsingPascalIdentity(3, "abcde", "");
-
+		INSTANCE.printPowerSet("123");
+		// INSTANCE.nCkUsingPascalIdentity(3, "abcde", "");
 
 	}
 
 	public void printPowerSet(String inputString) {
-		powerSetUsingPascalIdentity(inputString, "");
-		//powerSetUsingPascalIdentityExpansion(inputString, "");
+		// powerSetUsingPascalIdentity(inputString, "");
+		powerSetUsingPascalIdentityExpansion(inputString, "");
 
 	}
 
 	/**
 	 * 
-	 * Total no. of method invocation is equal to total no. of nodes in the tree
-	 * formed. 2^0 + 2^1 + 2^2 + ---+2^n = 2^(n+1) - 1 . i.e O(2^n)
+	 * Accurate calculation for Time Complexity : If we assume one-unit of task
+	 * being done at each method invocation. Since there are 2^n leaf-nodes, so
+	 * internal-nodes = (2^n -1) So, Time-complexity = O(2^n + 2^n -1) = O(2^(n+1)
+	 * -1) = O(2^(n+1))
 	 * 
-	 * C(n,k) = C(n-1,k-1) + C(n-1,k)
 	 * 
+	 * Approximate calculation for Time Complexity: To generate one leaf node we
+	 * need to traverse 'n' steps. And total number of leaf-nodes are 2^n so,
+	 * Time-Complexity = O(n*2^n)
 	 * 
 	 */
 	private void powerSetUsingPascalIdentity(String inputString, String output) {
 
-		//breaks the recursion
+		// breaks the recursion
 		if (inputString.length() == 0) {
 			System.out.println(selectionCounter++ + ":" + output);
 			return;
 		}
-		
-		
-		//recursionBranchCounter can be used to correlate time-complexity 
-		//System.out.println(recursionBranchCounter++);
+
+		// recursionBranchCounter can be used to correlate time-complexity
+		// System.out.println(recursionBranchCounter++);
 		// by including
-		powerSetUsingPascalIdentity(inputString.substring(1), output + inputString.substring(0, 1));
+		powerSetUsingPascalIdentity(inputString.substring(1), output + inputString.charAt(0));
 		// by excluding
 		powerSetUsingPascalIdentity(inputString.substring(1), output);
 
 	}
 
 	/**
-	 * C(n,k) = C(n-1,k-1) + C(n-1,k) 
+	 * 
+	 * 
+	 * C(n,k) = C(n-1,k-1) + C(n-1,k)
 	 * 
 	 * Expansion is based on recursive expansion of exclude-term C(n-1, k)
 	 * 
 	 * C(n,k) = C(n-1,k-1) + C(n-2,k-1) + C(n-3,k-1) + ... C(k-1, k-1)
 	 * 
-	 *    All terms in RHS represents include terms.
+	 * All terms in RHS represents include terms.
 	 * 
-	 * */
-    private static void powerSetUsingPascalIdentityExpansion(String input, String output) {
-        System.out.println(output);
-        for (int i = 0; i < input.length(); i++)
-        	powerSetUsingPascalIdentityExpansion(input.substring(i + 1), output + input.charAt(i));
-    }  
-	
-	
-	
-	
-	
+	 * 
+	 * As per the pascalIdentityExpansion.pdf, we are getting output printed at each
+	 * recursive invocation of method, and there are 2^n outputs, so 2^n recursive
+	 * invocation of method. Thus, time-complexity is O(2^n)
+	 * 
+	 * This method is more efficient than Include-Exclude based method
+	 * "powerSetUsingPascalIdentity". As in Include-Exclude based method all the
+	 * outputs are printed at leaf-level.
+	 */
+	private static void powerSetUsingPascalIdentityExpansion(String input, String output) {
+		System.out.println(output);
+		for (int i = 0; i < input.length(); i++)
+			powerSetUsingPascalIdentityExpansion(input.substring(i + 1), output + input.charAt(i));
+	}
+
 	/*
 	 * prints all the possible combination for a given length
 	 */
 	public void printAllSetOfGivenLength(final int length, String input) {
 		// both the methods has same O(n)
 		nCkUsingPascalIdentity(length, input, "");
-		//nCkUsingPascalIdentity(length, input, "");
+		// nCkUsingPascalIdentity(length, input, "");
 	}
 
 	/**
@@ -199,9 +205,9 @@ public class DoubleCounting {
 			return;
 		}
 
-		//recursionBranchCounter can be used to correlate time-complexity 
-		 System.out.println(recursionBranchCounter++);
-		 
+		// recursionBranchCounter can be used to correlate time-complexity
+		System.out.println(recursionBranchCounter++);
+
 		nCkUsingPascalIdentity(deziredLength, input.substring(1), output + input.substring(0, 1));
 		nCkUsingPascalIdentity(deziredLength, input.substring(1), output);
 
@@ -212,11 +218,11 @@ public class DoubleCounting {
 	 * 
 	 * [a,b,c,d]
 	 * 
-	 * At i=0; all possible combinations including 'a'; and at other subsequent iteration of 'i'
-	 * all possible combinations excluding a.
+	 * At i=0; all possible combinations including 'a'; and at other subsequent
+	 * iteration of 'i' all possible combinations excluding a.
 	 * 
-	 * At i=1; all possible combinations including 'b'; and at other subsequent iteration of 'i'
-	 * all possible combinations excluding b.
+	 * At i=1; all possible combinations including 'b'; and at other subsequent
+	 * iteration of 'i' all possible combinations excluding b.
 	 * 
 	 * 
 	 * 
@@ -238,7 +244,6 @@ public class DoubleCounting {
 
 	private void nCkUsingPascalIdentity1(final int desizedLength, String input, String output) {
 
-	
 //		if (input.length() == 0) {
 //			System.out.println(counter++ + ":" + output);
 //			return;

@@ -128,15 +128,14 @@ import java.util.stream.IntStream;
  * 
  */
 public class FractionalCascading {
-	
-	public interface IFractionalCascading{
-		 Map<Integer, List<?>> find(int targetValue);
-		 Map<Integer, List<?>>  findPredecessor(int targetValue);
-		 Map<Integer, List<?>> findSuccessor(int targetValue, boolean duplicateAllowed);
+
+	public interface IFractionalCascading {
+		Map<Integer, List<?>> find(int targetValue);
+
+		Map<Integer, List<?>> findPredecessor(int targetValue);
+
+		Map<Integer, List<?>> findSuccessor(int targetValue, boolean duplicateAllowed);
 	}
-	
-	
-	
 
 	private static final List<int[]> ORIGINAL_LIST = initializeOriginalList();
 
@@ -152,9 +151,9 @@ public class FractionalCascading {
 		IntStream.range(0, ORIGINAL_LIST.size())
 				.forEach(i -> System.out.println("i:" + i + ":" + Arrays.toString(ORIGINAL_LIST.get(i))));
 
-		 testFind();
+		testFind();
 		testSuccessor();
-		
+
 		testPredecessor();
 
 	}
@@ -168,7 +167,7 @@ public class FractionalCascading {
 		System.out.println("Finding 60: " + find(60));
 
 	}
-	
+
 	private static void testPredecessor() {
 		System.out.println("Finding predecessor 18: " + findPredecessor(18));
 		System.out.println("Finding predecessor -2: " + findPredecessor(-2));
@@ -248,7 +247,7 @@ public class FractionalCascading {
 	 * where range is exclusive.
 	 * 
 	 */
-	private static	Map<Integer, List<?>>  findPredecessor(int targetValue) {
+	private static Map<Integer, List<?>> findPredecessor(int targetValue) {
 
 		Data[] mergedList0 = MERGED_LIST_MAP.get(0);
 
@@ -263,7 +262,7 @@ public class FractionalCascading {
 			Data[] mergedList = MERGED_LIST_MAP.get(i);
 
 			int originalIndex;
-	
+
 			if (targetValue <= mergedList[mergedIndex - 1].value) {
 				originalIndex = mergedList[mergedIndex - 1].bridge.originalListPosition;
 				mergedIndex = mergedList[mergedIndex - 1].bridge.mergedListPosition;
@@ -272,7 +271,7 @@ public class FractionalCascading {
 				mergedIndex = mergedList[mergedIndex].bridge.mergedListPosition;
 			}
 
-			result.put(i, List.of("index:"+(originalIndex-1), " value:"+originalList[originalIndex-1]));
+			result.put(i, List.of("index:" + (originalIndex - 1), " value:" + originalList[originalIndex - 1]));
 
 		}
 
@@ -465,12 +464,14 @@ public class FractionalCascading {
 
 	/***
 	 * It returns the insertion index of targetValue in originalList. If the
-	 * targetValue is present in the originalList then returns the left-most index.
+	 * targetValue is already present in the originalList then returns the
+	 * left-most-targetValue's index, which is nothing but leftmost insertionIndex.
 	 * 
 	 * Because of the nature of bisetLeft: targetValue <= arrayValue. If targetValue
 	 * is not same to arrayValue it means arrayValue is immediate successor of
 	 * targetValue
 	 * 
+	 *  * TODO: instead of arrayLength -1; we can pass arrayLength.
 	 * 
 	 */
 	private static int bisectLeft(int targetValue, int[] originalList, int leftIndex, int rightIndex) {
@@ -495,6 +496,17 @@ public class FractionalCascading {
 
 	}
 
+	/**
+	 * It returns the insertion index of targetValue in originalList. If the
+	 * targetValue is present in the originalList then returns the
+	 * (rightMostIndex_of_targetValue + 1). Means bisectRight will not return the
+	 * index of targetValue. But bisect left will do.
+	 * 
+	 * 
+	 * 
+	 * Expected Bug: if targetValue is last element of array. Code should not work. 
+	 * Fix TODO: instead of arrayLength -1; we can pass arrayLength; 
+	 */
 	private static int bisectRight(int targetValue, int[] originalList, int leftIndex, int rightIndex) {
 
 		while (leftIndex < rightIndex) {
@@ -532,8 +544,6 @@ public class FractionalCascading {
 			builder.append(value).append(bridge);
 			return builder.toString();
 		}
-
-		
 
 	}
 
