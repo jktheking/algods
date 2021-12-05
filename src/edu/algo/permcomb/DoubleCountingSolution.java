@@ -1,4 +1,7 @@
-package edu.algo.numbertheory;
+package edu.algo.permcomb;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * links:
@@ -93,24 +96,20 @@ package edu.algo.numbertheory;
  * 
  * 
  */
-public class DoubleCounting {
-
-	private static final DoubleCounting INSTANCE = new DoubleCounting();
+public class DoubleCountingSolution implements DoubleCountingQuestion {
 
 	private int selectionCounter = 1;
 	private int recursionBranchCounter = 1;
 
 	public static void main(String[] args) {
 
-		INSTANCE.printPowerSet("123");
 		// INSTANCE.nCkUsingPascalIdentity(3, "abcde", "");
 
 	}
 
-	public void printPowerSet(String inputString) {
-		// powerSetUsingPascalIdentity(inputString, "");
-		powerSetUsingPascalIdentityExpansion(inputString, "");
-
+	@Override
+	public void printPowerSetUsingPascalIdentity(String inputString) {
+		printPowerSetUsingPascalIdentity(inputString, "");
 	}
 
 	/**
@@ -126,7 +125,7 @@ public class DoubleCounting {
 	 * Time-Complexity = O(n*2^n)
 	 * 
 	 */
-	private void powerSetUsingPascalIdentity(String inputString, String output) {
+	private void printPowerSetUsingPascalIdentity(String inputString, String output) {
 
 		// breaks the recursion
 		if (inputString.length() == 0) {
@@ -137,10 +136,42 @@ public class DoubleCounting {
 		// recursionBranchCounter can be used to correlate time-complexity
 		// System.out.println(recursionBranchCounter++);
 		// by including
-		powerSetUsingPascalIdentity(inputString.substring(1), output + inputString.charAt(0));
+		printPowerSetUsingPascalIdentity(inputString.substring(1), output + inputString.charAt(0));
 		// by excluding
-		powerSetUsingPascalIdentity(inputString.substring(1), output);
+		printPowerSetUsingPascalIdentity(inputString.substring(1), output);
 
+	}
+
+	@Override
+	public void printPowerSetUsingPascalIdentity(List<Integer> input) {
+		printPowerSetUsingPascalIdentity(input, new ArrayList<>());
+
+	}
+
+	/**
+	 * Total no. of method invocation is equal to total no. of nodes in the tree
+	 * formed. 2^0 + 2^1 + 2^2 + ---+2^n = 2^(n+1) - 1 . i.e O(2^n)
+	 */
+	private void printPowerSetUsingPascalIdentity(List<Integer> input, List<Integer> tempOutput) {
+		if (input.isEmpty()) {
+			System.out.println(tempOutput);
+			return;
+		}
+
+		Integer includeExcludeCandidate = input.remove(0);
+		List<Integer> copyOfTempOutput = new ArrayList<>(tempOutput);
+
+		// by including the candidate
+		tempOutput.add(includeExcludeCandidate);
+		printPowerSetUsingPascalIdentity(new ArrayList<>(input), new ArrayList<>(tempOutput));
+
+		// by excluding the candidate
+		printPowerSetUsingPascalIdentity(new ArrayList<>(input), copyOfTempOutput);
+	}
+
+	@Override
+	public void printPowerSetUsingPascalIdentityExpansion(String input) {
+		printPowerSetUsingPascalIdentityExpansion(input, "");
 	}
 
 	/**
@@ -163,19 +194,77 @@ public class DoubleCounting {
 	 * "powerSetUsingPascalIdentity". As in Include-Exclude based method all the
 	 * outputs are printed at leaf-level.
 	 */
-	private static void powerSetUsingPascalIdentityExpansion(String input, String output) {
+	private void printPowerSetUsingPascalIdentityExpansion(String input, String output) {
 		System.out.println(output);
 		for (int i = 0; i < input.length(); i++)
-			powerSetUsingPascalIdentityExpansion(input.substring(i + 1), output + input.charAt(i));
+			printPowerSetUsingPascalIdentityExpansion(input.substring(i + 1), output + input.charAt(i));
 	}
 
-	/*
-	 * prints all the possible combination for a given length
+	@Override
+	public void printPowerSetUsingSubSequence(String input) {
+		System.out.println(getPowerSetUsingSubSequence(input));
+
+	}
+
+	/**
+	 * <pre>
+	 * 
+	 * Given abc: a, b, c, ab, bc, ac, abc , "" are valid subsequences. ca, cb are
+	 * not becuase these are not in the chars order of input.
+	 * 
+	 * Total subsequences : is nothing but power-set formed by chars of input string
+	 * in occurrence order.
+	 * 
+	 * Assumption : abc ; first_operand = 'a', remaining collated operand 'bc'
+	 * 
+	 * Hypothesis: powerSetUsingSubSequence(input="abc") : a, b, c, ab, bc, ac, abc , ""
+	 * Substitution: powerSetUsingSubSequence(input="bc") : b, c, bc, ""
+	 * 
+	 * Induction: 
+	 * Include step: include char 'a' as prefix with the result of substitution
+	 * Exclude step: exclude the char 'a' as prefix with the result of substituton
+	 * 
+	 * Base Case : when input becomes empty, subsequence is empty string.
+	 * 
+	 * Time Complexity: subsequence creation starts at nth recursive invocation.
+	 * nth     recursion invoctioan :  for-loop iterates 2^0 times 
+	 * (n-1)th recursion invoctioan :  for-loop iterates 2^1 times 
+	 * (n-2)th recursion invoctioan :  for-loop iterates 2^2 times
+	 * (n-3)th recursion invoctioan :  for-loop iterates 2^3 times
+	 * 
+	 * Total for-loop iterations : 2^0 + 2^1 + 2^2 + .. + 2^(n-1)  = 2^(n-1+1) -1 = 2^n -1
+	 * Time complexity excluding method invocation cost : O(2^n -1) = O(2^n)
+	 * 
+	 * Time complexity including method invocation cost :we have total (n+1) method invocation ; 
+	 *  so total time complexity : (n+1)  + 2^n -1  =  n + 2^n  = O(2^n)
+	 * </pre>
+	 * 
+	 * @see : Substring of abc : a, b, c, ab, bc, abc ; total_number_of_subsequece:
+	 *      n(n+1)/2
 	 */
-	public void printAllSetOfGivenLength(final int length, String input) {
-		// both the methods has same O(n)
-		nCkUsingPascalIdentity(length, input, "");
-		// nCkUsingPascalIdentity(length, input, "");
+	private List<String> getPowerSetUsingSubSequence(String input) {
+
+		if (input.isEmpty()) {
+			return List.of("");
+		}
+
+		char ch = input.charAt(0);
+		List<String> resultOfSubstitution = getPowerSetUsingSubSequence(input.substring(1));
+
+		List<String> result = new ArrayList<>();
+		for (String ss : resultOfSubstitution) {
+			// include ch
+			result.add(ch + ss);
+			// exclude ch
+			result.add(ss);
+		}
+		return result;
+
+	}
+
+	@Override
+	public void print_nCkUsingPascalIdentity(final int deziredLength, String input) {
+		nCkUsingPascalIdentity(deziredLength, input, "");
 	}
 
 	/**
@@ -227,7 +316,8 @@ public class DoubleCounting {
 	 * 
 	 * 
 	 */
-	private void nC2UsingLoop(String input) {
+	@Override
+	public void print_nC2UsingLoop(String input) {
 
 		char[] inpuArr = input.toCharArray();
 
@@ -244,10 +334,10 @@ public class DoubleCounting {
 
 	private void nCkUsingPascalIdentity1(final int desizedLength, String input, String output) {
 
-//		if (input.length() == 0) {
-//			System.out.println(counter++ + ":" + output);
-//			return;
-//		}
+		// if (input.length() == 0) {
+		// System.out.println(counter++ + ":" + output);
+		// return;
+		// }
 		if (output.length() == desizedLength) {
 			System.out.println(selectionCounter++ + ":" + output);
 			return;
@@ -278,19 +368,16 @@ public class DoubleCounting {
 
 	}
 
-	/*
-	 * prints all size of string including the given character
-	 * 
-	 * 
-	 */
-	public void printAllSetByIncludingAGivenCharacterOfTheInput(int charIndex, String inputString) {
+	@Override
+	public void printPowerSetByIncludingAGivenCharOfInput(int includeCharIndex, String inputString) {
 
-		char charcterToInclude = inputString.charAt(charIndex);
+		char charcterToInclude = inputString.charAt(includeCharIndex);
 
-		final String newInputExcludingChar = inputString.substring(0, charIndex) + inputString.substring(charIndex + 1);
+		final String newInputExcludingChar = inputString.substring(0, includeCharIndex)
+				+ inputString.substring(includeCharIndex + 1);
 
 		// calling the powerSet method by including the given character
-		powerSetUsingPascalIdentity(newInputExcludingChar, String.valueOf(charcterToInclude));
+		printPowerSetUsingPascalIdentity(newInputExcludingChar, String.valueOf(charcterToInclude));
 
 	}
 

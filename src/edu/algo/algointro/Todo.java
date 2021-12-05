@@ -89,6 +89,8 @@ public class Todo {
 	 * 
 	 * */
 	
+	
+	
 	/**
 	 * 
 	 * https://www.geeksforgeeks.org/number-swaps-sort-adjacent-swapping-allowed/
@@ -107,4 +109,17 @@ public class Todo {
 	 * Graph : ring, bus, star topology
 	 * 
 	 * */
+	
+	/**
+	 * 
+	 * Lowest Common Ancestor(LCA): from graph topic of cp-algorithm
+	 * <pre>
+	 * Lowest Common Ancestor - Binary Lifting
+	 * Lowest Common Ancestor - Farach-Colton and Bender algorithm
+	 * Solve RMQ by finding LCA
+	 * Lowest Common Ancestor - Tarjan's off-line algorithm
+	 *</pre> 
+	 * 
+	 * */
+	
 }
