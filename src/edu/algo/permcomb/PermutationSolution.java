@@ -29,6 +29,8 @@ public class PermutationSolution implements PermutationQuestion {
 		// INSTANCE.printPermutationsOfArray2("abc".toCharArray(), 0);
 		// INSTANCE.printPermutationsOfArray3("abc".toCharArray(), 3);
 
+	//	INSTANCE.printPermuationsOfArrayByFixingInput("abc".toCharArray());
+
 		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps1("12345");
 		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps2("12345");
 		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps3("12345");
@@ -43,6 +45,12 @@ public class PermutationSolution implements PermutationQuestion {
 		// INSTANCE.printAllPermutationsInLexicographicOrder1("12345");
 		// INSTANCE.printAllPermutationsInLexicographicOrder2("12345");
 		// INSTANCE.printAllPermutationsInLexicographicOrder3("12345");
+
+//		System.out.println(INSTANCE.getStairPathPermutation(7, 1, 2, 3));
+//		INSTANCE.printStairPathPermutation(7, new int[] { 1, 2, 3 }, "");
+		
+		INSTANCE.printPrermuationsUsingIncExcByFixingPos(3, "ab");
+
 	}
 
 	/**
@@ -57,17 +65,23 @@ public class PermutationSolution implements PermutationQuestion {
 	 * 
 	 * Total Space Complexity = O(n*n!)
 	 * 
+	 * <pre>
+	 * Alogorithm approach: Fixing position and taking input as options at each level.
+	 * First level  : At p1 position we are trying all the input options
+	 * Second level : At p2 position we are trying all the remaining input options
 	 * 
+	 * </pre>
 	 */
 	@Override
-	public void printPermutationsOfString(String input, String output) {
+	public void printPermutationsOfStringByFixingPos(String input, String output) {
 
 		if (input.isEmpty()) {
 			System.out.println(output);
 			return;
 		}
 		for (int i = 0; i < input.length(); i++) {
-			printPermutationsOfString(input.substring(0, i) + input.substring(i + 1), output + input.charAt(i));
+			printPermutationsOfStringByFixingPos(input.substring(0, i) + input.substring(i + 1),
+					output + input.charAt(i));
 
 		}
 
@@ -80,9 +94,19 @@ public class PermutationSolution implements PermutationQuestion {
 	 * 
 	 * Space Complexity : extra space for output array O(n)
 	 * 
+	 * <pre>
+	 * Alogorithm approach: Fixing position and taking input as options at each level.
+	 * First level  : At p1 position we are trying all the input options
+	 * Second level : At p2 position we are trying all the remaining input options
+	 * 
+	 * We visit next level via recusion invocation and since position is getting increased at
+	 *  next level, so we pass position as input param.
+	 * 
+	 * </pre>
+	 * 
 	 */
 	@Override
-	public void printPermutationsOfArray1(char[] input, char[] output, int outPos) {
+	public void printPermutationsOfArray1ByFixingPos(char[] input, char[] output, int outPos) {
 
 		if (outPos == output.length) {
 			System.out.println(String.valueOf(output));
@@ -98,7 +122,7 @@ public class PermutationSolution implements PermutationQuestion {
 			output[outPos] = ch;
 			input[i] = Character.MIN_VALUE;
 
-			printPermutationsOfArray1(input, output, outPos + 1);
+			printPermutationsOfArray1ByFixingPos(input, output, outPos + 1);
 
 			input[i] = ch;
 
@@ -130,12 +154,15 @@ public class PermutationSolution implements PermutationQuestion {
 	 * .. + n!/n! = n!(1 + 1/1*2 + 1/1*2*3 + 1/1*2*3*4 + .. +1/n!) =~ n!(1+1) = 2n!
 	 * 
 	 * 
-	 * 
-	 * 
+	 * <pre>
+	 * Alogorithm approach: Fixing position and taking input as options at each level.
+	 * First level  : At p1 position we are trying all the input options
+	 * Second level : At p2 position we are trying all the remaining input options
+	 * </pre>
 	 * 
 	 */
 	@Override
-	public void printPermutationsOfArray2(char[] input, int position) {
+	public void printPermutationsOfArray2ByFixingPos(char[] input, int position) {
 
 		// Single element at last position is fixed in itself, so we can avoid self-swap
 		// at last position by checking (position == input.length - 1) instead of
@@ -147,7 +174,7 @@ public class PermutationSolution implements PermutationQuestion {
 
 		for (int i = position; i < input.length; i++) {
 			swap(input, position, i);
-			printPermutationsOfArray2(input, position + 1);
+			printPermutationsOfArray2ByFixingPos(input, position + 1);
 			swap(input, position, i);
 		}
 
@@ -190,12 +217,11 @@ public class PermutationSolution implements PermutationQuestion {
 	 * 
 	 * Same strategy need to be called for fixing the position P1 and P2.
 	 * 
-	 * 
 	 *          </pre>
 	 * 
 	 */
 	@Override
-	public void printPermutationsOfArray3(char[] input, int n) {
+	public void printPermutationsOfArray3ByFixingPos(char[] input, int n) {
 
 		// when n reaches to 0th index of input array
 		if (n == 1) {
@@ -216,7 +242,7 @@ public class PermutationSolution implements PermutationQuestion {
 		for (int i = 0; i < n; i++) {
 
 			swap(input, i, n - 1);
-			printPermutationsOfArray3(input, n - 1);
+			printPermutationsOfArray3ByFixingPos(input, n - 1);
 
 			// We are reverse swapping so that we can explore the other branch of the same
 			// input, i.e. back-tracing
@@ -567,7 +593,7 @@ public class PermutationSolution implements PermutationQuestion {
 	 */
 	@Override
 	public void printAllPermutationsInLexicographicOrder1(String inputString) {
-		printPermutationsOfString(inputString, "");
+		printPermutationsOfStringByFixingPos(inputString, "");
 
 	}
 
@@ -768,6 +794,172 @@ public class PermutationSolution implements PermutationQuestion {
 
 		}
 		return false;
+	}
+
+	/**
+	 * Find Permutation of given numbers whose sum is equal to a target_value.
+	 * 
+	 * Example problem statement : Find all the possible stair paths with given
+	 * total number of stairs step and allowed step size. e.g. Total number of setps
+	 * = 7 and at a time we can take step of size 1 or 2 or 3.
+	 * 
+	 * <pre>
+	 * HYPOTHEISIS : printStairPathPermutation(7, [1,2,3]) => print total paths 'n'
+	 * 
+	 * SUBSTITUTION: 
+	 * printStairPathPermutation(6, [1,2,3]) => provide all the subPaths that starts
+	 * with 1
+	 * 
+	 * printStairPathPermutation(5, [1,2,3]) => provide all the subPaths that starts
+	 * with 2
+	 * 
+	 * printStairPathPermutation(4, [1,2,3]) => provide all the subPaths that starts
+	 * with 3
+	 * 
+	 * INDUCTION STRATEGY : prepend 1, 2, 3 to  paths returned by respective substitution methods.
+	 * 
+	 * 
+	 * </pre>
+	 * 
+	 * TODO: Time complexity :
+	 * https://www.geeksforgeeks.org/count-ways-reach-nth-stair/
+	 */
+	@Override
+	public List<String> getStairPathPermutation(int targetValue, int... allowedSteps) {
+		// targetValue becomes negative for invalid path
+		if (targetValue < 0) {
+			return List.of();
+
+		}
+		// targetValue becomes 0 for valid end of path
+		if (targetValue == 0) {
+			return List.of("");
+		}
+
+		List<String> paths = new ArrayList<>();
+		for (int i = 0; i < allowedSteps.length; i++) {
+			List<String> ipaths = getStairPathPermutation(targetValue - allowedSteps[i], allowedSteps);
+
+			for (String path : ipaths) {
+				paths.add(allowedSteps[i] + path);
+			}
+		}
+		return paths;
+	}
+
+	/**
+	 * <pre>
+	 * 
+	 * STRATEGY: We pick all the options i.e. allowedSteps as branch of recursive_tree at each level 
+	 * and maintain the following two : 
+	 * 1. solution path so far by appending the option
+	 * 2. remaing targetValue ie.(targetValue - option)
+	 * 
+	 * HYPOTHEISIS : printStairPathPermutation(7,[1,2,3], "") : provide all the
+	 * allowed paths
+	 * 
+	 * SUBSTITUTION: 
+	 * printStairPathPermutation(6,[1,2,3], "1") :  add option "1" to solution path and 
+	 * then explore the remaining using substitution.
+	 * 
+	 * printStairPathPermutation(5,[1,2,3], "2") : add option "2" to solution path and 
+	 * then explore the remaining using substitution.
+	 * 
+	 *printStairPathPermutation(4,[1,2,3], "3") :add option "3" to solution path and 
+	 * then explore the remaining using substitution.
+	 * 
+	 * INDUCTION: 1st part of any path is appended to path_so_far by main code and remaining part
+	 * is appended to path_so_far by  substitution step.
+	 * </pre>
+	 * 
+	 * TODO: Time complexity :
+	 * https://www.geeksforgeeks.org/count-ways-reach-nth-stair/
+	 * 
+	 * @param path represents the path formed so far.
+	 */
+	@Override
+	public void printStairPathPermutation(int targetValue, int[] allowedSteps, String path) {
+		if (targetValue < 0)
+			return;
+		if (targetValue == 0) {
+			System.out.println(path);
+			return;
+		}
+		for (int i = 0; i < allowedSteps.length; i++) {
+			printStairPathPermutation(targetValue - allowedSteps[i], allowedSteps, path + allowedSteps[i]);
+		}
+	}
+
+	@Override
+	public void printPermuationsOfArrayByFixingInput(char[] input) {
+
+		printPermuationsOfArrayByFixingInput(input, 0, new char[input.length]);
+
+	}
+
+	/**
+	 * <pre>
+	 * Alogorithm approach: Fixing input and taking position as options at each level.
+	 * First level  : for 0th index input, we try all the positions as option
+	 * Second level : for 1th index input, we try all the remaining positions as option
+	 * 
+	 * We visit next level via recusion invocation and since input  is getting changed at
+	 *  next level, so we pass input_index as method param.
+	 *  
+	 * How to track the remaining position for next level :
+	 * 1.Either place postions in list, and remove the used positions.
+	 * 2.Use the output-array as postions tracker, and at next level only use the 
+	 * un-occupied positions.
+	 * </pre>
+	 * 
+	 */
+	private void printPermuationsOfArrayByFixingInput(char[] input, int idx, char[] output) {
+		if (idx == input.length) {
+			System.out.println(String.valueOf(output));
+			return;
+		}
+		for (int pos = 0; pos < output.length; pos++) {
+			// only use the un-occupied positions at next level
+			if (output[pos] == Character.MIN_VALUE) {
+
+				output[pos] = input[idx];
+				printPermuationsOfArrayByFixingInput(input, idx + 1, output);
+				// before trying next option, we need to remove the previous option
+				output[pos] = Character.MIN_VALUE;
+
+			}
+
+		}
+	}
+    
+	 /**
+     * 
+     * print premutation of 'r' items by arranging them on 'n' positions.
+     * 
+     * @param item : item String represents r chars
+     * @param positionCount : represents 'n' positions
+     * 
+     * */
+	@Override
+	public void printPrermuationsUsingIncExcByFixingPos(int positionCount, String item) {
+
+		nPrUsingIncExcByFixingPos(positionCount, item, "", 0);
+	}
+
+	private void nPrUsingIncExcByFixingPos(int positionCount, String item, String output, int posToFix) {
+
+		if(posToFix == positionCount) {
+			if(item.isEmpty())
+			System.out.println(output);
+			return;
+		}
+		
+		nPrUsingIncExcByFixingPos(positionCount, item, output+"_", posToFix+1);
+
+		for(int i=0; i< item.length(); i++) {
+			String remainingItem = item.substring(0,i) + item.substring(i+1);
+			nPrUsingIncExcByFixingPos(positionCount, remainingItem, output+item.charAt(i), posToFix+1);
+		}
 	}
 
 }

@@ -104,6 +104,10 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 	public static void main(String[] args) {
 
 		// INSTANCE.nCkUsingPascalIdentity(3, "abcde", "");
+		
+		//INSTANCE.printPowerSetUsingPascalIdentityExpansion2("abc".toCharArray());
+		
+		INSTANCE.printPowerSetUsingPascalIdentityByFixingPosition(3);
 
 	}
 
@@ -170,8 +174,8 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 	}
 
 	@Override
-	public void printPowerSetUsingPascalIdentityExpansion(String input) {
-		printPowerSetUsingPascalIdentityExpansion(input, "");
+	public void printPowerSetUsingPascalIdentityExpansion1(String input) {
+		printPowerSetUsingPascalIdentityExpansion1(input, "");
 	}
 
 	/**
@@ -194,15 +198,24 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 	 * "powerSetUsingPascalIdentity". As in Include-Exclude based method all the
 	 * outputs are printed at leaf-level.
 	 */
-	private void printPowerSetUsingPascalIdentityExpansion(String input, String output) {
+	private void printPowerSetUsingPascalIdentityExpansion1(String input, String output) {
 		System.out.println(output);
 		for (int i = 0; i < input.length(); i++)
-			printPowerSetUsingPascalIdentityExpansion(input.substring(i + 1), output + input.charAt(i));
+			printPowerSetUsingPascalIdentityExpansion1(input.substring(i + 1), output + input.charAt(i));
 	}
 
 	@Override
-	public void printPowerSetUsingSubSequence(String input) {
-		System.out.println(getPowerSetUsingSubSequence(input));
+	public void printPowerSetUsingPascalIdentityExpansion2(char[] input) {
+		printPowerSetUsingPascalIdentityExpansion2(input,0, "");
+	}
+
+	private void printPowerSetUsingPascalIdentityExpansion2(char[] input, int idx, String output) {
+		System.out.println(output);
+		while (idx < input.length) {
+			char currentCh = input[idx];
+			idx = idx + 1;
+			printPowerSetUsingPascalIdentityExpansion2(input, idx, output + currentCh);
+		}
 
 	}
 
@@ -242,7 +255,8 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 	 * @see : Substring of abc : a, b, c, ab, bc, abc ; total_number_of_subsequece:
 	 *      n(n+1)/2
 	 */
-	private List<String> getPowerSetUsingSubSequence(String input) {
+	@Override
+	public List<String> getPowerSetUsingSubSequence(String input) {
 
 		if (input.isEmpty()) {
 			return List.of("");
@@ -380,5 +394,28 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 		printPowerSetUsingPascalIdentity(newInputExcludingChar, String.valueOf(charcterToInclude));
 
 	}
+	/**
+	 * print power set by placing 'i' at 'n' given positions.
+	 * 
+	 * */ 
+	@Override
+	public void printPowerSetUsingPascalIdentityByFixingPosition(int positionCount) {
+		printPowerSetUsingPascalIdentityByFixingPosition(positionCount,"",0);
+	}
+	
+	private void printPowerSetUsingPascalIdentityByFixingPosition(int positionCount, String output, int posToFix) {
+		
+		if(positionCount==posToFix) {
+			System.out.println(output);
+			return;
+		}
+		//exclude
+		printPowerSetUsingPascalIdentityByFixingPosition(positionCount, output+"_", posToFix+1);
+		//include
+		printPowerSetUsingPascalIdentityByFixingPosition(positionCount, output+"i", posToFix+1);
+		
+	}
+	
+	
 
 }

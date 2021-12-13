@@ -1,23 +1,31 @@
 package edu.algo.permcomb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CombinationSolution implements CombinationQuestion {
 
 	public static void main(String[] args) {
-		INSTANCE.printGroupCombination(new String[] { "abc", "fg", "hijk" });
+		// System.out.println(INSTANCE.getGroupCombination(new String[] { "abc", "fg",
+		// "hijk" }));
+		// INSTANCE.printGroupCombination(new String[] { "abc", "fg", "hijk" });
+		// INSTANCE.printTargetSumCombination(new int[] { 1, 2, 3, 4, 5 }, 10);
+		// INSTANCE.printCombinationUingIncExcByFixingPos(4, 3);
+		INSTANCE.printCombinationUsingPermutationByFixingInput(4, "ab");
 
 	}
 
 	@Override
-	public void printGroupCombination(String[] groups) {
+	public List<String> getGroupCombination(String[] groups) {
 
-		System.out.println(getGroupCombination(groups, 0));
+		return getGroupCombination(groups, 0);
 
 	}
 
 	/**
+	 * <pre>
 	 * Get all possible combinations that can be formed by picking atmost one char
 	 * from each group.
 	 * 
@@ -32,13 +40,19 @@ public class CombinationSolution implements CombinationQuestion {
 	 * 
 	 * Example ['abc' 'fg', 'hijk'] : total combinations : 3 * 2 * 4 = 24
 	 * 
-	 * <pre>
+	 * Tree Structure:
+	 * 
+	 * At 0th level we will have 3 branches a, b, c
+	 * At 1st level, each branch will spawn 2 branches f, g
+	 * At 2nd level each branch will spawn 4 branches h, i, j, k
+	 * 
+	 *
 	 * HYPOTHESIS : getGroupCombination([g1, g2, g3]) => total  g1*g2*g3 combinations
 	 * 
 	 * SUBSTITUTION: collate the group g2, g3; getGroupCombination([g2, g3]) => total  g2*g3 combinations
 	 * 
 	 * INDUCTION strategy: need to map each element of g1 group, with each element returned
-	 * by SUBSTITUTION step.
+	 * by SUBSTITUTION step.  Means solution is prepared in  post-recursion step.
 	 * 
 	 * </pre>
 	 * 
@@ -52,7 +66,7 @@ public class CombinationSolution implements CombinationQuestion {
 		}
 		List<String> collatedGroupCombs = getGroupCombination(groups, idx + 1);
 		char[] firstGroupChars = groups[idx].toCharArray();
-
+		// solution is prepared in post-recursion
 		List<String> result = new ArrayList<>();
 		for (char c : firstGroupChars) {
 			for (String comb : collatedGroupCombs) {
@@ -61,6 +75,158 @@ public class CombinationSolution implements CombinationQuestion {
 		}
 		return result;
 
+	}
+
+	/**
+	 * <pre>
+	 * Example ['abc' 'fg', 'hijk'] : total combinations : 3 * 2 * 4 = 24
+	 * 
+	 * Tree Structure:
+	 * At 0th level we will have 3 branches a, b, c
+	 * At 1st level, each branch will spawn 2 branches f, g
+	 * At 2nd level each branch will spawn 4 branches h, i, j, k
+	 *  
+	 * Strategy: We will maintain two variables:
+	 * 1. solution_so_far : at every level we will append the options to solution_so_far
+	 * 2.  idx : tree level will be maintained by index of groups array.
+	 * 
+	 * HYPOTHESIS: printGroupCombination(['abc' 'fg'],  "") --> prints all the possible combinations
+	 * 
+	 * SUBSTITUTION: 
+	 * printGroupCombination(['abc', 'fg', 'hijk'],  "a") : appends remaining path to "a"
+	 * printGroupCombination(['abc', 'fg', 'hijk'],  "b") : appends remaining path to "b"
+	 * printGroupCombination(['abc', 'fg', 'hijk'],  "c") : appends remaining path to "b"
+	 * 
+	 * INDUCTION: main code will append options of first_group i.e. 'abc' to solution_so_far, 
+	 * and remaining path will be append by substitution step. Means solution is prepared in 
+	 * pre-recursion step.
+	 * 
+	 * </pre>
+	 * 
+	 */
+	@Override
+	public void printGroupCombination(String[] groups) {
+		printGroupCombination(groups, 0, "");
+	}
+
+	private void printGroupCombination(String[] groups, int idx, String combination) {
+		if (idx == groups.length) {
+			System.out.println(combination);
+			return;
+		}
+		char[] groupElements = groups[idx].toCharArray();
+		for (int option = 0; option < groupElements.length; option++) {
+			printGroupCombination(groups, idx + 1, combination + groupElements[option]);
+
+		}
+	}
+
+	/**
+	 * Print all possible combinations that can be formed by picking non-rpeated
+	 * elements of input array and whose value is equal to targetValue.
+	 * 
+	 */
+	@Override
+	public void printTargetSumCombination(int[] input, int targetValue) {
+
+		String inputStr = Arrays.stream(input).mapToObj(String::valueOf).collect(Collectors.joining());
+
+		printTargetSumComUsingPascalIdentityExpansion1(inputStr, 0, 0, "");
+
+		// printTargetSumComUsingPascalIdentityExpansion2(input, "", 0, targetValue, 0);
+	}
+
+	private void printTargetSumComUsingPascalIdentityExpansion1(String input, int targetValue, int sumSoFar,
+			String combination) {
+		if (sumSoFar == targetValue) {
+			System.out.println(combination);
+		}
+		for (int i = 0; i < input.length(); i++) {
+			printTargetSumComUsingPascalIdentityExpansion1(input.substring(i + 1), targetValue,
+					sumSoFar + (input.charAt(i) - '0'), combination + input.charAt(i));
+		}
+
+	}
+
+	private void printTargetSumComUsingPascalIdentityExpansion2(int[] input, String combination, int sumSoFar,
+			int targetValue, int idx) {
+		if (sumSoFar == targetValue) {
+			System.out.println(combination);
+		}
+		while (idx < input.length) {
+			printTargetSumComUsingPascalIdentityExpansion2(input, combination + input[idx], sumSoFar + input[idx],
+					targetValue, ++idx);
+		}
+
+	}
+
+	/**
+	 * print all the possible combinations by applying permutation/arrangement of
+	 * 'r' identical items at 'n' given positions.
+	 * 
+	 */
+	@Override
+	public void printCombinationUingIncExcByFixingPos(int positionCount, int r) {
+
+		printCombinationUingIncExcByFixingPos(positionCount, r, 0, "");
+	}
+
+	private void printCombinationUingIncExcByFixingPos(int positionCount, int r, int posToFix, String output) {
+
+		if (positionCount == posToFix) {
+			if (r == 0) {
+				System.out.println(output);
+			}
+
+			return;
+		}
+
+		// Exclude
+		printCombinationUingIncExcByFixingPos(positionCount, r, posToFix + 1, output + "_");
+		// Include
+		printCombinationUingIncExcByFixingPos(positionCount, r - 1, posToFix + 1, output + "i");
+
+	}
+
+	/**
+	 * print all the possible combinations by placing 'r' distinct items at 'n'
+	 * given positions.
+	 * 
+	 */
+	@Override
+	public void printCombinationUsingPermutationByFixingInput(int positionCount, String item) {
+
+		char[] output = new char[positionCount];
+		Arrays.fill(output, '_');
+		printCombinationUsingPermutationByFixingInput(item.toCharArray(), 0, output, -1);
+	}
+
+	/**
+	 * Algo strategy : Prermuation strategy of fixing input and taking position as
+	 * options
+	 * 
+	 * Note: If we allow only to place the input in lexicographic order, then we
+	 * will get combinations from permutation strategy
+	 * 
+	 * Since, we have fixed the input means input index will advance ahead only at
+	 * next level of recursion tree. So passing input_idx as method param.
+	 */
+	private void printCombinationUsingPermutationByFixingInput(char[] input, int inIdx, char[] output,
+			int occupiedPos) {
+
+		if (inIdx == input.length) {
+			System.out.println(String.valueOf(output));
+			return;
+		}
+
+		for (int pos = 0; pos < output.length; pos++) {
+			if (pos > occupiedPos) {
+				output[pos] = input[inIdx];
+				printCombinationUsingPermutationByFixingInput(input, inIdx + 1, output, pos);
+				output[pos] = '_';
+			}
+
+		}
 	}
 
 }

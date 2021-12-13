@@ -1,5 +1,7 @@
 package edu.algo.permcomb;
 
+import java.util.List;
+
 /**
  * <pre>
  * https://introcs.cs.princeton.edu/java/23recursion/
@@ -17,13 +19,26 @@ public interface PermutationQuestion {
 	PermutationQuestion INSTANCE  = new PermutationSolution();
 	
 	
-	void printPermutationsOfString(String input, String output);
+	void printPermutationsOfStringByFixingPos(String input, String output);
 
-    void printPermutationsOfArray1(char[] input, char[] output, int outPos);
+    void printPermutationsOfArray1ByFixingPos(char[] input, char[] output, int outPos);
 
-    void printPermutationsOfArray2(char[] input, int position);
+    void printPermutationsOfArray2ByFixingPos(char[] input, int position);
 
-    void printPermutationsOfArray3(char[] input, int n);
+    void printPermutationsOfArray3ByFixingPos(char[] input, int n);
+    
+    void printPermuationsOfArrayByFixingInput(char[] input);
+    
+    /**
+     * 
+     * print premutation of 'r' items by arranging them on 'n' positions.
+     * 
+     * @param item : item String represents r chars
+     * @param positionCount : represents 'n' positions
+     * 
+     * */
+    void printPrermuationsUsingIncExcByFixingPos(int positionCount, String item);
+    
 	
     void printPermutationUsingSJT1(int[] permutation);
     
@@ -88,5 +103,10 @@ public interface PermutationQuestion {
 	 * Question: Print all permutations in lexicographic order.
 	 */
 	void printAllPermutationsInLexicographicOrder3(String inputString);
+	
+	
+	List<String> getStairPathPermutation(int targetValue, int...allowedSteps);
+
+	void printStairPathPermutation(int targetValue, int[] allowedSteps, String path);
 
 }
