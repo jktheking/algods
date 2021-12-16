@@ -26,5 +26,11 @@ public interface DoubleCountingQuestion {
 	 * print power set by placing 'i' at 'n' given positions.
 	 * 
 	 * */ 
-	void printPowerSetUsingPascalIdentityByFixingPosition(int positionCount); 
+	void printPowerSetUsingPascalIdentityByFixingPos(int positionCount); 
+	
+	/**
+	 * print power set by placing 'i' at 'n' given positions.
+	 * 
+	 * */ 
+	void printPowerSetUsingPascalIdentityExpansionByFixingPos(int positionCount);
 }

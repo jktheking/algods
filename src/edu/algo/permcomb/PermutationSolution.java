@@ -2,7 +2,10 @@ package edu.algo.permcomb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -15,6 +18,8 @@ import java.util.stream.IntStream;
  * https://en.wikipedia.org/wiki/Heap%27s_algorithm
  * https://www.baeldung.com/java-array-permutations
  * 
+ * 
+ * 
  * SJT :
  * </pre>
  * 
@@ -23,17 +28,15 @@ public class PermutationSolution implements PermutationQuestion {
 
 	public static void main(String[] args) {
 
-		// INSTANCE.printPermutationsOfString("abc", "");
+		// INSTANCE.printPermutationOfStringByFixingPos("abc","");
 
-		// INSTANCE.printPermutationsOfArray1("abc".toCharArray(), new char[3], 0);
-		// INSTANCE.printPermutationsOfArray2("abc".toCharArray(), 0);
-		// INSTANCE.printPermutationsOfArray3("abc".toCharArray(), 3);
+		// INSTANCE.printPermutationOfArrayByFixingPos("abc".toCharArray());
 
-	//	INSTANCE.printPermuationsOfArrayByFixingInput("abc".toCharArray());
+		// INSTANCE.printPermuationOfArrayByFixingInput("abc".toCharArray());
 
-		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps1("12345");
-		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps2("12345");
-		// INSTANCE.permutationsWithAdjacentNonRepeatableSwaps3("12345");
+		// INSTANCE.printPermutationOfArrayUsingSwap1ByFixingPos("abc".toCharArray());
+
+		// INSTANCE.printPermutationOfArrayUsingSwap2ByFixingPos("abc".toCharArray());
 
 		// INSTANCE.printNextLexicographicPermutation("12345");
 		// INSTANCE.printNextLexicographicPermutation("12354");
@@ -46,10 +49,19 @@ public class PermutationSolution implements PermutationQuestion {
 		// INSTANCE.printAllPermutationsInLexicographicOrder2("12345");
 		// INSTANCE.printAllPermutationsInLexicographicOrder3("12345");
 
-//		System.out.println(INSTANCE.getStairPathPermutation(7, 1, 2, 3));
-//		INSTANCE.printStairPathPermutation(7, new int[] { 1, 2, 3 }, "");
+		// System.out.println(INSTANCE.getStairPathPermutation(7, 1, 2, 3));
+		// INSTANCE.printStairPathPermutation(7, new int[] { 1, 2, 3 }, "");
+
+		// INSTANCE.printPermutationOfItemInArrayByFixingInput(4, "ab");
+		// INSTANCE.printPermutationOfItemIn2DArrayByFixingInput(2, 2, "ab");
+
+		// INSTANCE.printPermutationOfItemInArrayByFixingPos(4, "aab");
+
+		// INSTANCE.printPermutationOfItemIn2DArrayByFixingPosition(2,3,"aaabbc");
+
+		//INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(5, "abaca");
 		
-		INSTANCE.printPrermuationsUsingIncExcByFixingPos(3, "ab");
+		INSTANCE.printPermutationOfItemIn2DElongatedArrayByFixingInput(2,3,"abcd");
 
 	}
 
@@ -73,17 +85,24 @@ public class PermutationSolution implements PermutationQuestion {
 	 * </pre>
 	 */
 	@Override
-	public void printPermutationsOfStringByFixingPos(String input, String output) {
+	public void printPermutationOfStringByFixingPos(String input, String output) {
 
 		if (input.isEmpty()) {
 			System.out.println(output);
 			return;
 		}
 		for (int i = 0; i < input.length(); i++) {
-			printPermutationsOfStringByFixingPos(input.substring(0, i) + input.substring(i + 1),
+			printPermutationOfStringByFixingPos(input.substring(0, i) + input.substring(i + 1),
 					output + input.charAt(i));
 
 		}
+
+	}
+
+	@Override
+	public void printPermutationOfArrayByFixingPos(char[] input) {
+
+		printPermutationOfArrayByFixingPos(input, new char[input.length], 0);
 
 	}
 
@@ -102,31 +121,45 @@ public class PermutationSolution implements PermutationQuestion {
 	 * We visit next level via recusion invocation and since position is getting increased at
 	 *  next level, so we pass position as input param.
 	 * 
+	 * Question: Input array is getting rest to original_state by backtracking, but why do we not
+	 * resetting output array back to original_state ?
+	 * Becuase output is getting printed at leaf-level on the path of euler_tour and before printing
+	 * the next output euler_tour comes back to root of the respective branch where we are overriding 
+	 * the required position in output array.
 	 * </pre>
 	 * 
+	 * 
+	 * 
+	 * 
 	 */
-	@Override
-	public void printPermutationsOfArray1ByFixingPos(char[] input, char[] output, int outPos) {
+	private void printPermutationOfArrayByFixingPos(char[] input, char[] output, int posToFix) {
 
-		if (outPos == output.length) {
+		if (posToFix == output.length) {
 			System.out.println(String.valueOf(output));
 			return;
 		}
 
 		for (int i = 0; i < input.length; i++) {
+
 			if (input[i] == Character.MIN_VALUE) {
 				continue;
 			}
 
 			char ch = input[i];
-			output[outPos] = ch;
+			output[posToFix] = ch;
+			// on next level, to get the remaining input
 			input[i] = Character.MIN_VALUE;
-
-			printPermutationsOfArray1ByFixingPos(input, output, outPos + 1);
-
+			printPermutationOfArrayByFixingPos(input, output, posToFix + 1);
+			// to try all the input options
 			input[i] = ch;
 
 		}
+	}
+
+	@Override
+	public void printPermutationOfArrayUsingSwap1ByFixingPos(char[] input) {
+
+		printPermutationOfArrayUsingSwap1ByFixingPos(input, 0);
 	}
 
 	/**
@@ -161,23 +194,27 @@ public class PermutationSolution implements PermutationQuestion {
 	 * </pre>
 	 * 
 	 */
-	@Override
-	public void printPermutationsOfArray2ByFixingPos(char[] input, int position) {
+	private void printPermutationOfArrayUsingSwap1ByFixingPos(char[] input, int posToFix) {
 
 		// Single element at last position is fixed in itself, so we can avoid self-swap
 		// at last position by checking (position == input.length - 1) instead of
 		// (position == input.length)
-		if (position == input.length - 1) {
+		if (posToFix == input.length - 1) {
 			System.out.println(String.valueOf(input));
 			return;
 		}
 
-		for (int i = position; i < input.length; i++) {
-			swap(input, position, i);
-			printPermutationsOfArray2ByFixingPos(input, position + 1);
-			swap(input, position, i);
+		for (int i = posToFix; i < input.length; i++) {
+			swap(input, posToFix, i);
+			printPermutationOfArrayUsingSwap1ByFixingPos(input, posToFix + 1);
+			swap(input, posToFix, i);
 		}
 
+	}
+
+	@Override
+	public void printPermutationOfArrayUsingSwap2ByFixingPos(char[] input) {
+		printPermutationOfArrayUsingSwap2ByFixingPos(input, input.length);
 	}
 
 	/**
@@ -187,15 +224,15 @@ public class PermutationSolution implements PermutationQuestion {
 	 * 
 	 * print n! permutation of the characters of array (not in order)
 	 * 
-	 * @param n is length of the input
+	 * @param posToFix is length of the input
 	 * 
-	 *          Time Complexity : O(n*n!) Depth of the tree is n, so to reach any of
-	 *          the leaf node we need to traverse n steps. And there are n! leaf
-	 *          nodes.
+	 *                 Time Complexity : O(n*n!) Depth of the tree is n, so to reach
+	 *                 any of the leaf node we need to traverse n steps. And there
+	 *                 are n! leaf nodes.
 	 * 
-	 *          Space Complexity : O(1)
+	 *                 Space Complexity : O(1)
 	 * 
-	 *          <pre>
+	 *                 <pre>
 	 * 
 	 * Strategy: permutation generation by swapping the last-element with other elements(right to left)         
 	 *          
@@ -217,14 +254,13 @@ public class PermutationSolution implements PermutationQuestion {
 	 * 
 	 * Same strategy need to be called for fixing the position P1 and P2.
 	 * 
-	 *          </pre>
+	 *                 </pre>
 	 * 
 	 */
-	@Override
-	public void printPermutationsOfArray3ByFixingPos(char[] input, int n) {
+	private void printPermutationOfArrayUsingSwap2ByFixingPos(char[] input, int posToFix) {
 
 		// when n reaches to 0th index of input array
-		if (n == 1) {
+		if (posToFix == 1) {
 			System.out.println(String.valueOf(input));
 			return;
 		}
@@ -239,15 +275,15 @@ public class PermutationSolution implements PermutationQuestion {
 		 * --swap c with c
 		 * 
 		 */
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < posToFix; i++) {
 
-			swap(input, i, n - 1);
-			printPermutationsOfArray3ByFixingPos(input, n - 1);
+			swap(input, i, posToFix - 1);
+			printPermutationOfArrayUsingSwap2ByFixingPos(input, posToFix - 1);
 
 			// We are reverse swapping so that we can explore the other branch of the same
 			// input, i.e. back-tracing
 
-			swap(input, i, n - 1);
+			swap(input, i, posToFix - 1);
 		}
 	}
 
@@ -593,7 +629,7 @@ public class PermutationSolution implements PermutationQuestion {
 	 */
 	@Override
 	public void printAllPermutationsInLexicographicOrder1(String inputString) {
-		printPermutationsOfStringByFixingPos(inputString, "");
+		printPermutationOfStringByFixingPos(inputString, "");
 
 	}
 
@@ -891,7 +927,7 @@ public class PermutationSolution implements PermutationQuestion {
 	}
 
 	@Override
-	public void printPermuationsOfArrayByFixingInput(char[] input) {
+	public void printPermuationOfArrayByFixingInput(char[] input) {
 
 		printPermuationsOfArrayByFixingInput(input, 0, new char[input.length]);
 
@@ -931,35 +967,291 @@ public class PermutationSolution implements PermutationQuestion {
 
 		}
 	}
-    
-	 /**
-     * 
-     * print premutation of 'r' items by arranging them on 'n' positions.
-     * 
-     * @param item : item String represents r chars
-     * @param positionCount : represents 'n' positions
-     * 
-     * */
-	@Override
-	public void printPrermuationsUsingIncExcByFixingPos(int positionCount, String item) {
 
-		nPrUsingIncExcByFixingPos(positionCount, item, "", 0);
+	/**
+	 * <pre>
+	 * print premutation of 'r'  distinct items by arranging them on 'n' positions.
+	 * where r<=n
+	 * 
+	 * 
+	 * WHEN item.length() < postionCount THEN some positions will be empty in output array
+	 * INFERENCE : 'empty' is acting as special input.
+	 *  
+	 * emptyCount = positionCount - item.length()
+	 * 
+	 * 
+	 * </pre>
+	 */
+	@Override
+	public void printPermutationOfItemInArrayByFixingPos(int positionCount, String item) {
+
+		int emptyCount = positionCount - item.length();
+		Map<Character, Integer> input = new LinkedHashMap<>();
+		input.put('_', emptyCount);
+		for (char c : item.toCharArray()) {
+			input.computeIfPresent(c, (k, v) -> v + 1);
+			input.computeIfAbsent(c, k -> 1);
+
+		}
+
+		printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(input, new char[positionCount], 0);
 	}
 
-	private void nPrUsingIncExcByFixingPos(int positionCount, String item, String output, int posToFix) {
+	/**
+	 * 
+	 * print premutation of 'r' distinct items by arranging them on 'n' positions.
+	 * 
+	 * @param item          : item String represents r chars
+	 * @param positionCount : represents 'n' positions
+	 * 
+	 */
+	@Override
+	public void printPermutationOfItemInArrayByFixingInput(int positionCount, String item) {
 
-		if(posToFix == positionCount) {
-			if(item.isEmpty())
-			System.out.println(output);
+		char[] output = new char[positionCount];
+		Arrays.fill(output, '_');
+		printPermutationofItemInArrayByFixingInput(item, output);
+
+	}
+
+	private void printPermutationofItemInArrayByFixingInput(String input, char[] output) {
+
+		if (input.isEmpty()) {
+			System.out.println(String.valueOf(output));
 			return;
 		}
-		
-		nPrUsingIncExcByFixingPos(positionCount, item, output+"_", posToFix+1);
-
-		for(int i=0; i< item.length(); i++) {
-			String remainingItem = item.substring(0,i) + item.substring(i+1);
-			nPrUsingIncExcByFixingPos(positionCount, remainingItem, output+item.charAt(i), posToFix+1);
+		for (int pos = 0; pos < output.length; pos++) {
+			if (output[pos] == '_') {
+				output[pos] = input.charAt(0);
+				String remainingInput = input.substring(1);
+				printPermutationofItemInArrayByFixingInput(remainingInput, output);
+				output[pos] = '_';
+			}
 		}
+	}
+
+	/**
+	 * 
+	 * print premutation of 'r' distinct items by arranging them in 2D-array.
+	 * 
+	 * @param item : item String represents r chars
+	 * @param rows : row count
+	 * @parm cols : column count
+	 * 
+	 */
+	@Override
+	public void printPermutationOfItemIn2DArrayByFixingInput(int rows, int cols, String item) {
+
+		char[][] output = new char[rows][cols];
+		for (int i = 0; i < rows; i++) {
+			Arrays.fill(output[i], '_');
+
+		}
+
+		printPermutationofItemIn2DArrayByFixingInput(item, output);
+	}
+
+	private void printPermutationofItemIn2DArrayByFixingInput(String input, char[][] output) {
+		if (input.isEmpty()) {
+			printMatrix(output);
+			return;
+		}
+		for (int row = 0; row < output.length; row++) {
+			for (int col = 0; col < output[0].length; col++) {
+				// at next level we only need to try with un-occupied positions
+				if (output[row][col] == '_') {
+					output[row][col] = input.charAt(0);
+					String remainingInput = input.substring(1);
+					printPermutationofItemIn2DArrayByFixingInput(remainingInput, output);
+					output[row][col] = '_';
+				}
+			}
+		}
+
+	}
+
+	private void printMatrix(char[][] matrix) {
+		System.out.println();
+		for (int row = 0; row < matrix.length; row++) {
+			System.out.println(Arrays.toString(matrix[row]));
+		}
+
+	}
+
+	@Override
+	public void printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(int positionCount, String item) {
+
+		int emptyCount = positionCount - item.length();
+		Map<Character, Integer> input = new LinkedHashMap<>();
+		input.put('_', emptyCount);
+		for (char c : item.toCharArray()) {
+			input.computeIfPresent(c, (k, v) -> v + 1);
+			input.computeIfAbsent(c, k -> 1);
+
+		}
+
+		printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(input, new char[positionCount], 0);
+	}
+
+	/**
+	 * <pre>
+	 *
+	 *NOTE 1:
+	 * This method will give us the combinations, when we try to print permutation 
+	 * of identical items.
+	 * 
+	 * NOTE 2: input is tried as options on each level of tree. We must try the
+	 * duplicate items as single option on any level of tree.
+	 * 
+	 *This method will also handle duplicates in input like : aabbcc
+	 * 
+	 * 
+	 * </pre>
+	 * 
+	 */
+
+	private void printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(Map<Character, Integer> inputFreqMap,
+			char[] output, int posToFix) {
+		if (posToFix == output.length) {
+			System.out.println(String.valueOf(output));
+			return;
+		}
+		for (Map.Entry<Character, Integer> entry : inputFreqMap.entrySet()) {
+			if (entry.getValue() > 0) {
+				output[posToFix] = entry.getKey();
+				entry.setValue(entry.getValue() - 1);
+				printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(inputFreqMap, output, posToFix + 1);
+				entry.setValue(entry.getValue() + 1);
+			}
+		}
+	}
+
+	/**
+	 * Since input_count is less than position_count, so we have to consider empty
+	 * as special input.
+	 * 
+	 */
+	@Override
+	public void printPermutationOfItemIn2DArrayByFixingPosition(int rows, int cols, String item) {
+
+		int emptyCount = rows * cols - item.length();
+
+		Map<Character, Integer> inputFreqMap = new LinkedHashMap<>();
+		inputFreqMap.put('_', emptyCount);
+		for (char c : item.toCharArray()) {
+			inputFreqMap.computeIfPresent(c, (k, v) -> v + 1);
+			inputFreqMap.computeIfAbsent(c, k -> 1);
+
+		}
+
+		printPermutationOfItemIn2DArrayByHandlingDuplicateAndFixingPosition(inputFreqMap, new char[rows][cols], 0, 0);
+	}
+
+	private void printPermutationOfItemIn2DArrayByHandlingDuplicateAndFixingPosition(
+			Map<Character, Integer> inputFreqMap, char[][] output, int rowPosToFix, int colPosToFix) {
+
+		if (rowPosToFix == output.length - 1 && colPosToFix == output[0].length) {
+			printMatrix(output);
+			return;
+		}
+
+		if (colPosToFix == output[0].length) {
+			rowPosToFix++;
+			colPosToFix = 0;
+		}
+
+		for (Map.Entry<Character, Integer> entry : inputFreqMap.entrySet()) {
+			if (entry.getValue() > 0) {
+				output[rowPosToFix][colPosToFix] = entry.getKey();
+				entry.setValue(entry.getValue() - 1);
+				printPermutationOfItemIn2DArrayByHandlingDuplicateAndFixingPosition(inputFreqMap, output, rowPosToFix,
+						colPosToFix + 1);
+				// because at next level we want the remainingInput
+				entry.setValue(entry.getValue() + 1);
+			}
+		}
+
+	}
+
+	@Override
+	public void printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(int positionCount, String item) {
+
+		char[] output = new char[positionCount];
+		Arrays.fill(output, '_');
+
+		printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(item, new HashMap<>(), output);
+	}
+
+	/**
+	 * Implementation Note: If we are fixing duplicate character on any next_level,
+	 * then the duplicate character can only occupy next_empty_positions of
+	 * previously occupied duplicate character. It cannot occupy
+	 * previous_empty_positions.
+	 * 
+	 */
+	private void printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(String input,
+			Map<Character, Integer> inputPreviousOccurrencePos, char[] output) {
+		// when reached the leaf-node
+		if (input.isEmpty()) {
+			System.out.println(String.valueOf(output));
+			return;
+		}
+
+		int pos = 0;
+		int backTrackPreviousOccurrencePos = Integer.MIN_VALUE;
+		char currentCh = input.charAt(0);
+		if (inputPreviousOccurrencePos.containsKey(currentCh)) {
+			backTrackPreviousOccurrencePos = inputPreviousOccurrencePos.get(currentCh);
+			pos = inputPreviousOccurrencePos.get(currentCh) + 1;
+		}
+
+		for (; pos < output.length; pos++) {
+			if (output[pos] == '_') {
+
+				output[pos] = currentCh;
+				inputPreviousOccurrencePos.put(currentCh, pos);
+				printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(input.substring(1),
+						inputPreviousOccurrencePos, output);
+				// backtrack to previous state, so that we can try next position
+				if (backTrackPreviousOccurrencePos == Integer.MIN_VALUE) {
+					inputPreviousOccurrencePos.remove(currentCh);
+				} else {
+					inputPreviousOccurrencePos.put(currentCh, backTrackPreviousOccurrencePos);
+				}
+
+				output[pos] = '_';
+			}
+
+		}
+	}
+
+	@Override
+	public void printPermutationOfItemIn2DElongatedArrayByFixingInput(int rows, int cols, String item) {
+
+		char[][] output = new char[rows][cols];
+		for (char[] c : output) {
+			Arrays.fill(c, '_');
+		}
+
+		printPermutationOfItemIn2DElongatedArrayByFixingInput(item, output);
+	}
+
+	private void printPermutationOfItemIn2DElongatedArrayByFixingInput(String input, char[][] output) {
+		if (input.isEmpty()) {
+			printMatrix(output);
+			return;
+		}
+
+		for (int pos = 0; pos < output.length*output[0].length; pos++) {
+			int row = pos / output[0].length;
+			int col = pos % output[0].length;
+			if (output[row][col] == '_') {
+				output[row][col] = input.charAt(0);
+				printPermutationOfItemIn2DElongatedArrayByFixingInput(input.substring(1), output);
+				output[row][col] = '_';
+			}
+		}
+
 	}
 
 }

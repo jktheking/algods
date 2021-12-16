@@ -13,7 +13,11 @@ public class CombinationSolution implements CombinationQuestion {
 		// INSTANCE.printGroupCombination(new String[] { "abc", "fg", "hijk" });
 		// INSTANCE.printTargetSumCombination(new int[] { 1, 2, 3, 4, 5 }, 10);
 		// INSTANCE.printCombinationUingIncExcByFixingPos(4, 3);
-		INSTANCE.printCombinationUsingPermutationByFixingInput(4, "ab");
+		// INSTANCE.printCombinationUsingPermutationByFixingInput(4, "ab");
+		// INSTANCE.printCombinationUsingPascalIdentityExpansionByFixingPos(4, 2);
+
+		//INSTANCE.print2DCombinationUsingPascalIdentityExpansionByFixingPos(3, 2, 4);
+		INSTANCE.printCombinationUsingPermutationByFixingPos(4, 2);
 
 	}
 
@@ -166,7 +170,7 @@ public class CombinationSolution implements CombinationQuestion {
 	 * 
 	 */
 	@Override
-	public void printCombinationUingIncExcByFixingPos(int positionCount, int r) {
+	public void printCombinationUsingPascalIdentityByFixingPos(int positionCount, int r) {
 
 		printCombinationUingIncExcByFixingPos(positionCount, r, 0, "");
 	}
@@ -227,6 +231,95 @@ public class CombinationSolution implements CombinationQuestion {
 			}
 
 		}
+	}
+
+	/**
+	 * print all the possible combinations by placing 'r' distinct items at 'n'
+	 * given positions.
+	 * 
+	 */
+	@Override
+	public void printCombinationUsingPascalIdentityExpansionByFixingPos(int positionCount, int r) {
+		char[] output = new char[positionCount];
+		Arrays.fill(output, '_');
+		printCombinationUsingPascalIdentityExpansionByFixingPos(output, r, 0);
+
+	}
+
+	/**
+	 * Here position is used for both: 1. fixing at each level 2. and trying options
+	 * 
+	 */
+	private void printCombinationUsingPascalIdentityExpansionByFixingPos(char[] output, int r, int posToFix) {
+		if (r == 0) {
+			System.out.println(String.valueOf(output));
+		}
+		while (posToFix < output.length) {
+			int currentPos = posToFix;
+			output[currentPos] = 'i';
+			printCombinationUsingPascalIdentityExpansionByFixingPos(output, r - 1, ++posToFix);
+			output[currentPos] = '_';
+		}
+	}
+
+	/**
+	 * print all the possible combinations by applying permutation/arrangement of
+	 * 'r' identical items in 2D array.
+	 * 
+	 * @param r : number of identical items
+	 * @parm rows : row count
+	 * @parm cols : column count
+	 * 
+	 */
+	@Override
+	public void print2DCombinationUsingPascalIdentityExpansionByFixingPos(int rows, int cols, int r) {
+		char[][] output = new char[rows][cols];
+		for (char[] o : output) {
+			Arrays.fill(o, '_');
+		}
+		print2DCombinationUsingPascalIdentityExpansionByFixingPos(output, r, 0, 0);
+	}
+
+	private void print2DCombinationUsingPascalIdentityExpansionByFixingPos(char[][] output, int r, int rowPosToFix,
+			int colPosToFix) {
+		if (r == 0) {
+			printMatrix(output);
+		}
+		// since we are taking position as options so iterate the output array
+		while (rowPosToFix < output.length) {
+
+			int currentRow = rowPosToFix;
+
+			while (colPosToFix < output[0].length) {
+				int currentCol = colPosToFix;
+				++colPosToFix;
+				output[currentRow][currentCol] = 'i';
+				print2DCombinationUsingPascalIdentityExpansionByFixingPos(output, r - 1, rowPosToFix, colPosToFix);
+				output[currentRow][currentCol] = '_';
+			}
+
+			colPosToFix = 0;
+			rowPosToFix++;
+		}
+	}
+
+	private void printMatrix(char[][] matrix) {
+		System.out.println();
+		for (int row = 0; row < matrix.length; row++) {
+			System.out.println(Arrays.toString(matrix[row]));
+		}
+
+	}
+
+	@Override
+	public void printCombinationUsingPermutationByFixingPos(int positionCount, int r) {
+
+		String item = "";
+		for (int i = 0; i < r; i++) {
+			item += "i";
+		}
+		PermutationQuestion.INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(positionCount, item);
+
 	}
 
 }
