@@ -59,9 +59,15 @@ public class PermutationSolution implements PermutationQuestion {
 
 		// INSTANCE.printPermutationOfItemIn2DArrayByFixingPosition(2,3,"aaabbc");
 
-		//INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(5, "abaca");
-		
-		INSTANCE.printPermutationOfItemIn2DElongatedArrayByFixingInput(2,3,"abcd");
+		// INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingInput(5,
+		// "abaca");
+
+		// INSTANCE.printPermutationOfItemIn2DElongatedArrayByFixingInput(2, 3, "abcd");
+		// INSTANCE.printPermutationOfItemIn2DElongatedArrayByFixingPos(2, 3, "abcd");
+
+		// INSTANCE.printNQueenPermutationByFixingPos(4);
+
+		INSTANCE.printNQueenPermutationByFixingInput(4);
 
 	}
 
@@ -1242,7 +1248,7 @@ public class PermutationSolution implements PermutationQuestion {
 			return;
 		}
 
-		for (int pos = 0; pos < output.length*output[0].length; pos++) {
+		for (int pos = 0; pos < output.length * output[0].length; pos++) {
 			int row = pos / output[0].length;
 			int col = pos % output[0].length;
 			if (output[row][col] == '_') {
@@ -1252,6 +1258,188 @@ public class PermutationSolution implements PermutationQuestion {
 			}
 		}
 
+	}
+
+	@Override
+	public void printPermutationOfItemIn2DElongatedArrayByFixingPos(int rows, int cols, String item) {
+
+		Map<Character, Integer> inputFreqMap = new LinkedHashMap<>();
+		int emptyCount = rows * cols - item.length();
+
+		inputFreqMap.put('_', emptyCount);
+		for (char c : item.toCharArray()) {
+			inputFreqMap.computeIfPresent(c, (k, v) -> v + 1);
+			inputFreqMap.computeIfAbsent(c, k -> 1);
+
+		}
+
+		printPermutationOfItemIn2DElongatedArrayByFixingPos(inputFreqMap, new char[rows][cols], 0);
+
+	}
+
+	/**
+	 * Why do we use "Map<Character, Integer> inputFreqMap" though all the inputs
+	 * are distinct in 'item' String ? Because position_count is greater than
+	 * input_count means we need to add empty as special inputs to match the
+	 * input_count with position_count.
+	 * 
+	 */
+	private void printPermutationOfItemIn2DElongatedArrayByFixingPos(Map<Character, Integer> inputFreqMap,
+			char[][] output, int posToFix) {
+		if (posToFix == output.length * output[0].length) {
+			printMatrix(output);
+			return;
+		}
+
+		for (Map.Entry<Character, Integer> entry : inputFreqMap.entrySet()) {
+
+			if (entry.getValue() > 0) {
+				int row = posToFix / output[0].length;
+				int col = posToFix % output[0].length;
+
+				output[row][col] = entry.getKey();
+				inputFreqMap.put(entry.getKey(), entry.getValue() - 1);
+				printPermutationOfItemIn2DElongatedArrayByFixingPos(inputFreqMap, output, posToFix + 1);
+				inputFreqMap.put(entry.getKey(), entry.getValue() + 1);
+				output[row][col] = Character.MIN_VALUE;
+			}
+
+		}
+
+	}
+
+	@Override
+	public void printNQueenPermutationByFixingPos(int n) {
+		int emptyCount = n * n - n;
+		Map<Character, Integer> inputFreqMap = new LinkedHashMap<>();
+		inputFreqMap.put('_', emptyCount);
+		for (int i = 0; i < n; i++) {
+			inputFreqMap.put((char) ('1' + i), 1);
+		}
+		printNQueenPermutationByFixingPos(inputFreqMap, new char[n][n], 0);
+	}
+
+	private void printNQueenPermutationByFixingPos(Map<Character, Integer> inputFreqMap, char[][] output,
+			int posToFix) {
+
+		if (posToFix == output.length * output[0].length) {
+			printMatrix(output);
+			return;
+		}
+
+		for (Map.Entry<Character, Integer> entry : inputFreqMap.entrySet()) {
+
+			int row = posToFix / output[0].length;
+			int col = posToFix % output[0].length;
+
+			if (entry.getValue() > 0) {
+				// when placing 'empty' input then no need to validate for valid qeen placement.
+				if (entry.getKey() == '_' || CombinationSolution.isValidQueenPlacementByFixingPos(output, row, col)) {
+					output[row][col] = entry.getKey();
+					inputFreqMap.put(entry.getKey(), entry.getValue() - 1);
+					printNQueenPermutationByFixingPos(inputFreqMap, output, posToFix + 1);
+					inputFreqMap.put(entry.getKey(), entry.getValue() + 1);
+					output[row][col] = Character.MIN_VALUE;
+				}
+			}
+
+		}
+
+	}
+
+	@Override
+	public void printNQueenPermutationByFixingInput(int n) {
+		String input = "";
+		for (int i = 1; i <= n; i++) {
+			input += i;
+		}
+		char[][] output = new char[n][n];
+		for (char[] c : output) {
+			Arrays.fill(c, '_');
+		}
+
+		printNQueenPermutationByFixingInput(input, output);
+
+	}
+
+	private void printNQueenPermutationByFixingInput(String input, char[][] output) {
+		if (input.isEmpty()) {
+			printMatrix(output);
+			return;
+		}
+
+		for (int pos = 0; pos < output.length * output[0].length; pos++) {
+			int row = pos / output[0].length;
+			int col = pos % output[0].length;
+			if (output[row][col] == '_' && isValidQueenPlacementByFixingInput(output, row, col)) {
+				output[row][col] = input.charAt(0);
+				printNQueenPermutationByFixingInput(input.substring(1), output);
+				output[row][col] = '_';
+			}
+		}
+	}
+
+	/**
+	 * <pre>
+	 * 
+	 * Since we are fixing input and trying positions as option, so at a particular
+	 * node of the tree we will try placling the queen on all postions(branches). At (n-1)th
+	 * level, the (n-1)th queen can be at any one of the possible postions, so we need to
+	 * search in all  the possible queen_moves direction when we are at nth level. 
+	 *   
+	 * 1.  vertical direction
+	 * 2.  horizontal direction
+	 * 3.  above-left-diagonal
+	 * 4.  above-right-diagonal
+	 * 5.  down-left-diagonal
+	 * 6.  down-right-diagonal
+	 * 
+	 * </pre>
+	 */
+	private boolean isValidQueenPlacementByFixingInput(char[][] board, int row, int col) {
+
+		// vertical
+		for (int i = 0; i < board.length; i++) {
+			// need to exclude current queen placement
+			if (i == row)
+				continue;
+			if (board[i][col] != '_')
+				return false;
+		}
+
+		// horizontal
+		for (int i = 0; i < board[0].length; i++) {
+			// need to exclude current queen placement
+			if (i == col)
+				continue;
+			if (board[row][i] != '_')
+				return false;
+		}
+		// above left-diagonal
+		for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		// above right-diagonal
+		for (int i = row - 1, j = col + 1; i >= 0 && j < board.length; i--, j++) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		// down left-diagonal
+		for (int i = row + 1, j = col - 1; i < board.length && j >= 0; i++, j--) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		// down right-diagonal
+		for (int i = row + 1, j = col + 1; i < board.length && j < board[0].length; i++, j++) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		return true;
 	}
 
 }

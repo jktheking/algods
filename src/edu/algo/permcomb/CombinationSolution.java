@@ -16,8 +16,11 @@ public class CombinationSolution implements CombinationQuestion {
 		// INSTANCE.printCombinationUsingPermutationByFixingInput(4, "ab");
 		// INSTANCE.printCombinationUsingPascalIdentityExpansionByFixingPos(4, 2);
 
-		//INSTANCE.print2DCombinationUsingPascalIdentityExpansionByFixingPos(3, 2, 4);
-		INSTANCE.printCombinationUsingPermutationByFixingPos(4, 2);
+		// INSTANCE.print2DCombinationUsingPascalIdentityExpansionByFixingPos(3, 2, 4);
+		// INSTANCE.printCombinationUsingPermutationByFixingPos(4, 2);
+		//INSTANCE.printCombinationIn2DElongatedArrayUsingPIEByFixingPos(3, 2, 4);
+		
+		INSTANCE.printNQueenCombinationUsingPIEByFixingPos(2);
 
 	}
 
@@ -272,16 +275,15 @@ public class CombinationSolution implements CombinationQuestion {
 	 * 
 	 */
 	@Override
-	public void print2DCombinationUsingPascalIdentityExpansionByFixingPos(int rows, int cols, int r) {
+	public void printCombinationIn2DArrayUsingPIEByFixingPos(int rows, int cols, int r) {
 		char[][] output = new char[rows][cols];
 		for (char[] o : output) {
 			Arrays.fill(o, '_');
 		}
-		print2DCombinationUsingPascalIdentityExpansionByFixingPos(output, r, 0, 0);
+		print2DCombinationUsingPIEByFixingPos(output, r, 0, 0);
 	}
 
-	private void print2DCombinationUsingPascalIdentityExpansionByFixingPos(char[][] output, int r, int rowPosToFix,
-			int colPosToFix) {
+	private void print2DCombinationUsingPIEByFixingPos(char[][] output, int r, int rowPosToFix, int colPosToFix) {
 		if (r == 0) {
 			printMatrix(output);
 		}
@@ -294,7 +296,7 @@ public class CombinationSolution implements CombinationQuestion {
 				int currentCol = colPosToFix;
 				++colPosToFix;
 				output[currentRow][currentCol] = 'i';
-				print2DCombinationUsingPascalIdentityExpansionByFixingPos(output, r - 1, rowPosToFix, colPosToFix);
+				print2DCombinationUsingPIEByFixingPos(output, r - 1, rowPosToFix, colPosToFix);
 				output[currentRow][currentCol] = '_';
 			}
 
@@ -320,6 +322,114 @@ public class CombinationSolution implements CombinationQuestion {
 		}
 		PermutationQuestion.INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(positionCount, item);
 
+	}
+
+	@Override
+	public void printCombinationIn2DElongatedArrayUsingPIEByFixingPos(int rows, int cols, int r) {
+
+		char[][] output = new char[rows][cols];
+		for (char[] o : output) {
+			Arrays.fill(o, '_');
+		}
+		printCombinationIn2DElongatedArrayUsingPIEByFixingPos(output, r, 0);
+	}
+
+	/**
+	 * <pre>
+	 *Pascal_Identity_Expansion(PIE) tree formation strategy: 
+	 *
+	 *Position is used for both:
+	 *1. fixing at tree level
+	 *2. tried as options(tree branches)
+	 *
+	 *Implementation note:
+	 *why do we have while -loop and option back-tracking ? 
+	 *Becuase positions are tried as options at a particular level of tree.
+	 * </pre>
+	 * 
+	 */
+	private void printCombinationIn2DElongatedArrayUsingPIEByFixingPos(char[][] output, int r, int posToFix) {
+		if (r == 0) {
+			printMatrix(output);
+		}
+		while (posToFix < output.length * output[0].length) {
+			int row = posToFix / output[0].length;
+			int col = posToFix % output[0].length;
+			output[row][col] = 'i';
+			printCombinationIn2DElongatedArrayUsingPIEByFixingPos(output, r - 1, ++posToFix);
+			output[row][col] = '_';
+		}
+	}
+
+	@Override
+	public void printNQueenCombinationUsingPIEByFixingPos(int n) {
+		char[][] output = new char[n][n];
+		for (char[] o : output) {
+			Arrays.fill(o, '_');
+		}
+		printNQueenCombinationUsingPIEByFixingPos(output, n, 0);
+	}
+
+	private void printNQueenCombinationUsingPIEByFixingPos(char[][] output, int n, int posToFix) {
+
+		if (n == 0) {
+			printMatrix(output);
+		}
+
+		while (posToFix < output.length * output[0].length) {
+			int row = posToFix / output[0].length;
+			int col = posToFix % output[0].length;
+			posToFix++;
+			if (isValidQueenPlacementByFixingPos(output, row, col)) {
+				output[row][col] = 'q';
+				printNQueenCombinationUsingPIEByFixingPos(output, n - 1, posToFix);
+				output[row][col] = '_';
+			}
+		}
+	}
+
+	/**
+	 * <pre>
+	 * 1. We will not validate queen placement on next positions as we are 
+	 * fixings positions, so next positions will be empty till leaf node 
+	 * on the path of euler_tour.
+	 * 
+	 * 
+	 * Remaining validation part on board:  
+	 * 1. above-vertical columns
+	 * 2. above-left-diagonal rows-cols 
+	 * 3. above-right-diagonal rows-cols
+	 * 4. horizontal-left columns
+	 * 
+	 * </pre>
+	 */
+	public static boolean isValidQueenPlacementByFixingPos(char[][] board, int row, int col) {
+
+		// above vertical columns
+		for (int i = row - 1; i >= 0; i--) {
+			if (board[i][col] != '_')
+				return false;
+		}
+
+		// above left-diagonal rows-cols
+		for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		// above right-diagonal rows-cols
+		for (int i = row - 1, j = col + 1; i >= 0 && j < board.length; i--, j++) {
+			if (board[i][j] != '_')
+				return false;
+		}
+
+		// horizontal left
+		for (int i = col-1; i >= 0; i--) {
+			if (board[row][i] != '_')
+				return false;
+		}
+
+		return true;
 	}
 
 }

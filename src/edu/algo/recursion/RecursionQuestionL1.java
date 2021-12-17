@@ -154,9 +154,15 @@ public interface RecursionQuestionL1 {
 	void printEncoding2(String input, String encoding);
 
 	/**
-	 * print all the possible allowed combinations of N queens on N X N Matrix.
+	 * Print all the possible allowed arrangement of N queens on N X N Matrix.
+	 * Since, all the n-queens are identical so it is essentially a problem of
+	 * finding the combination of n identical queens on n*n positions.
+	 * 
 	 */
-	void printNQueenAllowedPlacements(int n);
+	void printNQueenAllowedPlacement1(int n);
+	void printNQueenAllowedPlacement2(int n);
+	void printNQueenAllowedPlacement3(int n);
+	void printNQueenAllowedPlacement4(int n);
 
 	/**
 	 * print knight tour from a given starting_point such that it visits all points

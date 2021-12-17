@@ -708,34 +708,37 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 
 	}
 
-	/**
-	 * print all the possible allowed combinations of N queens on N X N Matrix.
-	 */
 	@Override
-	public void printNQueenAllowedPlacements(int n) {
-		printNQueenAllowedPlacements(new int[n][n], 0);
+	public void printNQueenAllowedPlacement4(int n) {
+		printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(new int[n][n], 0);
 	}
 
 	/**
 	 * <pre>
-	 * Recursion tree formation Strategy :
+	 * FACT about n-queens problem :
+	 * "In a single row we can place at-most one queen. So queen can be assumed as row.
+	 * Means, a queen can be placed at any column position in a row."
 	 * 
-	 * In a single row we can place at-most one queen. 
 	 * 
-	 * Exploration options strategy: In a row a queen can be placed at any column position.
+	 * Thus recursion tree formation Strategy will be: 
+	 * i.  we can fix the rows(queens) at each level and 
+	 * ii. try the columns as options.
 	 * 
-	 * Tree Node :  represented by Row
-	 * Tree Branch : represented by Columns. 
+	 * Note: we can reverse the tree formation strategy means column can be fixed and rows can be
+	 * tried as options.
+	 * 
+	 * Tree Node :  represented by Row as we have fixed the row
+	 * Tree Branch : represented by Columns as we are taking columns as options 
 	 * 
 	 * Levels of tree: for each row there will be one level in tree.
 	 * 
-	 *   Since row, represents level and we can go to next level via recursion call, 
-	 *   so need to pass row as method parameter
+	 * Since we are fixing the rows one by one at each level, and since we can go to next level via recursion call, 
+	 * so need to pass row as method parameter.
 	 * 
 	 * </pre>
 	 * 
 	 */
-	private void printNQueenAllowedPlacements(int[][] board, int row) {
+	private void printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(int[][] board, int row) {
 
 		if (row == board.length) {
 			printMatrix(board);
@@ -746,7 +749,7 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 			if (isValidQueenPlacement(board, row, col)) {
 				// placing the queen at col of a given row
 				board[row][col] = 1;
-				printNQueenAllowedPlacements(board, row + 1);
+				printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(board, row + 1);
 				// need to remove the queen from this col, so that we can try at next col of the
 				// same row
 				board[row][col] = 0;
@@ -874,5 +877,23 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 		// since we are trying all the moves
 		board[row][col] = 0;
 
+	}
+
+	@Override
+	public void printNQueenAllowedPlacement1(int n) {
+		CombinationQuestion.INSTANCE.printNQueenCombinationUsingPIEByFixingPos(n);
+		
+	}
+
+	@Override
+	public void printNQueenAllowedPlacement2(int n) {
+		PermutationQuestion.INSTANCE.printNQueenPermutationByFixingPos(n);
+		
+	}
+
+	@Override
+	public void printNQueenAllowedPlacement3(int n) {
+		PermutationQuestion.INSTANCE.printNQueenPermutationByFixingInput(n);
+		
 	}
 }

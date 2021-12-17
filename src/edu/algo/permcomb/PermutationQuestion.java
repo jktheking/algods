@@ -90,7 +90,7 @@ public interface PermutationQuestion {
 	void printPermutationOfItemIn2DArrayByFixingPosition(int rows, int cols, String item);
 
 	void printPermutationOfItemIn2DArrayByFixingInput(int rows, int cols, String item);
-	
+
 	/**
 	 * 
 	 * <pre>
@@ -103,14 +103,37 @@ public interface PermutationQuestion {
 	 * 2d_row_pos  : 1d_pos/row_count
 	 * 2d_col_pos  : 1d_pos%row_count 
 	 * 
+	 * </pre>
+	 * 
+	 * 
 	 * @param item : item String represents r chars
 	 * @param rows : row count
-	 * @parm cols : column count
-	 * 
-	 * </pre>
-	 * */
+	 * @param cols : column count
+	 */
 	void printPermutationOfItemIn2DElongatedArrayByFixingInput(int rows, int cols, String item);
 
+	/**
+	 * print premutation of 'r' distinct items by arranging them in 2D-array. whre r
+	 * <= positonCount(rows*cols)
+	 * 
+	 * Note: Elongating 2D-positions in 1D-positions make sense when we want to fix
+	 * the position. Becuase position will be passed as method parameter. And it is
+	 * easy to reach the end of 1D-array recursively by incrementing the 'posToFix'
+	 * method parameter than to reach the end cell of 2D-array recusively by
+	 * synchronizing and incrementing the two method parameters 'rowPosToFix' &
+	 * 'colPosToFix'.
+	 * 
+	 * 
+	 */
+	void printPermutationOfItemIn2DElongatedArrayByFixingPos(int rows, int cols, String item);
+	
+	void printNQueenPermutationByFixingPos(int n);
+	
+	void printNQueenPermutationByFixingInput(int n);
+	
+	
+	
+	
 	void printPermutationUsingSJT1(int[] permutation);
 
 	void printPermutationUsingSJT2(int[] permutation);
