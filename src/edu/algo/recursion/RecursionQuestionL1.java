@@ -163,6 +163,7 @@ public interface RecursionQuestionL1 {
 	void printNQueenAllowedPlacement2(int n);
 	void printNQueenAllowedPlacement3(int n);
 	void printNQueenAllowedPlacement4(int n);
+	void printNQueenAllowedPlacement5(int n);
 
 	/**
 	 * print knight tour from a given starting_point such that it visits all points

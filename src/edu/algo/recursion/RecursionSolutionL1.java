@@ -58,13 +58,15 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 		// INSTANCE.printObstacledMazePath3(maze, 0, 0, 2, 2);
 
 		int[][] maze2 = new int[][] { { 0, 1, 0, 1, 1 }, { 0, 1, 1, 0, 1 }, { 0, 0, 0, 0, 0 }, { 0, 1, 0, 1, 1 },
-				{ 0, 0, 0, 0, 0 } };
+			{ 0, 0, 0, 0, 0 } };
 
-		// INSTANCE.printObstacledMazePath3(maze2, 0, 0, 4, 4);
+			// INSTANCE.printObstacledMazePath3(maze2, 0, 0, 4, 4);
 
-		// INSTANCE.printNQueenAllowedPlacements(5);
+			// INSTANCE.printNQueenAllowedPlacements(5);
 
-		INSTANCE.printKnightTour(5, 2, 2);
+			//INSTANCE.printKnightTour(5, 2, 2);
+			
+			INSTANCE.printNQueenAllowedPlacement5(4);
 
 	}
 
@@ -736,7 +738,11 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 	 * so need to pass row as method parameter.
 	 * 
 	 * </pre>
-	 * 
+	 * Time complexity: 
+	 * total number of leaf-node in the tree. (n * n-1 * n-2 *...) = n!
+	 * total number of node = 2*n! -1
+	 * Some of the branches are getting truncated by  isValidQueenPlacement.
+	 * total time complexity : n! - time complexity of truncating the branches 
 	 */
 	private void printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(int[][] board, int row) {
 
@@ -772,6 +778,7 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 	 * 3. above right-diagonal rows-cols
 	 * 
 	 * </pre>
+	 * Time Complexity : O(n)
 	 */
 	private boolean isValidQueenPlacement(int[][] board, int row, int col) {
 
@@ -791,6 +798,108 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 		for (int i = row - 1, j = col + 1; i >= 0 && j < board.length; i--, j++) {
 			if (board[i][j] == 1)
 				return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void printNQueenAllowedPlacement5(int n) {
+
+		boolean[] occupiedColTracker = new boolean[n];
+		boolean[] occupiedAboveLeftDiagTracker = new boolean[n + n - 1];
+		boolean[] occupiedAboveRightDiagTracker = new boolean[n + n - 1];
+		printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(new int[n][n], 0, occupiedColTracker,
+				occupiedAboveLeftDiagTracker, occupiedAboveRightDiagTracker);
+	}
+
+	private void printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(int[][] board, int rowIdx, boolean[] column,
+			boolean[] aboveLeftDiag, boolean[] aboveRightDiag) {
+
+		if (rowIdx == board.length) {
+			printMatrix(board);
+		}
+
+		for (int colIdx = 0; colIdx < board[0].length; colIdx++) {
+
+			if (isValidQueenPlacement(board, rowIdx, colIdx, column, aboveLeftDiag, aboveRightDiag)) {
+
+				board[rowIdx][colIdx] = 1;
+				column[colIdx] = true;
+				aboveLeftDiag[rowIdx - colIdx + board.length - 1] = true;
+				aboveRightDiag[rowIdx + colIdx] = true;
+				
+				printNQueenCombinationByFixingRowsAndTryingColumnsAsOption(board, rowIdx + 1, column, aboveLeftDiag,
+						aboveRightDiag);
+			
+				board[rowIdx][colIdx] = 0;
+				column[colIdx] = false;
+				aboveLeftDiag[rowIdx - colIdx + board.length - 1] = false;
+				aboveRightDiag[rowIdx + colIdx] = false;
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * <pre>
+	 * 1. We will not validate queen placement in next rows because next rows are
+	 * still empty.
+	 * 
+	 * 2. We will not validate queen placement in current row because we are making
+	 * sure that current row will place at-max one queen through backtracking.
+	 * 
+	 * Remaining validation part on board:  
+	 * 1. above vertical columns
+	 * 2. above left-diagonal rows-cols 
+	 * 3. above right-diagonal rows-cols
+	 * 
+	 * above_vertical_column numbering : column numbering can be done with col_index.
+	 * 
+	 * above_left_diagonal numbering:  
+	 * 
+	 * 1. columns are decreasing along the direction of a diagonal.
+	 * 
+	 * 2. left_diagonal_count = row_count + col_count - 1
+	 * 
+	 * 3. When we do (row - col), will give us a fixed number for all the boxes representing the 
+	 * given diagonal.
+	 * 
+	 * 4.Since (row - col) will have -ve values for some diagonals, so we need to rescale the
+	 * diagonal numbering so that it can start with 0-index. The max -ve value will be equal 
+	 * to col.length -1;
+	 * 
+	 * above_right_diagonal numbering: 
+	 * 
+	 * 1. columns are increasing along the direction of a diagonal.
+	 *  
+	 * 2. right_diagonal_count = row_count + col_count - 1
+	 * 
+	 * 2. When we do (row + col), will give us a +ve fixed number for all the boxes representing the
+	 * given diagonal.
+	 * 
+	 * 
+	 * </pre>
+	 * TimeCompexity : O(1)
+	 */
+	private boolean isValidQueenPlacement(int[][] board, int rowIdx, int colIdx, boolean[] column,
+			boolean[] aboveLeftDiag, boolean[] aboveRightDiag) {
+
+		// above vertical columns
+		if (column[colIdx]) {
+			return false;
+		}
+
+		// above left-diagonal rows-cols
+		if (aboveLeftDiag[rowIdx - colIdx + board.length - 1]) {
+			return false;
+		}
+
+		// above right-diagonal rows-cols
+		if (aboveRightDiag[rowIdx + colIdx]) {
+			return false;
 		}
 
 		return true;
@@ -882,18 +991,19 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 	@Override
 	public void printNQueenAllowedPlacement1(int n) {
 		CombinationQuestion.INSTANCE.printNQueenCombinationUsingPIEByFixingPos(n);
-		
+
 	}
 
 	@Override
 	public void printNQueenAllowedPlacement2(int n) {
 		PermutationQuestion.INSTANCE.printNQueenPermutationByFixingPos(n);
-		
+
 	}
 
 	@Override
 	public void printNQueenAllowedPlacement3(int n) {
 		PermutationQuestion.INSTANCE.printNQueenPermutationByFixingInput(n);
-		
+
 	}
+
 }
