@@ -665,18 +665,22 @@ public class RecursionSolutionL1 implements RecursionQuestionL1 {
 	 * of maze.
 	 * 
 	 * NOTE_2. We need to mark the visited-cells to unvisited in return trip of an
-	 * exploration, so that the previous exploration would not impact the next
-	 * exploration path.
+	 * exploration(i.e. when all moves are exhasusted), so that the current exploration 
+	 * would not impact the next exploration paths.
 	 * 
 	 * Hypothesis: printObstacledMazePath3(startRow, startCol) : prints all the possible path
 	 * 
 	 * Substitution:
-	 * using option_left : printObstacledMazePath3(startRow, startCol - 1,  "l") : append remaining path to "l" 
-	 * using option_right: printObstacledMazePath3(startRow, startCol + 1 , "r") : append remaining path to "r" 
-	 * using option_top: printObstacledMazePath3(startRow - 1, startCol, "t") : append remaining path to "t" 
-	 * using option_down: printObstacledMazePath3(startRow - 1, startCol, "d") : append remaining path to "d" 
+	 * using option_left : go left 'l' and explore remaining_path. 
+	 *  printObstacledMazePath3(startRow, startCol - 1,  "l") :  append remaining_path to already explored path 'l'
+	 * using option_right: go right 'r' and explore remaining_path.
+	 * printObstacledMazePath3(startRow, startCol + 1 , "r") : append remaining_path to already explored path  "r" 
+	 * using option_top: go top 'r' and explore remaining_path.
+	 * printObstacledMazePath3(startRow - 1, startCol, "t") : append remaining_path to already explored path  "t" 
+	 * using option_down: go down 'd' and explore remaining_path
+	 * printObstacledMazePath3(startRow - 1, startCol, "d") : append remaining_path to already explored path "d" 
 	 * 
-	 * Induction: main code appends options l,r,t,d to path and remaining path is appended by substitution step.
+	 * Induction: main code appends options l,r,t,d to path and remainin_path is appended by substitution step.
 	 * </pre>
 	 **/
 	private void printObstacledMazePath3(int[][] obstacledMaze, boolean[][] visitedMaze, int startRow, int startCol,
