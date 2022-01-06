@@ -201,4 +201,6 @@ public interface PermutationQuestion {
 
 	void printStairPathPermutation(int targetValue, int[] allowedSteps, String path);
 
+    void printPalindromicPermuation(String input);
+
 }

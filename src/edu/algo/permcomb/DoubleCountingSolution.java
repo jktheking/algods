@@ -106,10 +106,10 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 
 		// INSTANCE.nCkUsingPascalIdentity(3, "abcde", "");
 
-		// INSTANCE.printPowerSetUsingPascalIdentityExpansion2("abc".toCharArray());
+		INSTANCE.printPowerSetUsingPascalIdentityExpansion2("abc".toCharArray());
 
 		// INSTANCE.printPowerSetUsingPascalIdentityByFixingPos(3);
-		INSTANCE.printPowerSetUsingPascalIdentityExpansionByFixingPos(3);
+		//INSTANCE.printPowerSetUsingPascalIdentityExpansionByFixingPos(3);
 
 	}
 
@@ -208,19 +208,30 @@ public class DoubleCountingSolution implements DoubleCountingQuestion {
 
 	@Override
 	public void printPowerSetUsingPascalIdentityExpansion2(char[] input) {
-		printPowerSetUsingPascalIdentityExpansion2(input, 0, "");
+		char[] output = new char[input.length];
+		Arrays.fill(output, '_');
+		printPowerSetUsingPascalIdentityExpansion2(input, 0, output);
 	}
 
 	/**
-	 * Input is used for both 1. fixing at tree levels and for 2. trying as options.
+	 * <pre>
+	 * Postion is used for both :
+	 *
+	 * 1. fixing at tree levels and for 
 	 * 
+	 * 2. trying as options.
+	 * 
+	 * 3. Note: input elemnts are hard-attached with respective postion.
+	 * </pre>
 	 */
-	private void printPowerSetUsingPascalIdentityExpansion2(char[] input, int idx, String output) {
-		System.out.println(output);
-		while (idx < input.length) {
-			char currentCh = input[idx];
-			idx = idx + 1;
-			printPowerSetUsingPascalIdentityExpansion2(input, idx, output + currentCh);
+	private void printPowerSetUsingPascalIdentityExpansion2(char[] input, int posToFix, char[] output) {
+		System.out.println(Arrays.toString(output));
+		while (posToFix < input.length) {
+			int currentPos = posToFix;
+			output[currentPos] = input[currentPos];
+			posToFix = posToFix + 1;
+			printPowerSetUsingPascalIdentityExpansion2(input, posToFix, output);
+			output[currentPos] = '_';
 		}
 
 	}

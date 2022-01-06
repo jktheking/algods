@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import edu.algo.algointro.BitwiseUtils;
 
 /**
  * <pre>
@@ -67,8 +70,9 @@ public class PermutationSolution implements PermutationQuestion {
 
 		// INSTANCE.printNQueenPermutationByFixingPos(4);
 
-		INSTANCE.printNQueenPermutationByFixingInput(4);
+		// INSTANCE.printNQueenPermutationByFixingInput(4);
 
+		INSTANCE.printPalindromicPermuation("aabbccc");
 	}
 
 	/**
@@ -1440,6 +1444,92 @@ public class PermutationSolution implements PermutationQuestion {
 		}
 
 		return true;
+	}
+
+	/**
+	 * <pre>
+	 * Properties of palindrome:
+	 * 
+	 * 1. If length of palindrome string is even, then frequency of all the chars will
+	 * be even. 
+	 *  Example.   abba -> a2b2 ; aabbbbaa; a4b4
+	 * 
+	 * 2. If length of palindrome string is odd, then frequency of all the chars will be 
+	 * even except one char whose frequency will be odd.
+	 * 
+	 * Example: abcccba -> a2b2c3--> a2b2c2c1
+	 * 
+	 * Algorithm:
+	 * 
+	 * STEP1: generate the permutation of chars by diving the frequency by 2 using integer division.
+	 * 
+	 * Example of even length aabbbbaa --> a4b4 --> divideBy2 --> a2b2; means need to generate permutation for a2b2.
+	 * Example of odd length abcccba -> a2b2c3--> a2b2c2c1--> divideBy2 --> a1b1c1c0 ; means need to generate permutation 
+	 *  for a1b1c1
+	 * 
+	 * STEP2: place the optional odd char in mid  and reverse the permutation and append at end.
+	 *  
+	 *  Example of even: aabbbbaa --> a4b4--> divideBy2 --> a2b2
+	 *  Permutations of a2b2: aabb,abba, abab ,bbaa ,baab ,baba
+	 *  -- Since example is of even so there is no mid char
+	 *   "aabb" + reverse("aabb") = "aabb" + "bbaa" = aabbbbaa
+	 *   
+	 *  Example of odd length abcccba -> a2b2c3--> a2b2c2c1--> divideBy2 --> a1b1c1c0 means  a1b1c1
+	 *   Permutations of a1b1c1 : abc, acb, bac, bca, cab,cba
+	 *   -- Since example is of odd so there is mid char whose frequency came to 0 i.e. c
+	 *   "acb" + mid_char + reverse("acb") = "acb" + c + bca = acbcbca
+	 * 
+	 * </pre>
+	 * 
+	 */
+	@Override
+	public void printPalindromicPermuation(String input) {
+
+		Map<Character, Integer> inputFreqMap = new LinkedHashMap<>();
+		for (char c : input.toCharArray()) {
+			inputFreqMap.computeIfPresent(c, (k, v) -> v + 1);
+			inputFreqMap.computeIfAbsent(c, k -> 1);
+
+		}
+		Character midChar = null;
+
+		for (Character c : inputFreqMap.keySet()) {
+
+			if (!BitwiseUtils.isEven(inputFreqMap.get(c))) {
+				if (null == midChar) {
+					midChar = c;
+				} else {
+					throw new IllegalArgumentException("palindrome not possible for input:" + input);
+				}
+
+			}
+
+			inputFreqMap.compute(c, (k, v) -> v / 2);
+
+		}
+
+		printPalindromicPermuationByFixingPos(inputFreqMap,
+				new char[inputFreqMap.values().stream().reduce(0, Integer::sum)], Optional.ofNullable(midChar), 0);
+	}
+
+	private void printPalindromicPermuationByFixingPos(Map<Character, Integer> inputFreqMap, char[] output,
+			Optional<Character> midChar, int posToFix) {
+		if (posToFix == output.length) {
+
+			String perm = String.valueOf(output);
+
+			System.out.println(perm + (midChar.isEmpty() ? "" : midChar.get())
+					+ String.valueOf(reverseCharArray(perm.toCharArray(), 0, perm.length() - 1)));
+			return;
+		}
+		for (Map.Entry<Character, Integer> entry : inputFreqMap.entrySet()) {
+			if (entry.getValue() > 0) {
+				output[posToFix] = entry.getKey();
+				entry.setValue(entry.getValue() - 1);
+				printPalindromicPermuationByFixingPos(inputFreqMap, output, midChar, posToFix + 1);
+				entry.setValue(entry.getValue() + 1);
+			}
+		}
 	}
 
 }

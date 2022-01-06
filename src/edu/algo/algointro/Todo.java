@@ -3,7 +3,11 @@ package edu.algo.algointro;
 public class Todo {
 	
 	/**
-	 * links : https://github.com/jwasham/coding-interview-university
+	 * https://nados.io/content
+	 * 
+	 * https://www.pepcoding.com/resources/
+	 * 
+	 *  https://github.com/jwasham/coding-interview-university
 	 * 
 	 * 
 	 * */
@@ -121,5 +125,7 @@ public class Todo {
 	 *</pre> 
 	 * 
 	 * */
+	
+	
 	
 }

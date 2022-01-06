@@ -1,13 +1,17 @@
 package edu.algo.recursion;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import edu.algo.algebra.BinaryExponentiation;
 import edu.algo.algointro.JosephusProblem;
-import edu.algo.algointro.RandomGenerator;
+import edu.algo.permcomb.PermutationQuestion;
 
 public class RecursionSolutionL2 implements RecursionQuestionL2 {
 
@@ -39,66 +43,16 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 
 		// System.out.println(INSTANCE.getMaxGoldFromIsLandsOnMaze(goldMine));
 
-		int[][] sudokuUnsolvable = { //
-				{ 2, 0, 0, 9, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 6, 0 }, //
-				{ 0, 0, 0, 0, 0, 1, 0, 0, 0 }, //
-				{ 5, 0, 2, 6, 0, 0, 4, 0, 7 }, //
-				{ 0, 0, 0, 0, 0, 4, 1, 0, 0 }, //
-				{ 0, 0, 0, 0, 9, 8, 0, 2, 3 }, //
-				{ 0, 0, 0, 0, 0, 3, 0, 8, 0 }, //
-				{ 0, 0, 5, 0, 1, 0, 0, 0, 0 }, //
-				{ 0, 0, 7, 0, 0, 0, 0, 0, 0 } //
-		};//
+		// INSTANCE.solveCryptArithmeticPuzzle("send", "more", "money");
 
-		// INSTANCE.solveSudoku(sudokuUnsolvable);
+		// INSTANCE.printFriendsPairing(3);
 
-		int[][] sudokuUniqeSol = { //
-				{ 3, 0, 6, 5, 0, 8, 4, 0, 0 }, //
-				{ 5, 2, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 8, 7, 0, 0, 0, 0, 3, 1 }, //
-				{ 0, 0, 3, 0, 1, 0, 0, 8, 0 }, //
-				{ 9, 0, 0, 8, 6, 3, 0, 0, 5 }, //
-				{ 0, 5, 0, 0, 9, 0, 6, 0, 0 }, //
-				{ 1, 3, 0, 0, 0, 0, 2, 5, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 7, 4 }, //
-				{ 0, 0, 5, 2, 0, 6, 3, 0, 0 } };
+		// INSTANCE.printKpartionSubsets1(4, 3);
+		// INSTANCE.printKpartionSubsets2(4, 3);
 
-		// INSTANCE.solveSudoku(sudokuUniqeSol);
+		// INSTANCE.printPalindormicPartition("abaaba");
 
-		/**
-		 * the diagonal matrices are independent of other empty matrices initially.
-		 * 
-		 * 
-		 */
-		int[][] sudokuMutipleSol = { //
-				{ 1, 2, 3, 0, 0, 0, 0, 0, 0 }, //
-				{ 4, 5, 6, 0, 0, 0, 0, 0, 0 }, //
-				{ 7, 8, 9, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 1, 2, 3, 0, 0, 0 }, //
-				{ 0, 0, 0, 4, 5, 6, 0, 0, 0 }, //
-				{ 0, 0, 0, 7, 8, 9, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 1, 2, 3 }, //
-				{ 0, 0, 0, 0, 0, 0, 4, 5, 6 }, //
-				{ 0, 0, 0, 0, 0, 0, 7, 8, 9 } };//
-
-		int[][] sudokuMutipleSol1 = { //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 }, //
-				{ 0, 0, 0, 0, 0, 0, 0, 0, 0 } };//
-
-		// INSTANCE.solveSudoku(sudokuMutipleSol);
-
-		// printMatrix(INSTANCE.generateSudoku1(50));
-
-		// printMatrix(INSTANCE.generateSudoku2(50));
-
+		INSTANCE.printKpartitionEqualSumSubsets(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3);
 
 	}
 
@@ -330,7 +284,7 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 	@Override
 	public void solveSudoku(int[][] sudokuPuzzle) {
 		Sudoku.INSTANCE.solveSudoku(sudokuPuzzle);
-		
+
 	}
 
 	@Override
@@ -343,14 +297,375 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 		return Sudoku.INSTANCE.generateSudoku2(countOfMissingElements);
 	}
 
-
-	
 	@Override
 	public void solveCrossWord(char[][] crossWordPuzzle, List<String> input) {
-		CrossWord.INSTANCE.solveCrossWordByFixingPos(crossWordPuzzle, input);
-		
+		CrossWord.INSTANCE.solveCrossWordByFixingInput(crossWordPuzzle, input);
+
 	}
 
-	
+	@Override
+	public void solveCryptArithmeticPuzzle(String s1, String s2, String s3) {
+
+		Map<Character, Integer> charDigitMapping = new TreeMap<>();
+
+		for (char c : s1.toLowerCase().toCharArray()) {
+			charDigitMapping.put(c, -1);
+		}
+
+		for (char c : s2.toLowerCase().toCharArray()) {
+			charDigitMapping.put(c, -1);
+		}
+
+		for (char c : s3.toLowerCase().toCharArray()) {
+			charDigitMapping.put(c, -1);
+		}
+
+		char[] input = charDigitMapping.keySet().stream().map(String::valueOf).collect(Collectors.joining())
+				.toCharArray();
+
+		solveCryptArithmeticByFixingInputAndDigitAsOption(s1, s2, s3, input, 0, charDigitMapping,
+				new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)));
+
+	}
+
+	/**
+	 * Strategy: Fixing input i.e. uniqe chars of S1, S2, S3 and taking digits 0-9
+	 * as option.
+	 * 
+	 */
+	private void solveCryptArithmeticByFixingInputAndDigitAsOption(String s1, String s2, String s3, char[] input,
+			int idx, Map<Character, Integer> charDigitMapping, List<Integer> digitOptions) {
+
+		if (input.length == idx) {
+			int s1Num = prepareNumber(s1, charDigitMapping);
+			int s2Num = prepareNumber(s2, charDigitMapping);
+			int s3Num = prepareNumber(s3, charDigitMapping);
+			if (s1Num + s2Num == s3Num) {
+				System.out.println(charDigitMapping);
+			}
+			return;
+		}
+
+		for (int i = 0; i < digitOptions.size(); i++) {
+
+			int digit = digitOptions.get(i);
+
+			digitOptions.remove(i);
+			charDigitMapping.put(input[idx], digit);
+
+			solveCryptArithmeticByFixingInputAndDigitAsOption(s1, s2, s3, input, idx + 1, charDigitMapping,
+					digitOptions);
+
+			// backtrack
+			charDigitMapping.put(input[idx], -1);
+			digitOptions.add(i, digit);
+		}
+	}
+
+	private int prepareNumber(String str, Map<Character, Integer> charDigitMapping) {
+		int num = 0;
+		for (int i = 0; i < str.length(); i++) {
+			num += charDigitMapping.get(str.charAt(str.length() - 1 - i))
+					* BinaryExponentiation.binaryPowerIterative(10, i);
+		}
+
+		return num;
+	}
+
+	@Override
+	public void printFriendsPairing(int friends) {
+
+		List<Integer> input = IntStream.range(1, friends + 1).boxed().collect(Collectors.toList());
+		printFriendsPairing(input, new ArrayList<>());
+	}
+
+	/**
+	 * <pre>
+	 * Note : we are need to generate the combination not permutation
+	 * 
+	 * Recursion Strategy: Here input is fixed and also taken as options.
+	 * 
+	 * 1. 1st input is taken out and considered to be fixed at level. By fixing the 1st input
+	 *    means at next level(recursion invocation) we will pass remaining input.
+	 * 
+	 * 2. We are creating options of remaing input using the 1st input.
+	 *     OPTION : pairing up 1st input with remaining inputs.
+	 *     SPECIAL_OPTION : first input is getting paired up with empty.
+	 * 
+	 * 
+	 * </pre>
+	 */
+	private void printFriendsPairing(List<Integer> input, List<String> output) {
+
+		if (input.isEmpty()) {
+			System.out.println(output);
+			return;
+		}
+
+		int friendToFix = input.remove(0);
+
+		output.add(String.valueOf(friendToFix));
+		printFriendsPairing(input, output);
+		output.remove(output.size() - 1);
+
+		for (int i = 0; i < input.size(); i++) {
+			int currentFriend = input.get(i);
+			String pair = friendToFix + "" + currentFriend;
+
+			output.add(pair);
+			input.remove(i);
+			printFriendsPairing(input, output);
+			input.add(i, currentFriend);
+			output.remove(output.size() - 1);
+		}
+
+		input.add(0, friendToFix);
+
+	}
+
+	@Override
+	public void printKpartitionSubsets1(int n, int k) {
+		printKpartionSubsetsByFixingPartitionsUsingPIE(prepareListOfSubsetsUptoSizeK(n, k), 0, "", 0, n, k);
+
+	}
+
+	private void printKpartionSubsetsByFixingPartitionsUsingPIE(List<String> input, int inIdx, String output,
+			int outputCharCount, int n, int partionToFix) {
+
+		if (partionToFix == 0) {
+			if (outputCharCount == n) {
+				System.out.println(output);
+			}
+			return;
+		}
+
+		while (inIdx < input.size()) {
+
+			String currentInput = input.get(inIdx);
+
+			inIdx++;
+
+			if (!isAlreadyPresentInOutput(currentInput, output)) {
+				printKpartionSubsetsByFixingPartitionsUsingPIE(input, inIdx, output + currentInput + "|",
+						outputCharCount + currentInput.length(), n, partionToFix - 1);
+
+			}
+
+		}
+
+	}
+
+	private boolean isAlreadyPresentInOutput(String input, String output) {
+		for (char ch : input.toCharArray()) {
+			if (output.contains(ch + "")) {
+				return true;
+			}
+
+		}
+		return false;
+	}
+
+	private static List<String> prepareListOfSubsetsUptoSizeK(int n, int k) {
+		List<String> accumulator = new ArrayList<>();
+		createPowerSetUsingPIE(n, k, "", accumulator, 1);
+		return accumulator;
+	}
+
+	private static void createPowerSetUsingPIE(int n, int k, String currOutput, List<String> accumulator,
+			int posToFix) {
+
+		if (1 <= currOutput.length() && currOutput.length() <= k) {
+			accumulator.add(currOutput);
+		}
+
+		while (posToFix <= n) {
+			createPowerSetUsingPIE(n, k, currOutput + posToFix, accumulator, ++posToFix);
+		}
+
+	}
+
+	@Override
+	public void printKpartitionSubsets2(int n, int k) {
+		String[] output = new String[k];
+		Arrays.fill(output, "_");
+		printKpartionSubsetsByFixingInput(n, output);
+
+	}
+
+	/**
+	 * <pre>
+	 * RECURSION STRATEGY: 
+	 * 1. Input is getting fixed at each level of tree.
+	 * 2. Partitions are tried as option at each level.
+	 * 
+	 * Note: While fixing a given_input we should treat all the empty partitions 
+	 * as same partition to avoid the permutation generation. So we should not
+	 * spawn new branch for each empty partition rather just spawn single branch 
+	 * against first empty partition.
+	 * 
+	 * If we wish to generate the permutations then we should spawn separate branch for 
+	 * each empty space.
+	 * 
+	 * &#64;see KPartitionSubsetsByFixingInput.pdf
+	 * </pre>
+	 * 
+	 */
+	private void printKpartionSubsetsByFixingInput(int inputToFix, String[] output) {
+
+		if (inputToFix == 0) {
+			for (String o : output) {
+				if (o.equals("_")) {
+					return;
+				}
+			}
+			System.out.println(Arrays.toString(output));
+			return;
+		}
+		for (int i = 0; i < output.length; i++) {
+			if (output[i].equals("_")) {
+				output[i] = "" + inputToFix;
+				printKpartionSubsetsByFixingInput(inputToFix - 1, output);
+				output[i] = "_";
+				break;
+			} else {
+				String previousOutStr = output[i];
+				output[i] += inputToFix;
+				printKpartionSubsetsByFixingInput(inputToFix - 1, output);
+				output[i] = previousOutStr;
+			}
+		}
+	}
+
+	@Override
+	public void printPalindromicPermuation(String input) {
+		PermutationQuestion.INSTANCE.printPalindromicPermuation(input);
+
+	}
+
+	@Override
+	public void printPalindormicPartition(String input) {
+
+		printPalindormicPartitionUsingPIE(input, "");
+	}
+
+	/**
+	 * <pre>
+	 * 
+	 * RECURSION_STRATEGY:
+	 * 
+	 * 1. input_palindromic_prefix is getting fixed at each level of tree
+	 *      --> so BASE CASE : the tree level where input_palindromic_prefix get exhausted.
+	 *      
+	 * 2.input_palindromic_prefix is tried as option at each level of tree
+	 * 
+	 * </pre>
+	 * 
+	 */
+	private void printPalindormicPartitionUsingPIE(String input, String output) {
+
+		if (input.isEmpty()) {
+			System.out.println(output);
+			return;
+		}
+
+		for (int i = 0; i < input.length(); i++) {
+			String prefix = input.substring(0, i + 1);
+			if (isPalindrome(prefix)) {
+				printPalindormicPartitionUsingPIE(input.substring(i + 1), output + "(" + prefix + ")");
+			}
+
+		}
+
+	}
+
+	private static boolean isPalindrome(String prefix) {
+		int endIndex = prefix.length() - 1;
+		// avoid self-check for odd length string.
+		for (int i = 0; i <= (endIndex - 1) >> 1; i++) {
+			if (prefix.charAt(i) != prefix.charAt(endIndex - i)) {
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+
+	@Override
+	public void printKpartitionEqualSumSubsets(int[] input, int k) {
+		// need to check edge cases
+		if (k >= input.length) {
+			System.out.println("-1");
+			return;
+		}
+
+		// total sum need to be divisible by partition_count, so that each partition
+		// will have equal_sum
+		int totalSum = IntStream.of(input).sum();
+		if (totalSum % k != 0) {
+			System.out.println("-1");
+			return;
+		}
+
+		String[] output = new String[k];
+		Arrays.fill(output, "_");
+		printKpartitionEqualSumSubsetsByFixingInput(input, 0, output, new int[k], totalSum / k);
+	}
+
+	/**
+	 * <pre>
+	 * RECURSION STRATEGY: 
+	 * 1. Input is getting fixed at each level of tree.
+	 * 2. Partitions are tried as option at each level.
+	 * 
+	 * Note: While fixing a given_input we should treat all the empty partitions 
+	 * as same partition to avoid the permutation generation. So we should not
+	 * spawn new branch for each empty partition rather just spawn single branch 
+	 * against first empty partition.
+	 * 
+	 * If we wish to generate the permutations then we should spawn separate branch for 
+	 * each empty space.
+	 *
+	 * </pre>
+	 * 
+	 */
+	private void printKpartitionEqualSumSubsetsByFixingInput(int[] input, int inputIndxToFix, String[] output,
+			int[] partitionSumAccumulator, int partitionSum) {
+
+		if (inputIndxToFix == input.length) {
+
+			for (String o : output) {
+				if (o.equals("_")) {
+					return;
+				}
+			}
+			
+			System.out.println(Arrays.toString(output));
+
+			return;
+		}
+		for (int i = 0; i < output.length; i++) {
+			if (output[i].equals("_")) {
+				output[i] = "" + input[inputIndxToFix];
+				partitionSumAccumulator[i] = input[inputIndxToFix];
+				printKpartitionEqualSumSubsetsByFixingInput(input, inputIndxToFix + 1, output, partitionSumAccumulator,
+						partitionSum);
+				partitionSumAccumulator[i] = 0;
+				output[i] = "_";
+				break;
+			} else if (partitionSumAccumulator[i] + input[inputIndxToFix] <= partitionSum) {
+
+				partitionSumAccumulator[i] += input[inputIndxToFix];
+				String previousOutStr = output[i];
+				output[i] += input[inputIndxToFix];
+
+				printKpartitionEqualSumSubsetsByFixingInput(input, inputIndxToFix + 1, output, partitionSumAccumulator,
+						partitionSum);
+				partitionSumAccumulator[i] -= input[inputIndxToFix];
+				output[i] = previousOutStr;
+			}
+		}
+
+	}
 
 }
