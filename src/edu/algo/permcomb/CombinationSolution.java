@@ -18,9 +18,11 @@ public class CombinationSolution implements CombinationQuestion {
 
 		// INSTANCE.print2DCombinationUsingPascalIdentityExpansionByFixingPos(3, 2, 4);
 		// INSTANCE.printCombinationUsingPermutationByFixingPos(4, 2);
-		//INSTANCE.printCombinationIn2DElongatedArrayUsingPIEByFixingPos(3, 2, 4);
-		
+		// INSTANCE.printCombinationIn2DElongatedArrayUsingPIEByFixingPos(3, 2, 4);
+
 		INSTANCE.printNQueenCombinationUsingPIEByFixingPos(2);
+		
+		INSTANCE.printCombinationByUsingPIEAndHandlingDuplicates("aabbccdde", 3);
 
 	}
 
@@ -424,12 +426,33 @@ public class CombinationSolution implements CombinationQuestion {
 		}
 
 		// horizontal left
-		for (int i = col-1; i >= 0; i--) {
+		for (int i = col - 1; i >= 0; i--) {
 			if (board[row][i] != '_')
 				return false;
 		}
 
 		return true;
+	}
+
+	@Override
+	public void printCombinationByUsingPIEAndHandlingDuplicates(String input, int r) {
+
+		String distinctStr = input.chars().distinct().mapToObj(ch -> (char) ch).map(Object::toString)
+				.collect(Collectors.joining());
+
+		printCombinationByUsingPIEAndHandlingDuplicates(distinctStr.toCharArray(), "", r, 0);
+	}
+
+	private void printCombinationByUsingPIEAndHandlingDuplicates(char[] input, String output, int r, int posToFix) {
+
+		if (r == 0) {
+			System.out.println(String.valueOf(output));
+			return;
+		}
+		while (posToFix < input.length) {
+			printCombinationByUsingPIEAndHandlingDuplicates(input, output + input[posToFix], r-1, ++posToFix);
+		}
+
 	}
 
 }

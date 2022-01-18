@@ -36,6 +36,13 @@ public interface CombinationQuestion {
 	 */
 	void printCombinationUsingPascalIdentityExpansionByFixingPos(int positionCount, int r);
 
+	
+	/**
+	 * @param input can contain duplicate chars
+	 * 
+	 * */
+	void printCombinationByUsingPIEAndHandlingDuplicates(String input, int r);
+	
 	/**
 	 * print all the possible combinations by applying permutation/arrangement of
 	 * 'r' identical items at 'n' given positions.

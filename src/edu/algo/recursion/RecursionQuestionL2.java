@@ -2,6 +2,7 @@ package edu.algo.recursion;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface RecursionQuestionL2 {
 
@@ -121,5 +122,131 @@ public interface RecursionQuestionL2 {
 	 * 
 	 */
 	void printKpartitionEqualSumSubsets(int[] input, int k);
+
+	/**
+	 * 1. You are given a string and a pattern.
+	 * 
+	 * 2. You've to check if the string is of the same structure as pattern without
+	 * using any regular expressions.
+	 * 
+	 * input: mzaddytzaddy
+	 * 
+	 * pattern: abcb
+	 **/
+	void printPatternMappings(String input, String pattern);
+
+	/**
+	 * 1. You are given n space separated strings, which represents a dictionary of
+	 * words.
+	 * 
+	 * 2. You are given another string which represents a sentence.
+	 * 
+	 * 3. You have to print all possible sentences from the string, such that words
+	 * of the sentence are present in dictionary.
+	 * 
+	 */
+	void wordBreakByFixingInput1(String input, Set<String> dictionary);
+
+	void wordBreakByFixingInput2(String input, Set<String> dictionary);
+
+	/**
+	 * 1. You are given a string, which represents an expression having only opening
+	 * and closing parenthesis.
+	 * 
+	 * 2. You have to remove minimum number of parenthesis to make the given
+	 * expression valid.
+	 * 
+	 * 3. If there are multiple answers, you have to print all of them.
+	 * 
+	 */
+	void printExpressionByRemovingMinimumInvalidParenthesis1(String expression);
+
+	void printExpressionByRemovingMinimumInvalidParenthesis2(String expression);
+
+	/**
+	 * 1. You are given a string which represents digits of a number.
+	 * 
+	 * 2. You have to create the maximum number by performing at-most k swap
+	 * operations on its digits.
+	 * 
+	 */
+	void printLargestNumberPossibleAfterKSwaps(int number, int k);
+
+	/***
+	 * TUG OF WAR
+	 * 
+	 * 1. You are given an array of n integers.
+	 * 
+	 * 2. You have to divide these n integers into 2 subsets such that the
+	 * difference of sum of two subsets is as minimum as possible.
+	 * 
+	 * 3. If n is even, both set will contain exactly n/2 elements. If is odd, one
+	 * set will contain (n-1)/2 and other set will contain (n+1)/2 elements.
+	 * 
+	 * 3. If it is not possible to divide, then print "-1".
+	 * 
+	 */
+	void print2PartitionMinimumSumSubsets(int[] nums);
+
+	/**
+	 * 1. You are given a word (may have one character repeat more than once).
+	 * 
+	 * 2. You are given an integer k.
+	 * 
+	 * 3. You are required to generate and print all ways you can select k distinct
+	 * characters out of the word.
+	 * 
+	 */
+	void printKdistinctSelection(String input, int k);
+
+	/**
+	 * 1. You are given a word (may have one character repeat more than once).
+	 * 
+	 * 2. You are given an integer k.
+	 * 
+	 * 3. You are required to generate and print all k length words (of distinct
+	 * chars) by using chars of the word.
+	 */
+	void printKdistinctArrangementWithoutCharRepitition(String input, int k);
+
+	/**
+	 * 1. You are given a word (may have one character repeat more than once).
+	 * 
+	 * 2. You are given an integer k.
+	 * 
+	 * 3. You are required to generate and print all k length words by using chars
+	 * of the word.
+	 * 
+	 **/
+	void printKdistinctArrangementWithCharRepitition(String input, int k);
+
+	/**
+	 * 1. You are given a number n, representing the count of coins.
+	 * 
+	 * 2. You are given n numbers, representing the denominations of n coins.
+	 * 
+	 * 3. You are given a number "amt".
+	 * 
+	 * 4. You are required to calculate and print the combinations of the n coins
+	 * (non-duplicate) using which the amount "amt" can be paid.
+	 * 
+	 */
+	void printCoinChangeCombinationWithoutDuplication(int[] coins, int amount);
+
+	/**
+	 * 1. You are given a number n, representing the count of coins.
+	 * 
+	 * 2. You are given n numbers, representing the denominations of n coins.
+	 * 
+	 * 3. You are given a number "amt".
+	 * 
+	 * 4. You are required to calculate and print the combinations of the n coins
+	 * (same coin can be used again any number of times) using which the amount
+	 * "amt" can be paid.
+	 * 
+	 */
+	void printCoinChangeCombinationWithDuplication1(int[] coins, int amount);
+	
+	void printCoinChangeCombinationWithDuplication2(int[] coins, int amount);
 
 }

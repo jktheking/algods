@@ -694,7 +694,7 @@ public class PermutationSolution implements PermutationQuestion {
 	}
 
 	/**
-	 * next_lexicographic_permutation
+	 * refer lexicographicPermutation.pdf
 	 * 
 	 * <pre>
 	 * Step1 : Identify Pivot Traverse the array from right side and stop at the

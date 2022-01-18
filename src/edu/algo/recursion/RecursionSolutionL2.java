@@ -1,16 +1,21 @@
 package edu.algo.recursion;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import edu.algo.algebra.BinaryExponentiation;
 import edu.algo.algointro.JosephusProblem;
+import edu.algo.permcomb.CombinationQuestion;
 import edu.algo.permcomb.PermutationQuestion;
 
 public class RecursionSolutionL2 implements RecursionQuestionL2 {
@@ -52,8 +57,35 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 
 		// INSTANCE.printPalindormicPartition("abaaba");
 
-		INSTANCE.printKpartitionEqualSumSubsets(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3);
+		// INSTANCE.printKpartitionEqualSumSubsets(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9
+		// }, 3);
 
+		// INSTANCE.printPatternMappings("mzaddytzaddy", "abcb");
+
+		// INSTANCE.wordBreakByFixingInput1("ilikepeppereatingmangoinpepcoding",
+		// Set.of("i", "like", "pep", "coding", "pepper", "eating", "mango", "man",
+		// "go", "in", "pepcoding"));
+		// System.out.println();
+		// INSTANCE.wordBreakByFixingInput2("ilikepeppereatingmangoinpepcoding",
+		// Set.of("i", "like", "pep", "coding", "pepper", "eating", "mango", "man",
+		// "go", "in", "pepcoding"));
+
+		// INSTANCE.printExpressionByRemovingMinimumInvalidParenthesis1("()())()");
+		// INSTANCE.printExpressionByRemovingMinimumInvalidParenthesis2("()())()");
+
+		// INSTANCE.printLargestNumberPossibleAfterKSwaps(38164, 2);
+		// INSTANCE.printLargestNumberPossibleAfterKSwaps(38164, 2);
+		// INSTANCE.printLargestNumberPossibleAfterKSwaps(54321, 10);
+
+		// INSTANCE.print2PartitionMinimumSumSubsets(new int[] { 1, 2, 3, 4, 5, 6 });
+
+		// INSTANCE.printCoinChangeCombinationWithoutDuplication(new int[] { 2, 3, 5, 6,
+		// 7 }, 12);
+
+		//INSTANCE.printCoinChangeCombinationWithDuplication1(new int[] { 2, 3, 5, 6, 7 }, 12);
+
+		//INSTANCE.printCoinChangeCombinationWithDuplication2(new int[] { 2, 3, 5, 6, 7 }, 12);
+		INSTANCE.printCoinChangeCombinationWithDuplication2(new int[] { 1, 2, 3}, 5);
 	}
 
 	@Override
@@ -639,7 +671,7 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 					return;
 				}
 			}
-			
+
 			System.out.println(Arrays.toString(output));
 
 			return;
@@ -668,4 +700,507 @@ public class RecursionSolutionL2 implements RecursionQuestionL2 {
 
 	}
 
+	@Override
+	public void printPatternMappings(String input, String pattern) {
+		System.out.println("input:" + input + "; pattern:" + pattern);
+		printPatternMappings(input, pattern.toCharArray(), 0, new HashMap<>());
+	}
+
+	/**
+	 * <pre>
+	 * RECURSION_STRATEGY :
+	 * 
+	 *  1.Fixing the pattern char at each tree level
+	 *  2.Trying all the possible substring of input as options at each tree level
+	 * 
+	 * </pre>
+	 * 
+	 */
+	private void printPatternMappings(String input, char[] pattern, int patternIndToFix,
+			Map<Character, String> patternMapping) {
+
+		if (patternIndToFix == pattern.length) {
+			if (input.isEmpty()) {
+				System.out.println(patternMapping);
+			}
+			return;
+		}
+
+		char patternCharToFix = pattern[patternIndToFix];
+
+		if (patternMapping.containsKey(patternCharToFix)) {
+			String mappedPattern = patternMapping.get(patternCharToFix);
+			if (input.startsWith(mappedPattern)) {
+				printPatternMappings(input.substring(mappedPattern.length()), pattern, patternIndToFix + 1,
+						patternMapping);
+
+			}
+		} else {
+
+			for (int i = 0; i < input.length(); i++) {
+
+				String currentPattern = input.substring(0, i + 1);
+				patternMapping.put(patternCharToFix, currentPattern);
+
+				printPatternMappings(input.substring(i + 1), pattern, patternIndToFix + 1, patternMapping);
+				// backtrack
+				patternMapping.remove(patternCharToFix);
+
+			}
+		}
+
+	}
+
+	@Override
+	public void wordBreakByFixingInput1(String input, Set<String> dictionary) {
+
+		wordBreakByFixingInput1(input, dictionary, "");
+	}
+
+	/**
+	 * <pre>
+	 * RECURSION STRATEGY: 
+	 * 
+	 * 1. fixing the input char at each level
+	 * 
+	 * 2. trying the input-prefixes as options starting from charToFix
+	 * 
+	 * </pre>
+	 * 
+	 */
+	private void wordBreakByFixingInput1(String input, Set<String> dictionary, String output) {
+		if (input.isEmpty()) {
+			System.out.println(output);
+			return;
+		}
+
+		for (int i = 0; i < input.length(); i++) {
+			String prefixToTry = input.substring(0, i + 1);
+			if (dictionary.contains(prefixToTry)) {
+				wordBreakByFixingInput1(input.substring(i + 1), dictionary, output + " " + prefixToTry);
+			}
+
+		}
+	}
+
+	@Override
+	public void wordBreakByFixingInput2(String input, Set<String> words) {
+
+		Map<Character, Set<String>> wordsMap = new HashMap<>();
+
+		for (String word : words) {
+			char startCh = word.charAt(0);
+			wordsMap.computeIfPresent(startCh, (k, v) -> {
+				v.add(word);
+				return v;
+			});
+
+			wordsMap.computeIfAbsent(startCh, k -> {
+				Set<String> set = new HashSet<>(Set.of(word));
+				return set;
+			});
+
+		}
+
+		wordBreakByFixingInput2(input, wordsMap, "");
+	}
+
+	/**
+	 * <pre>
+	 * RECURSION STRATEGY: 
+	 * 
+	 * 1. fixing the input char at each level
+	 * 
+	 * 2. trying the dictionary words that starts with charToFix as options
+	 * 
+	 * </pre>
+	 * 
+	 */
+	private void wordBreakByFixingInput2(String input, Map<Character, Set<String>> dictionary, String output) {
+
+		if (input.isEmpty()) {
+			System.out.println(output);
+			return;
+		}
+
+		char charToFix = input.charAt(0);
+		if (dictionary.containsKey(charToFix)) {
+			for (String wordToTry : dictionary.get(charToFix)) {
+				if (input.startsWith(wordToTry)) {
+					wordBreakByFixingInput2(input.substring(wordToTry.length()), dictionary, output + " " + wordToTry);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void printExpressionByRemovingMinimumInvalidParenthesis1(String expression) {
+		getValidExpressionByFixingInvalidParenthesis(expression, getMinimumInvalidParenthesis(expression), 0,
+				new HashSet<>());
+
+	}
+
+	/**
+	 * Invalid parenthesis is getting fixed at each level of tree
+	 * 
+	 * Input is tried as options at each tree level and invalid-parenthesis is
+	 * removed from the input of next level.
+	 * 
+	 */
+	private void getValidExpressionByFixingInvalidParenthesis(String expression, char[] invalidParenthesis,
+			int indxToFix, Set<String> duplicateCahe) {
+
+		if (indxToFix == invalidParenthesis.length) {
+
+			if (!duplicateCahe.contains(expression) && isValidParenthesisExression(expression)) {
+				System.out.println(expression);
+				duplicateCahe.add(expression);
+			}
+
+			return;
+		}
+
+		for (int i = 0; i < expression.length(); i++) {
+			char currentCh = expression.charAt(i);
+			if (currentCh == invalidParenthesis[indxToFix]) {
+				getValidExpressionByFixingInvalidParenthesis(expression.substring(0, i) + expression.substring(i + 1),
+						invalidParenthesis, indxToFix + 1, duplicateCahe);
+
+			}
+
+		}
+
+	}
+
+	private boolean isValidParenthesisExression(String expression) {
+		return getMinimumInvalidParenthesis(expression).length == 0;
+
+	}
+
+	private char[] getMinimumInvalidParenthesis(String expression) {
+
+		Deque<Character> stack = new ArrayDeque<>();
+
+		for (char ch : expression.toCharArray()) {
+			if (stack.isEmpty() || ch == '(') {
+				stack.push(ch);
+
+			} else if (ch == ')') {
+				if (stack.peek() == '(') {
+					stack.pop();
+				} else {
+					stack.push(ch);
+				}
+
+			}
+		}
+
+		return stack.stream().map(String::valueOf).collect(Collectors.joining()).toCharArray();
+
+	}
+
+	@Override
+	public void printExpressionByRemovingMinimumInvalidParenthesis2(String expression) {
+
+		Map<String, Integer> frequencyMap = new HashMap<>();
+		for (char ch : expression.toCharArray()) {
+
+			frequencyMap.computeIfPresent("" + ch, (k, v) -> {
+				v += 1;
+				return v;
+			});
+
+			frequencyMap.computeIfAbsent("" + ch, k -> 1);
+
+		}
+
+		for (char ch : getMinimumInvalidParenthesis(expression)) {
+
+			if (ch == '(') {
+				frequencyMap.put(OPENING_BRACKET, frequencyMap.get(OPENING_BRACKET) - 1);
+
+				frequencyMap.computeIfPresent(INVALID_OPENING_BRACKET, (k, v) -> {
+					v += 1;
+					return v;
+				});
+
+				frequencyMap.computeIfAbsent(INVALID_OPENING_BRACKET, k -> 1);
+
+			} else if (ch == ')') {
+				frequencyMap.put(CLOSING_BRACKET, frequencyMap.get(CLOSING_BRACKET) - 1);
+
+				frequencyMap.computeIfPresent(INVALID_CLOSING_BRACKET, (k, v) -> {
+					v += 1;
+					return v;
+				});
+
+				frequencyMap.computeIfAbsent(INVALID_CLOSING_BRACKET, k -> 1);
+			}
+		}
+
+		getValidExpressionByFixingPosition(frequencyMap, expression.toCharArray(), 0, "", new HashSet<>());
+	}
+
+	private static String OPENING_BRACKET = "(";
+	private static String CLOSING_BRACKET = ")";
+	private static String INVALID_OPENING_BRACKET = "-(";
+	private static String INVALID_CLOSING_BRACKET = "-)";
+
+	/**
+	 * 
+	 * Input Frequency example: O5, C3, IO2, IC1
+	 * 
+	 * Input char 'position' is getting fixed at each tree level.
+	 * 
+	 * Unique input chars are tried as options for posToFix.
+	 * 
+	 * 
+	 */
+	private void getValidExpressionByFixingPosition(Map<String, Integer> inputFreqMap, char[] input, int posToFix,
+			String output, Set<String> duplicateCahe) {
+
+		if (posToFix == input.length) {
+
+			if (isValidParenthesisExression(output) && !duplicateCahe.contains(output)) {
+				duplicateCahe.add(output);
+				System.out.println(output);
+			}
+
+			return;
+		}
+
+		if (inputFreqMap.containsKey(OPENING_BRACKET) && inputFreqMap.get(OPENING_BRACKET) > 0) {
+			if (input[posToFix] == '(') {
+				inputFreqMap.put(OPENING_BRACKET, inputFreqMap.get(OPENING_BRACKET) - 1);
+				getValidExpressionByFixingPosition(inputFreqMap, input, posToFix + 1, output + "(", duplicateCahe);
+				inputFreqMap.put(OPENING_BRACKET, inputFreqMap.get(OPENING_BRACKET) + 1);
+			}
+		}
+
+		if (inputFreqMap.containsKey(CLOSING_BRACKET) && inputFreqMap.get(CLOSING_BRACKET) > 0) {
+			if (input[posToFix] == ')') {
+				inputFreqMap.put(CLOSING_BRACKET, inputFreqMap.get(CLOSING_BRACKET) - 1);
+				getValidExpressionByFixingPosition(inputFreqMap, input, posToFix + 1, output + ")", duplicateCahe);
+				inputFreqMap.put(CLOSING_BRACKET, inputFreqMap.get(CLOSING_BRACKET) + 1);
+			}
+		}
+
+		if (inputFreqMap.containsKey(INVALID_OPENING_BRACKET) && inputFreqMap.get(INVALID_OPENING_BRACKET) > 0) {
+
+			if (input[posToFix] == '(') {
+				inputFreqMap.put(INVALID_OPENING_BRACKET, inputFreqMap.get(INVALID_OPENING_BRACKET) - 1);
+				getValidExpressionByFixingPosition(inputFreqMap, input, posToFix + 1, output, duplicateCahe);
+				inputFreqMap.put(INVALID_OPENING_BRACKET, inputFreqMap.get(INVALID_OPENING_BRACKET) + 1);
+			}
+		}
+
+		if (inputFreqMap.containsKey(INVALID_CLOSING_BRACKET) && inputFreqMap.get(INVALID_CLOSING_BRACKET) > 0) {
+
+			if (input[posToFix] == ')') {
+				inputFreqMap.put(INVALID_CLOSING_BRACKET, inputFreqMap.get(INVALID_CLOSING_BRACKET) - 1);
+				getValidExpressionByFixingPosition(inputFreqMap, input, posToFix + 1, output, duplicateCahe);
+				inputFreqMap.put(INVALID_CLOSING_BRACKET, inputFreqMap.get(INVALID_CLOSING_BRACKET) + 1);
+			}
+		}
+
+	}
+
+	@Override
+	public void printLargestNumberPossibleAfterKSwaps(int number, int k) {
+		int[] maxHolder = new int[1];
+		maxHolder[0] = number;
+		printLargestNumberPossibleAfterKSwaps(String.valueOf(number), k, maxHolder);
+		System.out.println(maxHolder[0]);
+	}
+
+	/**
+	 * Recursion Strategy:
+	 * 
+	 * 1. Fixing the swap-number at each level of tree
+	 * 
+	 * 2. Trying all the possible swaps as options at each tree level
+	 * 
+	 */
+	private void printLargestNumberPossibleAfterKSwaps(String number, int k, int[] maxHolder) {
+
+		if (k == 0) {
+			if (Integer.valueOf(number) > maxHolder[0]) {
+				maxHolder[0] = Integer.valueOf(number);
+			}
+
+			return;
+		}
+
+		for (int i = 0; i < number.length() - 1; i++) {
+			for (int j = i + 1; j < number.length(); j++) {
+				// if larger digit is on right side then swap.
+				if (number.charAt(i) < number.charAt(j)) {
+					printLargestNumberPossibleAfterKSwaps(swap(number.toCharArray(), i, j), k - 1, maxHolder);
+				}
+			}
+		}
+	}
+
+	private String swap(char[] num, int i, int j) {
+		char temp = num[i];
+		num[i] = num[j];
+		num[j] = temp;
+		return String.valueOf(num);
+	}
+
+	// TUG OF WAR QUESTION
+	@Override
+	public void print2PartitionMinimumSumSubsets(int[] nums) {
+		String[] minSumSolutionHolder = new String[1];
+		print2PartitionMinimumSumSubsets(nums, 0, new ArrayList<>(), new ArrayList<>(), new int[] { Integer.MAX_VALUE },
+				minSumSolutionHolder);
+		System.out.println(minSumSolutionHolder[0]);
+	}
+
+	/**
+	 * Fixing input at each tree level.
+	 * 
+	 * 2 partitions are tried as options.
+	 * 
+	 **/
+	private void print2PartitionMinimumSumSubsets(int[] nums, int inputIndXToFix, List<Integer> s1, List<Integer> s2,
+			int[] minSumHolder, String[] minSumSolutionHolder) {
+
+		if (inputIndXToFix == nums.length) {
+			int currentSumMin = Math.abs(s1.stream().reduce(0, Integer::sum) - s2.stream().reduce(0, Integer::sum));
+
+			if (currentSumMin < minSumHolder[0]) {
+				minSumHolder[0] = currentSumMin;
+				minSumSolutionHolder[0] = s1.toString() + " " + s2.toString();
+			}
+
+			return;
+		}
+
+		int numToFix = nums[inputIndXToFix];
+
+		// (nums.length + 1) / 2; can take care of both even and odd.
+		if (s1.size() < (nums.length + 1) / 2) {
+			s1.add(numToFix);
+			print2PartitionMinimumSumSubsets(nums, inputIndXToFix + 1, s1, s2, minSumHolder, minSumSolutionHolder);
+			s1.remove(s1.size() - 1);
+		}
+
+		if (s2.size() < (nums.length + 1) / 2) {
+			s2.add(numToFix);
+			print2PartitionMinimumSumSubsets(nums, inputIndXToFix + 1, s1, s2, minSumHolder, minSumSolutionHolder);
+			s2.remove(s2.size() - 1);
+		}
+
+	}
+
+	@Override
+	public void printKdistinctSelection(String input, int k) {
+		CombinationQuestion.INSTANCE.printCombinationByUsingPIEAndHandlingDuplicates(input, k);
+
+	}
+
+	@Override
+	public void printKdistinctArrangementWithoutCharRepitition(String input, int k) {
+		String distinctStr = input.chars().distinct().mapToObj(ch -> (char) ch).map(Object::toString)
+				.collect(Collectors.joining());
+		PermutationQuestion.INSTANCE.printPermutationOfItemInArrayByFixingPos(k, distinctStr);
+
+	}
+
+	@Override
+	public void printKdistinctArrangementWithCharRepitition(String input, int k) {
+		PermutationQuestion.INSTANCE.printPermutationOfItemInArrayByHandlingDuplicateAndFixingPos(k, input);
+	}
+
+	@Override
+	public void printCoinChangeCombinationWithoutDuplication(int[] coins, int amount) {
+
+		printCoinChangeCombinationWithoutDuplicationUsingPIE(coins, amount, 0, "", 0);
+	}
+
+	private void printCoinChangeCombinationWithoutDuplicationUsingPIE(int[] coins, int amount, int sumTillNow,
+			String output, int coinPosToFix) {
+
+		if (sumTillNow == amount) {
+			System.out.println(output);
+			return;
+		} else if (sumTillNow > amount) {
+			return;
+		}
+
+		while (coinPosToFix < coins.length) {
+			printCoinChangeCombinationWithoutDuplicationUsingPIE(coins, amount, sumTillNow + coins[coinPosToFix],
+					output + coins[coinPosToFix] + ",", ++coinPosToFix);
+		}
+
+	}
+
+	@Override
+	public void printCoinChangeCombinationWithDuplication1(int[] coins, int amount) {
+		printCoinChangeCombinationWithDuplicationUsingPIE(coins, amount, 0, "", 0);
+	}
+
+	/**
+	 * 
+	 * Note:
+	 * 
+	 * 1. fixing input position at level.
+	 * 
+	 * 2. trying positions as options at each level starting from the position fixed
+	 * at previous level
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	private void printCoinChangeCombinationWithDuplicationUsingPIE(int[] coins, int amount, int sumTillNow,
+			String output, int coinPosToFix) {
+
+		if (sumTillNow == amount) {
+			System.out.println(output);
+			return;
+		} else if (sumTillNow > amount) {
+			return;
+		}
+
+		for (int i = coinPosToFix; i < coins.length; i++) {
+			printCoinChangeCombinationWithDuplicationUsingPIE(coins, amount, sumTillNow + coins[i],
+					output + coins[i] + ",", i);
+		}
+	}
+
+	@Override
+	public void printCoinChangeCombinationWithDuplication2(int[] coins, int amount) {
+
+		printCoinChangeCombinationWithDuplicationUsingIncExc(coins, amount, 0, "", 0);
+	}
+
+	private void printCoinChangeCombinationWithDuplicationUsingIncExc(int[] coins, int amount, int sumTillNow,
+			String output, int coinPosToFix) {
+
+		if (sumTillNow == amount) {
+			System.out.println(output);
+			return;
+		}
+
+		if(coinPosToFix == coins.length || sumTillNow > amount) {
+			return;
+		}
+
+		// By excluding the current coin, it should be above of the include call because
+		// we are tempering the sumTillNow/output in while loop.
+		printCoinChangeCombinationWithDuplicationUsingIncExc(coins, amount, sumTillNow, output, coinPosToFix + 1);
+
+
+		// By including the current coins, 1 to k times
+		while (sumTillNow <= amount) {
+			sumTillNow = sumTillNow + coins[coinPosToFix];
+			output = output + coins[coinPosToFix]+",";
+			printCoinChangeCombinationWithDuplicationUsingIncExc(coins, amount, sumTillNow,
+					output, coinPosToFix + 1);
+
+		}
+	}
 }

@@ -1201,7 +1201,7 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 
 	/**
 	 * Approach: At every index , The amount of rain water stored is the difference
-	 * between current index height and minimum of lef_ max_height and
+	 * between current index height and minimum of left_ max_height and
 	 * right_max_height
 	 * 
 	 * TimeComplexity : O(2n) = O(n)
