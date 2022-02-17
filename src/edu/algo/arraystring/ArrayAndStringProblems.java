@@ -2,6 +2,8 @@ package edu.algo.arraystring;
 
 import java.util.List;
 
+import edu.ds.linkedlist.KarumanchiQuestions;
+
 public interface ArrayAndStringProblems {
 
 	ArrayAndStringProblems INSTANCE = new ArrayAndStringSolutions();
@@ -116,7 +118,7 @@ public interface ArrayAndStringProblems {
 	 * could have been made.
 	 * 
 	 **/
-	List<String> getMaxSortablePartitionBruteForce(int input[]);
+	List<String> getMaxSortablePartitionsBruteForce(int input[]);
 
 	/**
 	 *
@@ -127,7 +129,7 @@ public interface ArrayAndStringProblems {
 	 * could have been made.
 	 * 
 	 **/
-	List<String> getMaxSortablePartition(int input[]);
+	List<String> getMaxSortablePartitions(int input[]);
 
 	/**
 	 * You are given an integer array arr that is a permutation of [0, 1, ...,
@@ -139,7 +141,7 @@ public interface ArrayAndStringProblems {
 	 * Note: Shuffling of chunks is not allowed.
 	 * 
 	 */
-	List<String> getMaxSortablePartitionOnPermuted0ToNMinus1Elements(int[] input);
+	List<String> getMaxSortablePartitionsOnPermutedZeroToNMinusOneElements(int[] input);
 
 	/**
 	 * <pre>
@@ -211,5 +213,250 @@ public interface ArrayAndStringProblems {
 	 * 
 	 */
 	int maxProductOfAny3Number(int[] input);
+
+	/**
+	 * <pre>
+	 * 1. Given an integer X.
+	 * 
+	 * 2. The task is to find the minimum number of jumps to reach a point X in the
+	 * number line starting from zero.
+	 * 
+	 * 3. The first jump made can be of length one unit and each successive jump
+	 * will be exactly one unit longer than the previous jump in length.
+	 * 
+	 * 4. It is allowed to go either left or right in each jump.
+	 * 
+	 * refer : MinimumJumps+i-i.pdf
+	 * </pre>
+	 */
+	int getMinnimumJumpsToReachAPointOnXaxis1(int x);
+
+	int getMinnimumJumpsToReachAPointOnXaxis2(int x);
+
+	/**
+	 * <pre>
+	 * Given an integer array nums and two integers 'left' and 'right', return the
+	 * number of contiguous non-empty subarrays such that the value of the maximum
+	 * array element in that subarray is in the range [left, right].
+	 * 
+	 * The test cases are generated so that the answer will fit in a 32-bit integer.
+	 * 
+	 * Input: nums = [2,1,4,3], left = 2, right = 3 Output: 3
+	 * 
+	 * Explanation: There are three subarrays that meet the requirements: [2], [2, 1], [3].
+	 * </pre>
+	 */
+	int countOfSubarraysWithBoundedMax(int[] nums, int left, int right);
+
+	void inplaceTransposeOfNXNArray(int[][] nxn);
+
+	/**
+	 * Given an integer array nums, you need to find one continuous subarray that if
+	 * you only sort this subarray in ascending order, then the whole array will be
+	 * sorted in ascending order.
+	 * 
+	 * Return the shortest such subarray and output its length.
+	 * 
+	 * Example:
+	 * 
+	 * Input: nums = [2,6,4,8,10,9,15] Output: 5
+	 * 
+	 * Explanation: You need to sort [6, 4, 8, 10, 9] in ascending order to make the
+	 * whole array sorted in ascending order.
+	 * 
+	 */
+	default void printShortestUnsortedContiguousSubarray1(int[] nums) {
+
+		// solution: sort the array, and compare with original array
+		// get the first diff position as startPoint while scanning from left to right
+		// get the first diff position as endPoint while scanning from right to left
+	}
+
+	void printShortestUnsortedContiguousSubarray2(int[] nums);
+
+	void printShortestUnsortedContiguousSubarray3(int[] nums);
+
+	/**
+	 * 1. You are given an n x n 2D matrix representing an image.
+	 * 
+	 * 2. rotate the image by 90 degrees (clockwise).
+	 * 
+	 * 3. You have to rotate the image in-place, which means you have to modify the
+	 * input 2D matrix directly.
+	 * 
+	 * 4. DO NOT allocate another 2D matrix and do the rotation.
+	 */
+	void inplaceRotateMatrixBy90DegreeClockwise(int[][] matrix);
+
+	void reverseVowelOfAString(String input);
+
+	/**
+	 * <pre>
+	 * 1. A group of two or more people wants to meet and minimize the total travel
+	 * distance.
+	 * 
+	 * 2. You are given a 2D grid of values 0 or 1, where each 1 marks the home of
+	 * someone in the group.
+	 * 
+	 * 3. Return min distance where distance is calculated using 'Manhattan
+	 * Distance', where distance(p1, p2) = |p2.x - p1.x| + |p2.y - p1.y|.
+	 * 
+	 * Example: Input
+	 *
+	 * [
+	 *	[1,0,0,0,1],
+	 *	[0,0,0,0,0],
+	 *	[0,0,1,0,0]
+	 *  ]
+	 *
+	 * Output: 6
+	 * 
+	 * Explanation:
+	 * The point (0,2) is an ideal meeting point, as the total travel distance of 2 + 2 + 2 = 6 
+	 * is minimal. So return 6.
+	 * </pre>
+	 */
+	int getTotalDistanceTravelledToReachBestMeetingPoint(int[][] personCoordinates);
+
+	/**
+	 * 1. Given two non-negative integers, num1 and num2 represented as string.
+	 * 
+	 * 2. Return the sum of num1 and num2 as a string.
+	 * 
+	 * 3. You must solve the problem without using any built-in library for handling
+	 * large integers (such as BigInteger).
+	 * 
+	 * 4. You must also not convert the inputs to integers directly.
+	 * 
+	 * @see KarumanchiQuestions#summationForEqualSizedList(edu.ds.linkedlist.List,
+	 *      edu.ds.linkedlist.List)
+	 * 
+	 */
+	String getSummationOfTwoStrings(String str1, String str2);
+
+	String getProductOfTwoString(String str1, String str2);
+
+	/**
+	 * 1. Given an array nums of non-negative integers.
+	 * 
+	 * 2. Arrange elements of array in specific order, all even elements followed by
+	 * odd elements. [even -> odd]
+	 * 
+	 * 3. Preserve the order of Even elements without using extra space.
+	 * 
+	 * 4. Hence question is order specific so you have to match your output in order
+	 * of given output.a
+	 * 
+	 */
+	void sortArrayByParity(int arr[]);
+
+	/**
+	 * 1. Question will be provided with "n" Intervals. An Interval is defined as
+	 * (sp,ep) i.e. sp --> starting point & ep --> ending point of an Interval
+	 * (sp/ep are inclusive). Some Intervals may or maynot overlap eachother.
+	 * 
+	 * 2. Intervals[i] = [startingPoint,endingPoint] Task is to "Merge all
+	 * Overlapping Intervals".
+	 * 
+	 * Example 1 : Input : [[1,3],[2,4],[6,8],[10,14],[7,9]] Output :
+	 * [[1,4],[6,9],[10,14]]
+	 * 
+	 * Example 2 : Input : [[1,3],[3,15],[6,8],[10,14],[7,9]] Output : [[1,3][3,15]]
+	 * 
+	 * Example 3 : Input : [[1,3],[5,8],[10,19],[15,20],[9,9]] Output :
+	 * [[1,3],[5,8],[9,9],[10,20]]
+	 * 
+	 * Note : If ending time of interval I1 is same as starting time of I2 then both
+	 * will consider as separate Intervals.
+	 * 
+	 */
+	void printMergableIntervals(int[][] intervals);
+
+	int[] getSieveOfEratosthenes(int n);
+
+	void printSieveOfEratosthenesInRange(int start, int end);
+
+	/**
+	 * 1. A complex number can be represented as a string on the form "Real +
+	 * Imaginary i" where:
+	 * 
+	 * 1.1 Real is the real part and is an integer in the range [-100, 100].
+	 * 
+	 * 1.2 Imaginary is the imaginary part and is an integer in the range [-100,
+	 * 100]. 1.3 i^2 == -1.
+	 * 
+	 * 2. Given two complex numbers num1 and num2 as strings, return a string of the
+	 * complex number that represents their multiplications.
+	 */
+	void printProductOfTwoComplexNumber(String c1, String c2);
+
+	/**
+	 * 1. Given a string s.
+	 * 
+	 * 2. Return true if the s can be palindrome after deleting at most one
+	 * character from it.
+	 * 
+	 * s = "abca" by removing c => aba or b => aca we will have valid palindrome.
+	 * 
+	 * 
+	 */
+	boolean isValidPalindromeByIgnoringAtMostOneChar(String input);
+
+	/**
+	 * https://leetcode.com/problems/car-fleet/
+	 * 
+	 */
+	int calulateCarFleets(int target, int[] position, int[] speed);
+
+	/**
+	 * 1. You are given a number in form of String.
+	 * 
+	 * 2. You can swap two digits at most once to get the maximum valued number in
+	 * that string.
+	 * 
+	 * 3. Return the maximum valued number you can get in form of string.
+	 * 
+	 * num = "2736" : res = "7236" Explanation : swap 2 and 7 to get maximum values
+	 * 
+	 */
+	void maxNumberFromSingleSwap(String num);
+
+	/**
+	 * https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/
+	 * 
+	 * <pre>
+	 * You have k lists of sorted integers in non-decreasing order. Find the
+	 * smallest range that includes at least one number from each of the k lists.
+	 * 
+	 * Input: nums = [[4,10,15,24,26],[0, ,12,20],[5,18,22,30]] 
+	 * 
+	 * Output: [20,24]
+	 * </pre>
+	 */
+	int[] smallestRangeCoveringElementsOfKLists1(List<List<Integer>> nums);
+
+	int[] smallestRangeCoveringElementsOfKLists2(List<List<Integer>> nums);
+
+	/**
+	 * 
+	 * https://leetcode.com/problems/minimum-domino-rotations-for-equal-row/
+	 * 
+	 * 
+	 * 1. In a row of dominoes, tops[i] and bottoms[i] represent the top and bottom
+	 * halves of the ith domino.
+	 * 
+	 * 2. A domino(Dice Structured) is a tile with two numbers from 1 to 6 - one on
+	 * each half of the tile.
+	 * 
+	 * 3. We may rotate the ith domino, so that tops[i] and bottoms[i] swap values.
+	 * 
+	 * 4. Return the minimum number of rotations so that all the values in tops are
+	 * the same, or all the values in bottoms are the same.
+	 * 
+	 * 5. If it cannot be done, return -1.
+	 */
+	public int minDominoRotationsForEqualRow1(int[] tops, int[] bottoms);
+	
+	public int minDominoRotationsForEqualRow2(int[] tops, int[] bottoms);
 
 }

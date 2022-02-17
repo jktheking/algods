@@ -1089,7 +1089,7 @@ public class StackKarumanchiSolutions<T extends Comparable<T>> implements StackK
 
 						System.out.println("subGridCounter :" + ++subGridCounter);
 						// statement placed here will be executed => [m(m+1)/2]*[n(n+1)/2] =
-						// m(m+1)*n(n+1)/4 times; means starting of each sub-grid will land here
+						// m(m+1)*n(n+1)/4 times; means starting of each sub-grid will land here.
 						// each sub-grid will be of dimension row:(fromRow,ToRow+1) col:(fromCol,
 						// toCol+1)
 

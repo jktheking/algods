@@ -792,7 +792,7 @@ public class PermutationSolution implements PermutationQuestion {
 			char temp = input[startIndex + i];
 			input[startIndex + i] = input[endIndex - i];
 			input[endIndex - i] = temp;
-		}
+		} 
 
 		return input;
 	}
