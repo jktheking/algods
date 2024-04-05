@@ -10,7 +10,7 @@ import java.util.EmptyStackException;
  * let's say there is a value Z = 2*y - X. This Z will always be smaller than X.
  * 
  * PUSH STRATEGY : If current_element to be pushed on the stack is smaller than
- * the min_element, then instead of pushing actual current element we will push
+ * the min_element, then instead of pushing actual current element we will push the encoded element
  * the difference (2*CURRENT_ELEMENT - MIN_ELEMENT). This calculated difference
  * will help to preserve the previous_min.
  * 
