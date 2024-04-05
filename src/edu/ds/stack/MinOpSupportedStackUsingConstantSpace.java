@@ -6,9 +6,8 @@ import java.util.EmptyStackException;
 
 /**
  * Implementation Note:
- * 
- * 2*y - X <= X ; It is true for all values of y which is less than equal to X
- * i.e. y<=X
+ * If y<=X, then 
+ * let's say there is a value Z = 2*y - X. This Z will always be smaller than X.
  * 
  * PUSH STRATEGY : If current_element to be pushed on the stack is smaller than
  * the min_element, then instead of pushing actual current element we will push
