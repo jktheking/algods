@@ -1,0 +1,18 @@
+private int getIndex(K key) {
+    int hash = key.hashCode();
+    return hash & (table.length - 1);
+}
+
+(table.length - 1):
+If table.length is a power of two, (table.length - 1) results in a number where all lower bits are set to 1, and all higher bits are 0. 
+For example, if table.length is 16 (which is 2 power 4), then table.length - 1 equals 15, which in binary is 1111.
+
+Bitwise AND (&) Operation:
+The bitwise AND operation between the hash code and (table.length - 1) effectively performs a modulus operation when table.length is a power of two.
+The result is that it clears all the bits of the hash that are higher than the lowest bits of (table.length - 1).
+
+This operation yields a number that is always between 0 and table.length - 1, inclusive. This is exactly the range of valid indices for the hash table array.
+
+Handling Negative Hash Codes:
+Normally, the result of the bitwise AND operation is non-negative because bitwise operations don't care about the sign bit; they just work with the bits directly.
+This means the earlier concern of ensuring the hash code is non-negative before modulus operation is not relevant here because we're not actually dividing; we're just masking bits.
