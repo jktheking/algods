@@ -70,7 +70,7 @@ public class L189RotateArray {
 	 *
 	 *
 	 *CASE_B: Multiple transitive-iteration-cycle i.e when GCD(n,k) > 1
-	 * lets say array size is 4 and k=2
+	 * lets say array size is 6 and k=2
 	 * (i+k)% n = r
 	 * (0+2)%6 = 2
 	 * (1+2)%6 = 3
