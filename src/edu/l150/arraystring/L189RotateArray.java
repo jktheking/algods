@@ -16,6 +16,22 @@ public class L189RotateArray {
 
 	/**
 	 *
+	 * <pre>
+	 *
+	 * Juggling algorithm for array-rotation
+	 *
+	 * Total number of transitive-iteration-cycles : GCD(n,k)
+	 * Total elements in a transitive-iteration-cycle : n/GCD(n,k)
+	 * Each transitive-iteration-cycle is mutually exclusive.
+	 *
+	 * Why is it that once we finish a cycle, we start the new cycle from the next
+	 * element i.e. can't the next element be already a part of a processed cycle?
+	 *
+	 *https://leetcode.com/problems/rotate-array/solutions/259418/clear-cyclic-replacement-java-solution-with-proof-o-n-in-time-o-1-in-space/
+	 *
+	 * </pre>
+	 *
+	 *
 	 * As we know, how we convert 1-d array index to 2-d array index
 	 *
 	 * row = (index_1d) / 2d_arr[0].length col = (index_1d) % 2d_arr[0].length
@@ -40,8 +56,8 @@ public class L189RotateArray {
 	 * (n-1+k)%n = k-1;
 	 *
 	 * Two cases:
-	 * CASE_A: odd sized array
-	 * when nums length is odd, lets say array size is 5 and k=2
+	 * CASE_A: Single transitive-iteration-cycle, i.e. when GCD(n,k) = 1
+	 * lets say array size is 5 and k=2
 	 * (i+k)% n = r
 	 * (0+2)%5 = 2
 	 * (1+2)%5 = 3
@@ -53,8 +69,8 @@ public class L189RotateArray {
 	 * There is single transitive-iteration-cycle starting at 0.
 	 *
 	 *
-	 *CASE_B: even sized array
-	 * when nums length is even, lets say array size is 4 and k=2
+	 *CASE_B: Multiple transitive-iteration-cycle i.e when GCD(n,k) > 1
+	 * lets say array size is 4 and k=2
 	 * (i+k)% n = r
 	 * (0+2)%6 = 2
 	 * (1+2)%6 = 3
@@ -79,7 +95,7 @@ public class L189RotateArray {
 	 * 1 -> 4 -> 1
 	 * 2 -> 5 -> 2
 	 *
-	 *Means for even-sized-array  loop needs to start the transitive-iteration cycles in sequence
+	 *Means loop needs to start the transitive-iteration cycles in sequence
 	 *until we reach to the total count of elements.
 	 *
 	 * </pre>
@@ -89,11 +105,9 @@ public class L189RotateArray {
 	 * This approach involves repeatedly moving elements to their correct positions
 	 * one step at a time until all elements are in their correct positions.
 	 *
-	 * For odd-sized array single transitive-iteration covers all the elements of
-	 * the array. It starts from the 0th index and ends at 0th index. But for
-	 * even-sized array there can be multiple transitive-iterations. So, for
-	 * even-sized-array outer loop needs to start the transitive-iteration cycles in
-	 * sequence until we reach to the total count of elements.
+	 * Total number of transitive-iteration-cycles : GCD(n,k) Total elements in a
+	 * transitive-iteration-cycle : n/GCD(n,k)
+	 *
 	 *
 	 * Time complexity: O(n), because loop is getting iterated only once, that is we
 	 * scan each element once combined inner+outer loop. This can be understood from
