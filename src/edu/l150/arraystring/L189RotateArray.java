@@ -76,8 +76,8 @@ public class L189RotateArray {
 	 *
 	 * There are 3 contiguous transitive-iteration-cycle starting at contiguous indices 0, 1, 2
 	 * 0 -> 3 -> 0
-	 * 1 -> 4 -> 0
-	 * 2 -> 5 -> 0
+	 * 1 -> 4 -> 1
+	 * 2 -> 5 -> 2
 	 *
 	 *Means for even-sized-array  loop needs to start the transitive-iteration cycles in sequence
 	 *until we reach to the total count of elements.
