@@ -20,18 +20,17 @@ package edu.algo.dp.str;
  *
  *      lps = 2 + r.length;  provided that LPS(r) is equal to r.length
  *
- *
- *  caseA#2. c1 is included in the solution but not c2 LPS(c1r)
- *  caseA#3. c2 is included in the solution but not c1 LPS(rc2)
- *  caseA#4. c1 and c2 both are not included in the solution; LPS(r)
+ *  caseA#2. c1 is included in the solution but not c2 =>  0 + LPS(c1r) even though c1==c2.
+ *  caseA#3. c2 is included in the solution but not c1 => 0 + LPS(rc2) even though c1==c2
+ *  caseA#4. c1 and c2 both are not included in the solution => 0 + LPS(r) even though c1==2.
  *
  *  caseA#4. will come as sub-solution of caseA#2 and caseA#3.
  *
  * Case2: When c1!=c2
  *
- *  caseB#1. c1 is included in the solution but not c2 LPS(c1r)
- *  caseB#2. c2 is included in the solution but not c1 LPS(rc2)
- *  caseB#3. c1 and c2 both are not included in the solution; LPS(r)
+ *  caseB#1. c1 is included in the solution but not c2 => 0 + LPS(c1r)
+ *  caseB#2. c2 is included in the solution but not c1 => 0 + LPS(rc2)
+ *  caseB#3. c1 and c2 both are not included in the solution => 0 + LPS(r)
  *
  * caseB#1, caseB#2, caseB#3 are duplicates
  *
