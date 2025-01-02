@@ -3,11 +3,15 @@ package edu.algo.dp.str;
 /**
  * <pre>
  *
+ * <a href=
+ *      "https://leetcode.com/problems/longest-palindromic-substring">leetcode</a>
+ * 
+ *  Note: For order of n solution check: "Manacher’s Algorithm" 
+ *
  * String structure: c1rc2, this format can cover whole problem string,
  * lps in begning, lps in middle, lps in end.
  * LPS function structure: LPS(i,j)
  * where i points to c1 and j points to c2
- *
  *
  * Case1: When c1==c2
  *
@@ -31,8 +35,6 @@ package edu.algo.dp.str;
  *
  * caseB#1, caseB#2, caseB#3 are duplicates
  *
- *
- *
  * </pre>
  */
 
@@ -42,7 +44,9 @@ public class LongestPalindromicSubString3 {
 
 		// String s = "BAABBBBB";
 
-		String s = "aacabdkacaa";
+		// String s = "aacabdkacaa";
+
+		String s = "aaca";
 
 		// String s = "abaaa";
 
@@ -62,7 +66,9 @@ public class LongestPalindromicSubString3 {
 	 *
 	 * LPS(i,j) i starts at 0 and j starts at end
 	 *
-	 * Base Case: i==j; then LPS ==1; when string is of length 1
+	 * Base Cases are extreme conditions:
+	 * 
+	 * 1. i==j; then LPS ==1; when string is of length 1
 	 *
 	 * j< i: when j crosses the i; meaning no characters between the indices i,j
 	 * which results in a length of 0.
@@ -80,34 +86,36 @@ public class LongestPalindromicSubString3 {
 		}
 
 		int solution = 0;
+		int exclude_i_sol = 0;
+		int exclude_j_sol = 0;
 
-		// case A:
-		if (s1[i] == s1[j]) {
+		/*
+		 * currentString = c1rc2; i points to c1 j points to c2
+		 *
+		 * remaingString = r
+		 *
+		 * string_length_formula = (j - i + 1)
+		 *
+		 * remainingString_length = (j - i + 1) - 2; 2 is for c1, c2
+		 * 
+		 * Here with caseA (s1[i] == s1[j]): we have merged the condition
+		 * "remainingLength == recursiveLPS1(s1, i + 1, j - 1))" ; so exclude calls of
+		 * caseA is getting executed by else-section.
+		 *
+		 */
+		int remainingLength = j - i - 1;
+		if (s1[i] == s1[j] && (remainingLength == recursiveLPS1(s1, i + 1, j - 1))) {
+			solution = 2 + remainingLength;
 
-			/*
-			 * currentString = c1rc2; i points to c1 j points to c2
-			 *
-			 * remaingString = r
-			 *
-			 * string_length_formula = (j - i + 1)
-			 *
-			 * remainingString_length = (j - i + 1) - 2; 2 is for c1, c2
-			 *
-			 */
-			int remainingLength = j - i - 1;
-			if (remainingLength == recursiveLPS1(s1, i + 1, j - 1)) {
-				solution = 2 + remainingLength;
-			}
+		} else {
+			exclude_i_sol = recursiveLPS1(s1, i + 1, j);
+			exclude_j_sol = recursiveLPS1(s1, i, j - 1);
 		}
-
-		// exclude decision tree calls which are common for CaseA and caseB
-		int exclude_i_sol = recursiveLPS1(s1, i + 1, j);
-		int exclude_j_sol = recursiveLPS1(s1, i, j - 1);
 
 		return Math.max(solution, Math.max(exclude_i_sol, exclude_j_sol));
 	}
 
-	// different solution
+	// different solution similar to longest common substring
 	private static int recursiveLPS(char[] s1, int i, int j, int palindromicCount) {
 
 		//
