@@ -1,7 +1,14 @@
 package edu.algo.dp.str;
 
+import java.util.Arrays;
+
 /**
  * <pre>
+ *
+ * Since it's the class of subset,as all the problem space can be generated
+ * using subset, so we will use  'S = cr' and will try to include/exclude
+ * with all the native cases of the problem.
+ *
  * To understand decision tree cases:
  * {@link https://www.youtube.com/watch?v=lkL_--Bnxi4}
  *
@@ -12,23 +19,33 @@ package edu.algo.dp.str;
  * s1 = c1r1
  * s2 = c2r2
  *
- * caseA: c1 == c2
- * ==================================
- * there can be 4 further situations:
- *  caseA#1. c1 and c2 both be included in the solution; 1 + LCS(r1,r2)
- *  caseA#2. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
- *  caseA#3. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
- *  caseA#4. c1 and c2 both are not included in the solution; 0 + LCS(r1, r2)
+ *If we apply the unit step i.e. include/exclude on c1r1 and c2r2 there can
+ *be following 4 case
  *
- *  example string:
- *  s1 = zpabcde ;     s1 = zp[a]bcde
- *  s2 =  nayaablmdxb; s2 =  n[a]yaablmdxb
+ *  case_1. c1 and c2 both be included in the solution; 1 + LCS(r1,r2)
+ *  case_2. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
+ *  case_3. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
+ *  case_4. c1 and c2 both are not included in the solution; 0 + LCS(r1, r2)
+ *  
+ *  
  *
- *  Let's say i in pointing to marked [a] of s1, and j is pointing to marked [a] of s2.
- *  s1 = p1 + [a] + r1
- *  s2 = p22 + [a] + r2
+ *Explanation for case_1:
+ *=========================
+ *   LCS(A^X, A^Y) = A^LCS(X, Y), where ^ denotes string concatenation.
+ *   This means that if the first characters of two strings (c1 and c2) are equal, 
+ *    i.e. if c1==c2
+ *    then LCS(c1r1, c2r2) = 1 + LCS(r1, r2), where r1 and r2 are the remaining substrings of s1 and s2.
+ *  
+ *  
+ * example string:
+ *   s1 = zpabcde ;     s1 = zp[a]bcde
+ *   s2 =  nayaablmdxb; s2 =  n[a]yaablmdxb
  *
- *  Let's consider the following situations:
+ * Let's say i in pointing to marked [a] of s1, and j is pointing to marked [a] of s2.
+ *   s1 = p1 + [a] + r1
+ *   s2 = p2 + [a] + r2
+ *
+ * Let's consider the following situations:
  *
  *  Sit#1. if we find Longest common subsequence because of including part_before i.e. LCS(p1, p2)
  *    still extra 1 will be added because of suffix [a] of s1 and s2.
@@ -37,23 +54,26 @@ package edu.algo.dp.str;
  *  Sit#2. if we find Longest common subsequence because of including r1,r2 i.e. LCS(r2,r2)
  *  still extra 1 will be added because of prefix [a] of s1 and s2.
  *    So, final LCS = 1 +  LCS(r2,r2)
+ *	
  *
- *    So, if we think thoroughly in the context of longest common subsequence then out of 4 possibilities
- *    only CASEA#1 is valid and others (caseA#2,caseA#3,caseA#4) are either redundant or invalid sub-cases.
- *    The other possibilities (case A#2, case A#3, case A#4) may be considered in other problems,
- *    such as the longest common substring.
+ *LCS(c1r1,c2r2)  will be 1 + LCS(r1,r2) only when c1==c2.
  *
  *
+ *Explanation for case_2 and case_3
+ *==================================
+ *Since either c1 or c2 is included in the solution, means c1 is not equal to c2.
+ *Max (0 + LCS(r1, s2), 0 + LCS(r2, s1))
  *
- *  caseB:c1 != c2
- *  ====================================
- *  caseB#1. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
- *  caseB#2. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
- *  caseB#3. c1 and c2 both are not included in the solution; 0 + LCS(r1, s2)
  *
- *  In case of caseB all possibilities are valid, just that caseB#3 will be the repeated sub-problem
- *  of caseB#1 and caseB#2.
- *   (Note: {@link https://www.youtube.com/watch?v=lkL_--Bnxi4})
+ *
+ *Explanation for case_4 
+ *======================
+ *c1 and c2 both are not included in the solution and this can come as 
+ *repeated recursive sub-problem of case_2 and case_3, so the solution 
+ *from case_4 will always be less than the value returned from case_2 or case_3.
+ *so we can ignore the case_4.
+ *Note: {@link https://www.youtube.com/watch?v=lkL_--Bnxi4}
+ *
  *
  *
  *  So, Final recursive formulation  will be as follows:
@@ -62,46 +82,42 @@ package edu.algo.dp.str;
  *
  *  CASE A: if c1==c2 then LCS(s1,s2) = 1 + LCS(r1,r2)
  *
- *  CASE B: if c1 != c2 then LCS(s1,s2) = Max (LCS(r1, s2), LCS(r2, s1), LCS(r1,r2) )
+ *  CASE B: if c1 != c2 then LCS(s1,s2) = Max (LCS(r1, s2), LCS(r2, s1), LCS(r1, r2))
+ *   here we can ignore the LCS(r1,r2), 
+ *   means when c1 != c2 then LCS(s1, s2) =  Max (LCS(r1, s2), LCS(r2, s1)))
  *
  *
  * </pre>
  *
  ***/
+
 public class LongestCommonSubSequence1 {
 
 	public static void main(String[] args) {
 
-		String str1 = "AGGTAB";
-		String str2 = "GXTXAYB";
+		String str1 = "LAGGTAB";
+		String str2 = "LGXYXAYB";
 
 		System.out.println(recursiveLCS(str1.toCharArray(), str2.toCharArray(), 0, 0));
 		System.out.println(dpLCS(str1.toCharArray(), str2.toCharArray()));
 
+		int[][] cache = new int[str1.length()][str2.length()];
+		for (int i = 0; i < cache.length; i++) {
+			Arrays.fill(cache[i], -1);
+		}
+		recursiveLCSMemo(str1.toCharArray(), str2.toCharArray(), 0, 0, cache);
+
 	}
 
 	/**
-	 * Let's pick two pointer i and j, i points to char of s1 and j points to char
-	 * of s2.
-	 *
-	 * CASE A: s1[i] == s2[j] then LCS(s1, s2) = 1 + LCS(s1[i+1..n], s2[j+1...n])
-	 *
-	 * CASE B: if s1[i] != s2[j] then LCS(s1, s2) = MAX[LCS(s1[i+1..n], s2), LCS(s1,
-	 * s2[j+1..n])]
-	 *
-	 *
-	 * if i == s1.length or j == s2.length then LCS = 0; means when either s1 or s2
-	 * becomes exhausted or becomes empty
-	 *
-	 * time complexity : O(2^min(s1.length, s2.length))
-	 *
-	 * For each character pair (s1[i], s2[j]), there are two main cases to consider:
-	 * If the characters match, the function makes one recursive call with (i+1,
-	 * j+1). If the characters do not match, the function makes two recursive calls:
-	 * (i, j+1) and (i+1, j). In worst case each recursive call can potentially lead
-	 * to two more calls, leading to an exponential growth in the number of calls.
-	 *
+	 * - The recursive cases cover the possibilities of including or excluding
+	 * characters c1 and c2.
+	 * 
+	 * - The time complexity of this approach is O(2^min(s1.length, s2.length)) due
+	 * to the exponential number of subsequences.
+	 * </pre>
 	 */
+
 	private static int recursiveLCS(char[] s1, char[] s2, int i, int j) {
 
 		// LCS of empty string is 0
@@ -112,7 +128,6 @@ public class LongestCommonSubSequence1 {
 		if (s1[i] == s2[j]) {
 			return 1 + recursiveLCS(s1, s2, i + 1, j + 1);
 		} else {
-
 			return Math.max(recursiveLCS(s1, s2, i + 1, j), recursiveLCS(s1, s2, i, j + 1));
 		}
 
@@ -146,13 +161,13 @@ public class LongestCommonSubSequence1 {
 
 		if (s1[i] == s2[j]) {
 			cache[i][j] = 1 + recursiveLCSMemo(s1, s2, i + 1, j + 1, cache);
-			return cache[i][j];
 		} else {
 
 			cache[i][j] = Math.max(recursiveLCSMemo(s1, s2, i + 1, j, cache),
 					recursiveLCSMemo(s1, s2, i, j + 1, cache));
-			return cache[i][j];
 		}
+
+		return cache[i][j];
 
 	}
 
@@ -192,7 +207,7 @@ public class LongestCommonSubSequence1 {
 	 *
 	 * </pre>
 	 */
-	private static int dpLCS(char[] s1, char[] s2) {
+	public static int dpLCS(char[] s1, char[] s2) {
 
 		// Note:since we are creating dp with one extra length to accommodate empty
 		// string condition, so we need to take care while pointing to index of s1, s2
@@ -223,8 +238,35 @@ public class LongestCommonSubSequence1 {
 			}
 		}
 
+		System.out.println(printLCS(s1, s2, dp));
 		return dp[s1.length][s2.length];
 
 	}
-}
 
+	private static String printLCS(char[] s1, char[] s2, int[][] dp) {
+
+		StringBuilder sb = new StringBuilder();
+
+		int i = s1.length;
+		int j = s2.length;
+
+		while (i > 0 && j > 0) {
+
+			// since c1 and c2 are equal; and in dp tabulation we have decremented
+			// both i and j; so here also we will adjust both i and j to reach to the
+			// previous state i.e. previous cell which contributed to the solution
+			if (s1[i - 1] == s2[j - 1]) {
+				sb.append(s1[i - 1]);
+				i--;
+				j--;
+			} else if (dp[i - 1][j] > dp[i][j - 1]) {
+				// means we have come from the upper cell, so we will go back to upper cell
+				i--;
+			} else {
+				j--;
+			}
+
+		}
+		return sb.reverse().toString();
+	}
+}
