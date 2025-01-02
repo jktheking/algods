@@ -30,26 +30,42 @@ import java.util.Arrays;
  *  j : represents current char of s2, i.e. c2
  *
  *
+ * caseA: c1 == c2
+ * ==================================
  * there can be 4 possibilities of decision tree :
  * 
- *  case_1. c1 and c2 both be included in the solution; LCS(r1,r2, contiguousCount + 1)
- *  - means c1 and c2 are equal
- *  
- *  case_2. c1 is included in the solution but not c2; LCS(s1, r2, 0)
- *  case_3. c2 is included in the solution but not c1; LCS(r1, s2, 0)
- *  case_4. c1 and c2 both are not included in the solution; LCS(r1, r2, 0)
- *  
- *  case_2, case_3, case_4: belongs to the situation where  current char in consideration is not 
- *  equal i.e. c1 != c2
+ *  caseA#1. c1 and c2 both be included in the solution; LCS(r1,r2, contiguousCount + 1)
+ *  caseA#2. c1 is included in the solution but not c2; LCS(s1, r2, 0)
+ *  caseA#3. c2 is included in the solution but not c1; LCS(r1, s2, 0)
+ *  caseA#4. c1 and c2 both are not included in the solution; LCS(r1, r2, 0)
  *
- *  case_4. would come as child in decision-tree (sub-problem)  of caseA#2 and caseA#3
+ *  caseA#4. would come as child in decision-tree (sub-problem)  of caseA#2 and caseA#3
  *
+ *   If we think thoroughly in the context of longest common substring then all the possibilities
+ *   are valid caseA#1, caseA#2, caseA#3, caseA#4.
  *
  *   Why do we need to take contiguousCount variable ?
  *   - Because LCS can exist in part_before(p1, p2) and c1r1, c2r2 does not contain LCS.
  *
  *
- *  ========================================================
+ *
+ *  caseB:c1 != c2
+ *  ====================================
+ *  caseB#1. c1 is included in the solution but not c2; LCS(s1, r2, 0)
+ *  caseB#2. c2 is included in the solution but not c1;  LCS(r1, s2, 0)
+ *  caseB#3. c1 and c2 both are not included in the solution; LCS(r1, r2, 0)
+ *
+ *  caseB#3. would come as sub-problem possibility of caseB#1 and caseB#2
+ *
+ *  In case of caseB all possibilities caseB#1, caseB#2, caseB#3 are valid.
+ *
+ *
+ *  Now, we need to pick the max among  caseA#1, caseA#2, caseA#3, caseA#4, caseB#1, caseB#2, caseB#3.
+ *  
+ *  ==============================================================
+ *  If we merge all the above cases together then the final formulation will be as follows:
+ *  =============================================================
+ * 
  *  BASE CASE: If any of S1 or S2 is empty then LCS will be 0.
  *
  *  if c1==c2 then
@@ -62,6 +78,10 @@ import java.util.Arrays;
  *
  *   finalLCS = Max(contiguousCount, include_LCS, excldue_C1_S1, excldue_C2_S2)
  *
+ *   Why do we need to take contiguousCount variable ?
+ *   - Because LCS can exist in part_before(p1, p2) and c1r1, c2r2 does not contain LCS.
+ *
+ *
  *
  * </pre>
  *
@@ -71,18 +91,25 @@ public class LongestCommonSubString2 {
 
 	public static void main(String[] args) {
 
-		String s1 = "yyzabcpdex";
-		String s2 = "yyczxabc";
+		// String s1 = "yyzabcpdex";
+		// String s2 = "yyczxabc";
 
-		// String s1 = "abc";
-		// String s2 = "abc";
+		String s1 = "bbca";
+		String s2 = "bca";
 
 		System.out.println(recursiveLCS(s1.toCharArray(), s2.toCharArray()));
-		System.out.println(tabulationLCS("ABCDGH".toCharArray(), "ACDGHR".toCharArray()));
+		System.out.println(recursiveLCS1(s1.toCharArray(), s2.toCharArray()));
+		System.out.println(tabulationLCS(s1.toCharArray(), s2.toCharArray()));
 
 	}
 
 	private static int recursiveLCS(char[] s1, char[] s2) {
+
+		return recursiveLCS(s1, s2, 0, 0, 0);
+
+	}
+
+	private static int recursiveLCS1(char[] s1, char[] s2) {
 
 		return recursiveLCS1(s1, s2, 0, 0, 0);
 
@@ -110,16 +137,14 @@ public class LongestCommonSubString2 {
 			// returned from the result will be greater than the input contiguousCount
 			contiguousCount = recursiveLCS(s1, s2, i + 1, j + 1, contiguousCount + 1);
 
-		} else {
-			// let's generate the solution space by
-			// 1. including c1 and excluding c2
-			// 2. Including c2 and excluding c1
-			// also, since c1 != c2, means we are not extending the running contiguousCount
-			// rather we need to reset the same
-			includeC1ExcludeC2 = recursiveLCS(s1, s2, i, j + 1, 0);
-			includeC2ExcludeC2 = recursiveLCS(s1, s2, i + 1, j, 0);
-
 		}
+		// let's generate the solution space by
+		// 1. including c1 and excluding c2
+		// 2. Including c2 and excluding c1
+		// also, since c1 != c2, means we are not extending the running contiguousCount
+		// rather we need to reset the same
+		includeC1ExcludeC2 = recursiveLCS(s1, s2, i, j + 1, 0);
+		includeC2ExcludeC2 = recursiveLCS(s1, s2, i + 1, j, 0);
 
 		return Math.max(contiguousCount, Math.max(includeC1ExcludeC2, includeC2ExcludeC2));
 
