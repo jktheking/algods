@@ -34,18 +34,25 @@ package edu.algo.dp.str;
  */
 
 /**
+ * 
+ * 
  * <pre>
- *How to solve the DP problems?
+ *How to solve the comparison based DP problems?
+ *
+ *Rule of Thumb: "COMBINATIONS_ON_COMPARISONS"
+ *Apply all the possible combinations using include/exclude on problem comparisons. 
+ *
+ *
  *
  *First define the recursive solution --> the memomization --> then tabulation
  *
  *Steps involved:
  *===============================================================================
  *
- *STEP1:Drawing PROBLEM-SPACE-SPAN
+ *STEP1:Drawing PROBLEM-COMPARISION-SPACE-SPAN
  *
- *First we need to figure-out the "problem-space-span" on inputs given in problem.
- *Here we can try options from brute-force to figure-out problem-space-span
+ *First we need to figure-out the "problem-comparision-space-span" on inputs given in the problem 
+ *Here we can try comparison options from brute-force to figure-out problem-comparision-space-span
  *and recursive function definition.
  *===============================================================================
  * s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
@@ -66,10 +73,10 @@ package edu.algo.dp.str;
  *
  *================================================================================
  *
- *STEP3: Defining CASES as per PROBLEM-SPACE-SPAN
+ *STEP3: Defining CASES as per PROBLEM-COMPARISION-SPACE-SPAN
  *
  *need to figure-out the cases available in problem statement by just
- *moving through the PROBLEM-SPACE-SPAN.
+ *moving through the PROBLEM-COMPARISION-SPACE-SPAN.
  *================================================================================
  *
  *Here if we scan chars of s1 or s2 with respect to s3 we can traverse
@@ -156,7 +163,9 @@ package edu.algo.dp.str;
  *     additionally we need to take care of contiguousPrefix.
  *    By excluding the current char 'c' and creating the solution without 'c',
  *      additionally we need to take care of contiguousPrefix.
- *
+ *   This is effectively:
+ *    - apply currentElement with running contiguousPrefix
+ *    - start the contiguousPrefix from currentElement itself
  *
  * </pre>
  **/
