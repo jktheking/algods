@@ -5,31 +5,40 @@ import java.util.Arrays;
 /**
  * <pre>
  *
- * Since it's the class of subset,as all the problem space can be generated
- * using subset, so we will use  'S = cr' and will try to include/exclude
- * with all the native cases of the problem.
+ * Longest Common Subsequence (LCS) - Problem Analysis and Recursive Formulation
  *
- * To understand decision tree cases:
+ * The LCS problem is a subset problem, where the entire problem space can be 
+ * generated using subsets. We'll follow the approach of "S = cr" (current_char + remaining_string),
+ * and for each step, we will either include or exclude characters based on the problem's native cases.
+ *
+ * For better understanding of the decision tree and recursion:
  * {@link https://www.youtube.com/watch?v=lkL_--Bnxi4}
+ *
  *
  * Let's explore all possibilities of recursive decision:
  *
+ *PROBLEM-COMPARISION-SPACE-SPAN:
  * String = current_char + remaining string
  *
  * s1 = c1r1
  * s2 = c2r2
+ * 
+ *PROBLEM-COMPARISION-CASES:
  *
- *If we apply the unit step i.e. include/exclude on c1r1 and c2r2 there can
- *be following 4 case
- *
- *  case_1. c1 and c2 both be included in the solution; 1 + LCS(r1,r2)
- *  case_2. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
- *  case_3. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
- *  case_4. c1 and c2 both are not included in the solution; 0 + LCS(r1, r2)
+ * =====================================
+ * PROBLEM-COMPARISION caseA: c1 == c2
+ * =====================================
+ * 
+ * Apply COMBINATIONS-ON-COMPARISONS:
+ * 
+ *  caseA#1. c1 and c2 both be included in the solution; 1 + LCS(r1,r2)
+ *  caseA#2. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
+ *  caseA#3. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
+ *  caseA#4. c1 and c2 both are not included in the solution; 0 + LCS(r1, r2)
  *  
  *  
  *
- *Explanation for case_1:
+ *Property of LCS:
  *=========================
  *   LCS(A^X, A^Y) = A^LCS(X, Y), where ^ denotes string concatenation.
  *   This means that if the first characters of two strings (c1 and c2) are equal, 
@@ -56,23 +65,24 @@ import java.util.Arrays;
  *    So, final LCS = 1 +  LCS(r2,r2)
  *	
  *
- *LCS(c1r1,c2r2)  will be 1 + LCS(r1,r2) only when c1==c2.
+ *SO, for PROBLEM-COMPARISION-CASE "C1==C2" only COMBINATION caseA#1 is valid. Means when
+ *c1==c2, then it is always the part of the solution, there will not be the situation where 
+ *either c1 or c2 going to be the part of solution if it happens then it is going to be a redundant solution. 
  *
+ * 
+ *=====================================
+ *  PROBLEM-COMPARISION caseB:c1 != c2
+ *=====================================
+ *Apply COMBINATIONS-ON-COMPARISONS:
  *
- *Explanation for case_2 and case_3
- *==================================
- *Since either c1 or c2 is included in the solution, means c1 is not equal to c2.
- *Max (0 + LCS(r1, s2), 0 + LCS(r2, s1))
+ *  caseB#1. c1 is included in the solution but not c2; 0 + LCS(s1, r2)
+ *  caseB#2. c2 is included in the solution but not c1; 0 + LCS(r1, s2)
+ *  caseB#3. c1 and c2 both are not included in the solution; 0 + LCS(r1, s2)
  *
- *
- *
- *Explanation for case_4 
- *======================
- *c1 and c2 both are not included in the solution and this can come as 
- *repeated recursive sub-problem of case_2 and case_3, so the solution 
- *from case_4 will always be less than the value returned from case_2 or case_3.
- *so we can ignore the case_4.
- *Note: {@link https://www.youtube.com/watch?v=lkL_--Bnxi4}
+ *  In case of caseB all possibilities are valid, just that caseB#3 will be the repeated sub-problem
+ *  of caseB#1 and caseB#2.
+ *  
+ *  Note: {@link https://www.youtube.com/watch?v=lkL_--Bnxi4}
  *
  *
  *
@@ -84,6 +94,7 @@ import java.util.Arrays;
  *
  *  CASE B: if c1 != c2 then LCS(s1,s2) = Max (LCS(r1, s2), LCS(r2, s1), LCS(r1, r2))
  *   here we can ignore the LCS(r1,r2), 
+ *   
  *   means when c1 != c2 then LCS(s1, s2) =  Max (LCS(r1, s2), LCS(r2, s1)))
  *
  *
