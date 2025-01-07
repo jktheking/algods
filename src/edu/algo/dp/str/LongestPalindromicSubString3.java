@@ -43,9 +43,7 @@ public class LongestPalindromicSubString3 {
 
 		// String s = "BAABBBBB";
 
-		// String s = "aacabdkacaa";
-
-		String s = "aaca";
+		String s = "aacabdkacaa";
 
 		// String s = "abaaa";
 
@@ -55,7 +53,9 @@ public class LongestPalindromicSubString3 {
 
 		System.out.println(recursiveLPS1(s.toCharArray(), 0, s.length() - 1));
 
-		System.out.println(recursiveLPS(s.toCharArray(), 0, s.length() - 1, 0));
+		System.out.println(recursiveLPS3(s.toCharArray(), 0, s.length() - 1, 0));
+
+		System.out.println(tabulationOnLPS3_wrongImplementation(s.toCharArray()));
 
 		System.out.println(tabulationLPS(s.toCharArray()));
 
@@ -102,9 +102,18 @@ public class LongestPalindromicSubString3 {
 		 * caseA is getting executed by else-section.
 		 *
 		 */
-		int remainingLength = j - i - 1;
-		if (s1[i] == s1[j] && (remainingLength == recursiveLPS1(s1, i + 1, j - 1))) {
-			solution = 2 + remainingLength;
+
+		if (s1[i] == s1[j]) {
+
+			int remainingLength = j - i - 1;
+			// if LPS(r) != r it means c1 and c2 together are not participating in the
+			// solution,means exclude calls to be invoked.
+			if (remainingLength == recursiveLPS1(s1, i + 1, j - 1)) {
+				solution = 2 + remainingLength;
+			} else {
+				exclude_i_sol = recursiveLPS1(s1, i + 1, j);
+				exclude_j_sol = recursiveLPS1(s1, i, j - 1);
+			}
 
 		} else {
 			exclude_i_sol = recursiveLPS1(s1, i + 1, j);
@@ -114,8 +123,36 @@ public class LongestPalindromicSubString3 {
 		return Math.max(solution, Math.max(exclude_i_sol, exclude_j_sol));
 	}
 
+	// optimized form
+	private static int recursiveLPS2(char[] s1, int i, int j) {
+		if (i == j) {
+			return 1;
+		}
+
+		if (j < i) {
+			return 0;
+		}
+
+		int solution = 0;
+		int exclude_i_sol = 0;
+		int exclude_j_sol = 0;
+
+		int remainingLength = j - i - 1;
+
+		// if LPS(r) != r it means c1 and c2 together are not participating in the
+		// solution,
+		// means exclude calls to be invoked.
+		if (s1[i] == s1[j] && (remainingLength == recursiveLPS2(s1, i + 1, j - 1))) {
+			solution = 2 + remainingLength;
+		} else {
+			exclude_i_sol = recursiveLPS2(s1, i + 1, j);
+			exclude_j_sol = recursiveLPS2(s1, i, j - 1);
+		}
+		return Math.max(solution, Math.max(exclude_i_sol, exclude_j_sol));
+	}
+
 	// different solution similar to longest common substring
-	private static int recursiveLPS(char[] s1, int i, int j, int palindromicCount) {
+	private static int recursiveLPS3(char[] s1, int i, int j, int palindromicCount) {
 
 		//
 		if (i == j) {
@@ -128,45 +165,119 @@ public class LongestPalindromicSubString3 {
 
 		int incCount = 0;
 		if (s1[i] == s1[j]) {
-
-			incCount = recursiveLPS(s1, i + 1, j - 1, palindromicCount + 2);
+			/*
+			 * Important Note: For the scenario, where even though c1 == c2, and they do not
+			 * contribute to the solution because the 'r' of c1rc2 is not a palindrome.
+			 * Example: For the string s = "aacabdkacaa", the substring r = 'bdk' is not a
+			 * palindrome. As a result, the palindromicCount is getting reset to ZERO by the
+			 * exclude calls outside this if-block to get the recursion work correctly.
+			 * 
+			 * If we attempt to directly translate this logic into a tabulation approach by
+			 * storing palindromicCount in a dp cell, the invocation-call mapping would fail
+			 * to address cases where c1 == c2, but c1 and c2 are not part of the solution.
+			 * This limitation arises because the tabulation approach does not allow us to
+			 * correctly override dp[i][j] with ZERO in such cases.
+			 * 
+			 * To fix this, we must explicitly enforce the condition that 'r' must be a
+			 * palindrome (i.e., LPS(r) == r) to ensure correctness.
+			 * 
+			 * 
+			 */
+			incCount = recursiveLPS3(s1, i + 1, j - 1, palindromicCount + 2);
 
 		}
 
-		int resi = recursiveLPS(s1, i + 1, j, 0);
-		int resj = recursiveLPS(s1, i, j - 1, 0);
+		int resi = recursiveLPS3(s1, i + 1, j, 0);
+		int resj = recursiveLPS3(s1, i, j - 1, 0);
 
 		return Math.max(incCount, Math.max(resi, resj));
 
 	}
 
 	/**
-	 * <pre>
-	 * Cell Meaning:
-	 * dp[i][j] represents whether the substring starting at index i and ending at index j (both inclusive) is a palindrome.
-	 * If the substring is a palindrome, its length will be stored; otherwise, ZERO will be stored.
+	 * recursiveLPS3(char[] s1, int i, int j, int palindromicCount)
 	 *
-	 * Problem String Representation: S = C1rC2; to obtain the tabulated solution, we first solve for smaller substrings, starting with 'r'.
-	 * Initially, we consider 'r' of length 1, then length 2, and so forth.
-	 *
-	 * Given that 'r' is the middle part of the string representation (C1rC2) and must be solved before the complete string
-	 * string is considered -- we start solving the problem from the diagonal of the matrix as a rule of thumb.
-	 * - The diagonal represents r with length 1.
-	 * - The next cell ahead of  the diagonal cells represent r with length 2, and so on.
-	 *
-	 * Note: How to calculate 'r' at a given cell S = C1rC2?
-	 * The length of 'r' is j - i - 1, and its value is stored in the cell dp[i+1][j-1].
-	 *
-	 * Refer to the recursive solution for the final implementation:
-	 *
-	 * if (dp[i+1][j-1] != 0) {
-	 * // r is a palindrome
-	 *     dp[i][j] = 2 + dp[i+1][j-1];
-	 * } else {
-	 * // r is not a palindrome
-	 *     dp[i][j] = 0;
-	 * }
-	 * </pre>
+	 * We will store palindromicCount at dp[i][j]; which as per recursiveLPS3
+	 * represents whether the substring starting at index i and ending at index j
+	 * (both inclusive) is a palindrome. If the substring is a palindrome, its
+	 * length will be stored; otherwise, ZERO will be stored.
+	 * 
+	 */
+
+	private static int tabulationOnLPS3_wrongImplementation(char[] s) {
+
+		/*
+		 * Let's understand the indices and their relationship for diagonal traversal:
+		 * 
+		 * Note: string.length == dp.length == dp[0].length
+		 * 
+		 * - At the centre-diagonal (0th diagonal) gap between indices i and j is ZERO
+		 * (i.e., i == j). It increases/decreases by one if we traverse right/left
+		 * respectively.
+		 * 
+		 * j is derived from diagonal-index (j = i +/- diagonal-index)
+		 * 
+		 * - Length of diagonal is derived from dp.length ==> diagonal_length =
+		 * (dp.length - diagonal-index)
+		 * 
+		 * Number of diagonals between center to corner = dp.length
+		 * 
+		 * - The length of the substring represented by a diagonal is given by
+		 * (diagonal-index + 1)
+		 * 
+		 * 
+		 */
+
+		int[][] dp = new int[s.length][s.length];
+
+		// base case if (i == j), fill 0th diagonal
+		for (int i = 0; i < dp.length; i++) {
+			dp[i][i] = 1;
+		}
+
+		int solMax = Integer.MIN_VALUE;
+		// we will fill the table diagonally and will fill upper half
+		// length of string = j - i + 1
+
+		for (int d = 1; d < dp.length; d++) {
+			// i is for traversing along the length of the diagonal
+			for (int i = 0; i < dp.length - d; i++) {
+
+				int j = i + d;
+
+				/**
+				 * This code will fail in cases where c1 == c2, but they do not contribute to
+				 * the solution because the substring 'r' in c1rc2 is not a palindrome.
+				 * 
+				 * Example: For the string s = "aacabdkacaa", the substring r = 'bdk' is not a
+				 * palindrome. However, the current logic keeps adding 2 to the count without
+				 * verifying whether 'r' is a palindrome. Additionally, unlike the recursive
+				 * solution where exclude calls allow us to reset dp[i][j] to ZERO, the
+				 * tabulation approach has no mechanism to do this.
+				 * 
+				 * To fix this issue, we must include a palindromic check for the substring 'r'
+				 * to ensure the solution handles such cases correctly.
+				 */
+				if (s[i] == s[j]) {
+					dp[i][j] = 2 + dp[i + 1][j - 1];
+
+					solMax = Math.max(solMax, dp[i][j]);
+
+				} else {
+					dp[i][j] = 0;
+				}
+
+			}
+		}
+
+		return solMax;
+	}
+
+	/**
+	 * dp[i][j] : store LPS if the string is palindrome else store ZERO. refer
+	 * SubStringsOn2DMatrix.pdf for further explanations.
+	 * 
+	 * Note: s.length == dp.length == dp[0].length
 	 */
 	private static String tabulationLPS(char[] s) {
 
@@ -175,39 +286,94 @@ public class LongestPalindromicSubString3 {
 
 		int dp[][] = new int[s.length][s.length];
 
-		// need to calculate the solution for all the string of length 1.
+		// fill the 0th diagonal and first diagonal as base case
 		for (int i = 0; i < dp.length; i++) {
 			dp[i][i] = 1;
 		}
+		// 1th diagonal C1rC2: r is ZERO for first diagonal because it is substring of
+		// 2 chars.
+		// so LPS will just depend on C1 and C2 not on r.
+		for (int i = 0; i < dp.length - 1; i++) {
+			int j = i + 1;
+			dp[i][j] = s[i] == s[j] ? 2 : 0;
 
-		// length of string = j - i + 1
-		for (int l = 2; l <= s.length; l++) {
-			for (int i = 0; i <= s.length - l; i++) {
+			if (solutionLength < dp[i][j]) {
+				solutionLength = dp[i][j];
+				solution_i = i;
+			}
+		}
 
-				int j = l + i - 1;
+		for (int d = 2; d < dp.length; d++) {
+			for (int i = 0; i < dp.length - d; i++) {
 
-				if (s[i] == s[j]) {
-					int remainingLength = j - i - 1;
+				int j = i + d;
 
-					// C1rC2, when r is of length 0, i.e string is of length==2
-					// palindromic length of r is 0
-					if (remainingLength == 0) {
-						dp[i][j] = 2;
-					} else {
-						int palindromicLength_r = dp[i + 1][j - 1];
+				// we need to go back 2 diagonals from current diagonal-index
+				// we are adding 1 to get the length as diagonal is index-based.
+				int r = (d - 2) + 1;
 
-						if (palindromicLength_r != 0) {
+				if (s[i] == s[j] && dp[i + 1][j - 1] == r) {
 
-							dp[i][j] = 2 + palindromicLength_r;
-						} else {
-							// since r is not the palindrome, hence string c1rc2 cannot be palindrome
-							dp[i][j] = 0;
-						}
-					}
+					dp[i][j] = r + 2;
+				} else {
+					dp[i][j] = 0;
 				}
 
 				if (solutionLength < dp[i][j]) {
 					solutionLength = dp[i][j];
+					solution_i = i;
+				}
+
+			}
+
+		}
+
+		return new String(s, solution_i, solutionLength);
+
+	}
+
+	private static String tabulationLPSBoolean(char[] s) {
+
+		int solutionLength = 1;
+		int solution_i = 0;
+
+		boolean dp[][] = new boolean[s.length][s.length];
+
+		// fill the 0th diagonal and first diagonal as base case
+		for (int i = 0; i < dp.length; i++) {
+			dp[i][i] = true;
+		}
+		// 1th diagonal C1rC2: r is ZERO for first diagonal because it is substring of
+		// 2 chars.
+		// so LPS will just depend on C1 and C2 not on r.
+		for (int i = 0; i < dp.length - 1; i++) {
+			int j = i + 1;
+			dp[i][j] = s[i] == s[j] ? true : false;
+
+			if (dp[i][j]) {
+				solutionLength = 2;
+				solution_i = i;
+			}
+		}
+
+		for (int d = 2; d < dp.length; d++) {
+			for (int i = 0; i < dp.length - d; i++) {
+
+				int j = i + d;
+
+				// we need to go back 2 diagonals from current diagonal-index
+				// we are adding 1 to get the length as diagonal is index-based.
+				int r = (d - 2) + 1;
+
+				if (s[i] == s[j] && dp[i + 1][j - 1]) {
+
+					dp[i][j] = true;
+				} else {
+					dp[i][j] = false;
+				}
+
+				if (dp[i][j]) {
+					solutionLength = r + 2;
 					solution_i = i;
 				}
 
