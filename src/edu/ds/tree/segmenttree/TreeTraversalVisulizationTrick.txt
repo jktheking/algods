@@ -1,0 +1,10 @@
+The Tree-Traversal Visualization Trick: Marking Nodes
+
+Imagine walking around the tree with a pencil, starting at the root and following its edges.
+
+Steps:
+Pre-order: Mark the node when you first arrive at it. 
+
+In-order: Mark the node when you pass it from below (after visiting its left subtree).
+
+Post-order: Mark the node when you leave(means you will never come back to it) it after visiting both subtrees.
