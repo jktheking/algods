@@ -1,0 +1,1274 @@
+Notes:
+=========
+Database index:
+
+
+1. Hash Index: 
+===================
+-> In general storing Hash index on Hard-Drive are not so efficient, becuase of holes(i.e. scattered memory, the motto of HASH function is to evenly distribute the elements).  So, we can use WAL-logs to replay the  HASH index in RAM.
+
+-> HASH index does not wrok with range query. Hash index works best with equality check.
+
+
+2. B-tree index
+================
+Property of B-tree :
+- B-tree is a self-balancing tree. All leaf nodes are on the same level, this is the balancing formula for B-tree. 
+- Every node has maximum and minumum number of keys with the exception of root node.  
+- We just need to define the maximum number for keys. minimum number of keys = maximum-key/2. 
+- Any node execept of the root-node cannot have less than minimum number of node.
+- B-tree gets taller only when root node splits in two.
+- Search is faster than insert and delete
+
+Range queries are faster on B-tree.
+
+
+Clustered Index vs Non-Clustered Index
+========================================
+
+
+3. LSM Tree
+============
+The LSM Tree is a write-optimized data structure that defers and batches writes, storing them in memory and periodically flushing them to disk. It contrasts with traditional B-Trees, which require frequent and random I/O operations to maintain a sorted order on disk.
+
+Design: LSM trees use a log-structured approach, where data is initially written to an in-memory structure (MemTable) and simultaneously logged to a Write-Ahead Log (WAL) for durability. Later, the data is flushed to disk as sorted tables (SSTables).
+
+Components: It consists of MemTable for in-memory writes, a Write-Ahead Log for durability, and SSTables for on-disk storage.
+
+Write Path: Write operations are first stored in MemTable and simultaneously written to the WAL. They are later flushed to disk when the MemTable is full or periodically.
+
+Read Path: Data is retrieved by first checking the MemTable and then SSTables, organized in levels for efficient retrieval.
+
+Compaction: SSTables are periodically merged and compacted to reduce the number of files and improve read performance.
+Advantages: LSM trees offer high write throughput, good read performance, and space efficiency.
+
+Disadvantages: They may suffer from write amplification, complexity, and occasional latency spikes during compaction.
+
+Use Cases: Widely used in NoSQL databases and key-value stores like Cassandra, LevelDB, HBase, and RocksDB.
+The Write-Ahead Log ensures durability by logging all write operations before they are applied to the main data structure, providing a recovery mechanism in case of system failure through replaying the logged operations.
+
+Compaction strategies:
+=============================================
+
+1. Size-Tiered Compaction Strategy (STCS): Based on the concept that merging similar sized-sorted lists is faster than
+------------------------------------------
+merging skewed size sorted lists.  See leetcode question: merging list of sorted arrays of same size.
+
+
+SSTable Organization: Groups SSTables into tiers based on size.
+SSTables within the same tier can have overlapping key ranges.
+
+Compaction Process:
+--------------------
+Compacts similar-sized SSTables into larger ones when enough accumulate (typically 4 or more).
+The resulting larger SSTable is moved to the next size tier.
+
+Characteristics:
+-----------------
+Write Amplification: Lower, as compactions are less frequent but can be substantial when they do occur.
+
+Read Amplification: Higher, due to overlapping key ranges requiring more SSTables to be checked during reads.
+
+Compaction Frequency: Infrequent but potentially large compactions.
+
+
+2. Leveled Compaction Strategy (LCS):
+------------------------------------
+
+SSTable Organization:
+
+Organizes SSTables into levels (L0, L1, L2, etc.).
+L0 can have overlapping key ranges, but higher levels have non-overlapping key ranges.
+Compaction Process:
+
+When the number of SSTables in L0 exceeds a threshold, they are compacted into L1.
+Each subsequent level has a size limit increasing by a factor of 10.
+Compaction involves merging SSTables from a lower level into a higher level, resulting in smaller, non-overlapping SSTables.
+Characteristics:
+
+Write Amplification: Higher, due to frequent compactions and reorganization of SSTables.
+Read Amplification: Lower, as non-overlapping SSTables reduce the number of SSTables to check during reads.
+Compaction Frequency: Frequent and smaller compactions.
+
+
+Summary Comparison
+===============================
+STCS:
+
+SSTable Overlap: Yes.
+Write Amplification: Lower.
+Read Amplification: Higher.
+Compaction Frequency: Infrequent but large.
+
+LCS:
+
+SSTable Overlap: No (except in L0).
+Write Amplification: Higher.
+Read Amplification: Lower.
+Compaction Frequency: Frequent and smaller.
+These strategies offer different trade-offs, with STCS being more write-efficient and LCS being more read-efficient.
+
+=======================================================================================================================
+
+ACID:
+
+Atomicity: All writes succeed or none of them do.
+-----------
+Consistency: All fails occur gracefully no invariants are broken.
+-------------
+When database fails it should fail gracefully, means when its boot back either the running write succeeds as intended or rollbacks, does not leave the data in corrupted interleaving states. Both Atomicity and Consistency are related.. 
+Successfully enforcing atomicity guarranttes is consistency.
+
+Isolation: 
+-----------
+ Appears as if all transactions are executed independent of each other. No race condition!!!
+ Isolation ensures that we keep the intermediate states of a transaction invisible to other transactions. This gives concurrently running transactions an effect of being serialized. The degree to which a transaction must be isolated from other transactions is defined by isolation levels.
+
+Durability: Committed write don't get lost, data on disk. (Assumption is that once data is on disk, it is safe).
+-----------
+
+
+ISOLATION:  https://en.wikipedia.org/wiki/Isolation_(database_systems)
+===========
+
+In presence of transactional race condition following read phenomena can be observed:
+======================================================================================
+Read Phenomena:
+==================
+Dirty write: over-writing uncommited field values in DB, which brings the data in in-consistence state.
+------------
+1. Dirty read: reading uncommited field values in DB. To solve the dirty read efficiently we can store the old value 
+-----------
+until new value is commited.
+
+2. Non-repeatable reads:
+--------------------------
+ A non-repeatable read occurs when a transaction retrieves a row twice and that row is updated by another transaction that is committed in between.
+
+3. Phantom read: (occurs because of range query)
+-------------------
+A phantom read occurs when a transaction retrieves a set of rows twice and new rows are inserted into or removed from that set by another transaction that is committed in between.
+
+
+There are two basic strategies used to prevent in-consistence read-phenomenons i.e non-repeatable reads and phantom reads.
+
+ 1. lock-based concurrency control strategy:
+ =============================================
+Transaction 2 is committed after transaction 1 is committed or rolledback. 
+It produces the serial schedule T1, T2.
+
+ 2. multiversion concurrency control strategy:(snapshot strategy):
+ ==================================================================
+ Each transaction operates on a "snapshot" of the database, which is taken at the start of the transaction. This snapshot represents a consistent view of the database, meaning it appears as it did at a particular point in time, unaffected by other concurrent transactions. 
+ - transaction 2 is committed immediately while transaction 1, which started before transaction 2, continues to operate on an old snapshot of the database taken at the start of transaction 1, and when transaction 1 eventually tries to commit, if the result of committing would be equivalent to the serial schedule T1, T2, then transaction 1 is committed; otherwise, there is a commit conflict and transaction 1 is rolled back with a serialization failure.
+
+ Read Stability:
+A transaction under snapshot isolation always sees a consistent view of the data, meaning the data it reads will not change, even if other transactions commit changes. This prevents non-repeatable reads.
+
+Write Conflicts:
+When a transaction attempts to commit, the database system checks if any of the data it has modified has been changed by other transactions since the snapshot was taken. If there is such a conflict, the transaction is typically aborted to ensure consistency.
+
+
+1. Read Committed isolation: A database is said to implemented 'Read Committed isolation' if it protects against 'Dirty Write and 'Dirty Read'.
+
+
+
+ISOLATION LEVELS: see wikipedia for explanations:
+ https://en.wikipedia.org/wiki/Isolation_(database_systems)
+ Serializable --> Repeatable read --> Read committed --> Read uncommitted
+
+
+ ================================================
+ Acheving ACID: Actual Serial Execution(VoltDB)
+ ================================================
+ CPU's are faster than they used to be.
+ Run everything on one core.
+
+
+ Database Internal Two Phase Locking:
+ =====================================
+ Make concurrent transcations seem as if they were running on one thread.
+
+ Two pahse locking: shared reader lock, and exclusive writer lock. it's kind of single lock with two mode read and write. A transaction can acquire the writer lock only when all other readers lock have relinquished the read mode. 
+
+ Column oriented  and Row oriented database:
+ =============================================
+
+ in column oriented db:  all the data of a column are stored together. 
+ -- can be useful for analytics
+ -- if there are patterns of data in columns, compression can be applied 
+    which reduces the size of data on disk and in-memeory. 
+
+  compression-type: bitmap encoding, run-length-encoding, dictionary encoding.
+
+  example :Apache parquet 
+
+=============================
+Distributed System
+==============================
+reasons why we might want to distribute a database across multiple machines ?
+
+1. Scalability/throughput:
+--------------------------
+ If  data volume, read load, or write load grows bigger than a single machine can handle, we can potentially spread the load across multiple machines.
+
+2. Fault tolerance/high availability/durability:
+------------------------------------------------
+If application needs to continue working even if one machine (or several machines, or the network, or an entire datacenter) goes down.
+
+3. Latency/Geography:
+--------------------
+If we have users around the world, we might want to have servers at various locations worldwide so that each user can be served from a datacenter that is geographically close to them. 
+
+
+
+
+
+=======================================================================================================================
+  Replication: 
+  Synchronous replication (Strong consistency) : not possible to read stale data
+      -- replying to client only when ack received from all the replicas.
+
+  Asynchronous replication(Eventual consistency): client may read stale data
+     -- replying to client immediately just with the ack of writer replica and
+        without waiting for ackS from other replicas. Here write is propogated to all the 
+        replica asynchronously, so system will be eventually consistent.
+
+  Ways to do replication:
+  ========================
+
+  1. Write ahead log
+     -- In general WAL logs are bind to memory location, so it will not be useful for replication.
+
+  2. replication log 
+   -- logically formatted data-> like id:1,name:jk:,job:IT
+
+  Replication usecase:
+    -- High Durablility
+    -- High Throughput
+    -- Decrease the latency by near-geo-locating the replica
+
+==========================
+ Eventual consitency
+==========================
+
+  How to make eventual consistency less problematic ? Means how to deal with stale read.
+
+  1. Monotonic Read / Monotonic Write :  
+  --------------------------------------
+  will not see time go backward— i.e., they will not read older data after having previously read newer data.
+
+One way of achieving monotonic reads is to make sure that each user always makes their reads from the same replica (different users can read from different replicas).
+
+ Reading/Writing from the same replica everytime to get the consistent data(may be stale) i.e. always forward in time 
+ but not the out of oder messages. We can use some hashing function on client_id so that the client goes on the same replica for read/write.
+
+ Edge case: what will happen when the replica is down ?
+
+ Consistent Prefix Reads
+---------------------------------------
+Consistent prefix reads ensure that replicas in a distributed system read data in a consistent order, even if the data is somewhat outdated.
+
+Example:
+
+Imagine a dataset split across two partitions. If causally dependent messages are directed to different partitions, the replicated messages may not maintain their causal order. To address this, all causally related messages should be written to the same partition. This ensures that replicas see these messages in the same order, even if they are not the most up-to-date.
+
+
+
+------------------------------------------------------------------
+What is the difference between Serializability and Linearizability ?
+--------------------------------------------------------------------
+
+Linearizability is about ensuring that operations on data appear instantaneous and respect real-time constraints. It
+ determines the causal dependency that is read operations never goes back in time.
+
+Serializability ensures that the result of executing concurrent transactions is the same as some serial execution, without any real-time guarantees.
+
+
+
+
+=========================
+Single Leader Relication
+=========================
+In single leader replication, write operations occur on a single leader node, and all other replicas are asynchronously synchronized with the leader.
+
+
+Failure Handling:
+-------------------
+CASE_1: When Follower goes down:
+---------------------------------
+If a follower node goes down, recovery is straightforward. When the follower reconnects, it can resume synchronization by reading from the replication log starting at the last committed offset.
+
+CASE_2: When Leader goes down: It's a problematic situation.
+------------------------------
+Situation1: When the network connection between a follower and the leader is down, other followers continue to receive writes from the leader.
+
+Situation2: If a follower has not received the latest write from the leader and the leader goes down, some messages may be lost.
+
+Situation 3: Split Brain
+In a distributed system when the expectation is there should always be only one leader. However, due to nodes frequently going up and down, a system issue can cause the emergence of two leaders. This split brain scenario can lead to serious data integrity issues.
+
+Solution : We need distributed consensus -- like RAFT
+
+Conclusion:
+----------- 
+1. Simply easy to modify existing backend to add new follower replica.
+2. Easy fix if follower node goes down
+3. More read throughput.
+4. But What if we want more write throughput ? 
+     --Mitigations: 
+       -- data sharding
+       -- optimization of replication logs
+       -- Aschronous write to follower
+
+=================================
+Multi-leader replication
+=================================
+
+
+Leader topologies 
+-----------------
+1. Ring topology
+2. Star topology
+3. All to all topology
+
+
+How to detect concurrent writes:  version vectors
+--------------------------------
+1. cleint version vector
+2. vnode version vector
+3. dotted version vector (DVV)
+https://riak.com/posts/technical/vector-clocks-revisited/index.html?p=9545.html
+https://riak.com/posts/technical/vector-clocks-revisited-part-2-dotted-version-vectors/index.html?p=9929.html
+
+
+
+
+In Multi-leader replication we can have write conflicts
+-------------------------------------------------------
+
+1. Confilct avoidance: all the writes of on same 'key' goes to same leader.
+2. Last write wins, put receiver clock's timestamp on the message. We should avoid the sender's clock as
+sender can purposefully bias the clock.
+
+    -- how to get receiver's node clocks in sync ? we can use network time protocol(NTP) to get the node synchronized with central global GPS clock server(whoes accuracy is too high). 
+
+
+================================
+Dealing with write conflicts
+================================
+Build a Distributed counter using a multi-leader setup.
+
+Counter Version Vector: We need to maintain a position in vector for each leader node.
+Counter Version vector: [0,0,0,0] This counter version vector keeps the counter of 4 leader nodes.
+
+How to merge two counter version vector on each node ?
+------------------------------------------------------
+To merge two version vectors take the bigger element at each index of the vector, which represents 
+how many times inc() has been called on the given node.
+
+
+How to figureout using version vector which writes are concurrent(conflicting writes) ?
+----------------------------------------------------------------------------------------
+ Let's say a leader node has the version vector [2,1,3] for a "key=X" and has receive [1,1,2] from another leader for same "key=X" for replication.
+ Since each entry of first version vector is greater ([2,1,3] >= [1,1,2]) than each entry of other version vector. Means first write has come after the second write, they are not concurrent(no-conflict). So, the leader node can totally disregard the replication version vector, no need to merge. Means the value against 3rd entry of the
+ version vector[2,1,3] is the latest for the given "key=X"
+
+ Two writes are concurrent(or write conflict) if any of the current entry is less than the corresponding replica entry.
+ e.g. [5,2,1] and [4,3,2]. Here we cannot say with guarrantee that for "key=X" value against first entry of version
+ vector[5,2,1] holds the latest value.
+
+ Solution 1: store all the conflicting values against "key=X" and let client/coordinator node resolve the conflict.
+
+ Solution 2: databases automatically merges them for us. This is premise behind CRDTs(Confilt-Free Replicated Data Types).
+
+ The above counter based version vector is an example of CRDT.
+
+
+ ===============================
+ CRDT's
+ ===============================
+ We have a write conflit what do we do ?
+
+ 1. Last write wins :  --> we cannot rely on system timestamp
+
+ 2.Store siblings writes and let a user decide later:
+    --> we can detect concurrent writes using version vectors
+    --> later a user can decide which one to pick.
+
+ 3.Have the database merge them (CRDTs) : -->
+
+
+
+
+CRDT's DB example:
+-------------------
+Riak, Redis set in enterprise edition
+
+
+Two possible implementation of CRDT's
+--------------------------------------
+1. Operational CRDTs: 
+-----------------------
+Instead of sending full version vector we send the specific operation to another leader.
+example 0th leader which receive the write sends inc(0), to other leaders, represents we need to increment 0th index of version vector.
+
+Downside of Operational CRDTs: 
+-------------------------------  
+If operations to send to other leader are not idempotent, then we need to have causally consistent broadcast
+delivery system in place, operations need not be dropped or duplicated. Also, operations need to be delivered
+in the order to maintain the sementics. 
+
+2. State Based CRDTs:
+-----------------------
+Send the whole CRDTs to other leader instead of the operation on it.
+e.g. send the whole INC version_vector from one leader to the other
+
+L0 [5,4] ---> L1[4,6] ==> L1 merge([5,4], [4,6]) = L1 [5,6]
+Here merge function must be  1. commutative, 2. associative and 3. Idempotent
+
+Note: if the merge function is commutative, associative and idempotent then it
+will not depend on the causal order of the messages.
+
+https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
+
+=================================
+Leaderless Replication:
+================================
+
+write to many nodes, read from many nodes.
+
+Example of Leaderless Replication
+-----------------------------------
+1. cassandra
+2. riak
+3. dynamodb : is single leader replication, though amazon opensource dynamo paper talks about leaderless replication.
+
+
+There are two mechanism for consistency
+---------------------------------------
+1. Read Repair
+2. Anti-entropy
+
+
+Read Repair:
+------------ 
+Read repair is a mechanism that helps maintain consistency across replicas during read operations. When a client reads data from the system, it typically contacts multiple replicas to retrieve the requested data. If the data returned from these replicas is inconsistent (i.e., the data versions are different), the system can perform a read repair to ensure that all replicas eventually hold the most recent version of the data.
+
+Here's how read repair works:
+-----------------------------
+
+Read Request: A client issues a read request, and the system retrieves data from multiple replicas.
+
+Version Comparison: The system compares the versions of the data from each replica. This is typically done using versioning mechanisms like vector clocks or timestamps.
+
+Determine the Latest Version: The system determines the latest version of the data based on the versioning information.
+
+Update Stale Replicas: If any replica has stale or outdated data, the system writes the latest version of the data back to those replicas to bring them up to date.
+
+Read repair ensures that inconsistencies are detected and corrected during read operations, thereby improving the overall consistency of the system over time.
+
+
+Anti-entropy
+------------
+Anti-entropy is a background process that continuously works to reconcile differences and inconsistencies across replicas, ensuring that all replicas eventually converge to the same state. Unlike read repair, which is triggered by read operations, anti-entropy operates independently and proactively.
+
+Here's how anti-entropy works:
+------------------------------
+Replica Comparison: Nodes periodically compare their data with other replicas. This can be done using different algorithms such as 'Merkle trees', which are efficient data structures for summarizing and comparing large sets of data.
+
+Identify Differences: The nodes identify any differences between their data sets. This includes detecting missing, outdated, or divergent data items.
+
+Data Synchronization: The nodes exchange data to reconcile these differences. This involves updating stale or missing data to ensure that all replicas converge to the same state.
+
+Anti-entropy is a continuous process that runs in the background, ensuring that replicas remain consistent even in the absence of read or write operations. It provides a mechanism for eventual consistency, where all replicas will eventually reflect the same data, given enough time and network stability.
+
+Quorums:
+--------
+R+W > N ; 
+there will always be at least one replica that has participated in both the write and the read operations. This overlapping replica helps to ensure that the read operation can retrieve the most recent write, thereby maintaining consistency.
+
+While the quorum model provides a strong foundation for maintaining consistency,means in theory there is consistency, but there are practical limitations that can lead to eventual consistency rather than strong consistency.
+
+Reasons: 
+1. race condition in writes
+2. out of bunch of writes one write fails
+3. Sloopy quorums:
+Sloppy quorums generally occur in distributed systems with multiple database clusters. This technique ensures resiliency by allowing write operations to proceed on a different cluster if one cluster is down. Here’s how it works and the implications:
+
+Write to Different Cluster: When a cluster becomes unavailable, to maintain high availability, write operations are allowed to be directed to a different cluster using quorum write. This means the system temporarily stores the data on available nodes outside the intended cluster.
+
+Client Reads from Original Cluster: When the original cluster becomes available again, a client might read from this cluster and find that the data written while the cluster was down is missing. This happens because the write operation was redirected to a different cluster during the downtime.
+---------------
+Hinted Handoff:
+----------------
+ To resolve this issue, the system uses a process called hinted handoff. Here’s how hinted handoff works:
+
+Temporary Storage: Data written to the alternative cluster during the original cluster's downtime is temporarily stored.
+
+Replication: Once the original cluster is back online, the system replicates the data from the cluster where the write operation occurred back to the original cluster. This ensures that the original cluster eventually receives and stores the data that was written during its downtime, thereby restoring consistency.
+
+Conclusion:
+-------------
+For applications where data correctness and immediate consistency are critical, relying solely on leaderless database setups may not be ideal. These systems are better suited for scenarios where high availability and fault tolerance are prioritized, and some temporary inconsistency is acceptable.
+
+In conclusion, while quorums and leaderless databases offer significant benefits, they are not perfect. For applications requiring guaranteed immediate data correctness, additional mechanisms or different database architectures may be necessary to ensure the required level of consistency.
+
+======================================================================================================================
+
+=======================
+Partitioning/Sharding
+========================
+
+1. Range based partitioning:
+------------------------------ 
+pros: similar keys on the same node so suitable for range based queries.
+cons: Hot spots
+
+2. Hash Range based partitioning:
+---------------------------------
+pros: Relatively even distribution of keys, less hot spots
+cons:no data locality for range queries. what can we do about this ? "Secondary Index"
+
+
+A secondray index is an additional index to primary index in different sort order.
+
+Local secondary index: An LSI is an index that has the same partition key as the base table but a different sort key.
+----------------------
+ we keep a second sorted copy on each partition(sharded using primary key).
+ Read implication on local secondary index: we need to go to every partition(node), because we have locally sorted
+ data, so on each partition(node) we have to do index lookup.  
+
+
+
+ Global secondary index:   
+------------------------
+ A GSI is an index with a partition key and a sort key that can be different from those on the base table.
+ pros: now read using the index require reading from one node.
+ cons: write has to go to multiple shards. eg. one shard for primary index and another for secondary index.
+
+
+ When a write operation spans multiple partitions or involves a Global Secondary Index (GSI) where the main index and the GSI are stored on different nodes, db has to ensure that the write is atomic. This means that the write operation will either succeed or fail as a whole, maintaining the integrity of the data. 
+ Here partial writes would cause incorrectness of the data, which is different than eventual consistency. 
+
+This requirement of data integrity is different from eventual consistency, which refers to the replication process where changes to the data may not be immediately visible across all replicas but will eventually become consistent.
+
+Cross partition writes/global secondary index are the premise of distributed transaction.
+------------------------------------------------------------------------------------------
+
+====================
+Two phase commit
+===================
+
+Note: it is different from Two phase locking  & serializable snapshot that is being used while executing transaction
+locally in relational databases.
+
+Coordinator is required for 2PC. 
+
+Phase 1: Prepare Phase
+-------------------------
+Transaction Initiation:
+A coordinator node initiates the transaction and sends a prepare request to all participating nodes (participants).
+
+Vote Request:
+The coordinator asks all participants to prepare to commit the transaction and vote on whether they can commit or need to abort.
+
+Prepare to Commit:
+Each participant does the necessary checks and operations to determine if it can commit the transaction. This usually involves acquiring the necessary locks and ensuring that the transaction can be safely committed.
+
+Vote Response:
+Each participant responds to the coordinator with its vote:
+Yes if it can commit.
+No if it cannot commit (e.g., due to a validation failure, resource contention, or any other reason).
+
+Phase 2: Commit/Abort Phase
+----------------------------
+Coordinator Decision:
+
+The coordinator collects all votes from participants:
+If all participants vote Yes, the coordinator decides to commit the transaction.
+If any participant votes No, the coordinator decides to abort the transaction.
+Commit/Abort Request:
+
+The coordinator sends a commit request to all participants if the decision is to commit.
+The coordinator sends an abort request to all participants if the decision is to abort.
+Commit/Abort Execution:
+
+Upon receiving the coordinator’s decision, each participant performs the corresponding action:
+If the decision is commit, the participant commits the transaction.
+If the decision is abort, the participant rolls back any changes made during the transaction.
+Acknowledgment:
+
+Each participant sends an acknowledgment back to the coordinator after completing the commit or abort operation.
+Completion:
+
+Once the coordinator receives acknowledgments from all participants, the transaction is considered complete. The coordinator may log the final outcome for recovery purposes.
+
+
+pros:
+Ensures strong consistency and data integrity.
+Simple and reliable for ensuring atomicity in distributed transactions.
+
+cons:
+Mutiple ponits of failure, non falut tolerance. 
+
+Performance Overhead:
+---------------------
+High Latency: The protocol involves multiple rounds of communication (prepare and commit/abort phases), which can introduce significant latency.
+Blocking: Participants can be blocked waiting for the coordinator’s decision, leading to potential delays and reduced throughput.
+
+Resource Contention:
+-------------------
+Locks Held Longer: During the prepare phase, participants typically hold locks on resources, which can lead to contention and reduced system performance, especially in high-concurrency environments.
+Single Point of Failure:
+
+Coordinator Dependence:
+-----------------------
+The coordinator is a single point of failure. If the coordinator fails, participants may be left in an uncertain state, waiting for a decision.
+Complex Recovery:
+
+Recovery Complexity: 
+--------------------
+Recovering from a failure (especially of the coordinator) can be complex and requires careful handling to ensure that the system can correctly determine whether to commit or abort a transaction.
+Scalability Issues:
+
+Limited Scalability: 
+--------------------
+As the number of participants in the transaction increases, the communication overhead and coordination complexity also increase, potentially leading to scalability challenges.
+
+
+
+==========================================================
+Consistent Hashing
+==========================================================
+We can think of that each node as have fixed number of partitions.
+
+Algorithm parameter k: represents number of partitions per node, or meaning number of points 
+for a node on the ring.
+
+
+=================================================
+Linearizable database
+==================================================
+
+what is linearizable storage ?
+
+Linearizability, also known as strong consistency, ensures that all operations appear to occur instantaneously at some point between their invocation and their response. In other words, a read operation should always return the most recent write result.  Read never goes back in time.
+
+
+- We need this for correct reads.
+- Just one person with lock
+- Just one database leader
+- All writes are orderd, means our read can never go back in time.
+
+How do we order our writes ?
+
+-- In case of single leader replication: replication logs are shared to followers.
+
+-- Multi-leader replication or leaderless replication : it's not truly  the write order, but the logical
+ consistent order that all the participant nodes agree on, this aggrement happens after the write.
+
+   Version vector/ Lamports clock
+
+ - Version vector takes O(n) space where n is the number of replica.
+ - Lamport clock takes constant space O(1)
+
+Version vector/ lamport clock only gives us the total ordering after the fact.
+------------------------------------------------------------------------------
+
+ Does above ordering strategy in multi-leader/leaderless setup create linearizable storage ?  Answer is no.
+
+ Does a single leader replication setup ensure linearizable storage?
+The answer is no. This is because, until the write is propagated to the followers, reading from different followers and the leader might result in inconsistencies.
+
+Therefore, even a single leader replication setup does not guarantee linearizable storage because there can be a time window where followers have not yet caught up with the latest writes. To achieve linearizable storage, additional mechanisms like synchronous replication, quorum reads, or read-your-writes guarantees need to be implemented to ensure that all read operations reflect the most recent writes.
+
+So infact what do we need ? 
+
+                            "Total order broadcast"
+                            ----------------------
+- Means every node has to agree on the order of write.
+- In the face of faults we cannot lose any write.
+
+So, how can we achieve it ? Distributed consensus
+
+=======================================================
+Distributed consensus : to build lineriazable storage
+=======================================================
+
+Application of linearizable storge:
+
+1. distributed lock
+2. service discovery
+
+RAFT: helps to build a distributed log, because logs are orderd hence they are linearizable.
+---------------------------------------------------------------------------------------------
+
+Key Concepts
+-------------
+Term: A term is a logical time unit. Each term starts with an election, and it can have at most one leader. Terms are incremented with each new election.
+
+Candidates: Nodes that can become leaders.
+
+Votes: Nodes vote for a candidate during elections.
+
+Majority: A candidate needs a majority of votes to become the leader.
+
+Leader Election Process
+------------------------
+The leader election in Raft involves the following roles and transitions:
+
+Follower: A node starts as a follower.
+
+Candidate: If a follower doesn't hear from a leader for a timeout period, it becomes a candidate.
+
+Leader: A candidate that receives votes from the majority of nodes becomes the leader.
+
+Election Cases Using Term Numbers
+---------------------------------
+
+Starting Election:
+-------------------
+A node increments its current term and transitions to a candidate state.
+
+It votes for itself and sends RequestVote RPCs (remote procedure calls) to other nodes.
+
+Vote Requests and Responses:
+----------------------------
+When a follower receives a RequestVote RPC, it responds based on term numbers:
+
+If the term in the RPC is greater than its current term, the follower updates its term and votes for the candidate.
+
+If the term in the RPC is less than its current term, the follower rejects the vote.
+
+If the term is equal but the follower has already voted, it either grants or denies the vote based on whether it has already voted in the current term.
+
+Winning the Election:
+---------------------
+A candidate wins the election if it receives a majority of votes, means it hear "YES" from a quorum of nodes.
+Once a candidate wins, it becomes the leader and starts sending AppendEntries RPCs to all other nodes to assert its leadership.
+
+Handling Network Partitions and Failures:
+------------------------------------------
+If a candidate doesn't get enough votes (due to network partitions or other issues), it will eventually timeout and start a new election with an incremented term.
+
+Followers that receive AppendEntries RPCs with a higher term than their current term update their term and follow the new leader.
+
+If two candidates start elections simultaneously, one may win if it gathers a majority first. The other will return to a follower state upon learning about the higher term.
+
+Why does RAFT work ?
+---------------------
+1. Cannot elect two leaders at the same time due to quorums.
+2.Older leader cannot come back due to fencing-token/epoch-number/term-number.
+3.Leader has up to date log and can backfill stale nodes.
+
+-------------------
+Broadcasting writes
+-------------------
+
+1. There is Only One Leader per Term:
+In Raft, each term can have only one leader. The leader is responsible for managing the log replication process and ensuring consistency across all followers.
+
+2. Ensuring Up-to-Date Logs for Successful Writes:
+To ensure that logs are fully up-to-date, the leader must ensure that all committed and uncommitted entries are correctly replicated to the followers.
+
+Log Replication Process
+-------------------------
+Leader Sends AppendEntries RPC:
+
+The leader sends an AppendEntries RPC to each follower.
+
+This RPC includes:
+------------------
+A prefix of already committed log entries.
+A suffix of the current uncommitted log entries.
+
+Follower Response:
+-----------------
+The follower checks if the prefix of committed log entries matches its own log.
+If the prefix matches, the follower appends the suffix of uncommitted entries and acknowledges the leader, with "YES"
+If the prefix does not match, the follower rejects the AppendEntries RPC.
+Here, for a particular write to succeed, leader may use YES from quorum of followers, and then leader commits
+the log at it's local and ask other follower to commit this to and fro between leader and followers are similar
+to 2PC.
+
+Handling Mismatches:
+--------------------
+If a follower rejects the AppendEntries RPC due to a log mismatch, the leader will retry with the previous prefix of log entries.
+The leader decrements the log index in the next AppendEntries RPC to find a matching log prefix.
+
+This process continues until the leader finds a matching prefix, ensuring the follower's log becomes consistent with the leader's log.
+
+If leader hears YES from quorum of the nodes for append entries, then it commits locally.
+
+
+Raft's design includes mechanisms like term numbers and dynamic leader election, which make it more robust and fault-tolerant compared to the traditional 2PC protocol. These features help Raft maintain consistency and availability even in the face of node failures, ensuring a reliable distributed system.
+
+Raft is more robust compared to the traditional Two-Phase Commit (2PC) protocol due to several reasons:
+
+1. Term Numbers (Version Clock)
+---------------------------------
+Raft uses terms to add a versioning mechanism to the log entries. Each term is a period during which one leader is elected and can serve the role of the coordinator.
+
+Incrementing Terms: When a node becomes a candidate, it increments its term number and starts a new election.
+
+Term Comparison: Nodes include their term numbers in every communication. If a node discovers a higher term in a received message, it updates its term and transitions to the follower state.
+
+This term-based system helps in avoiding outdated information and ensures that the most recent leader's decisions are followed.
+
+2. Leader Election
+--------------------
+Raft includes a built-in leader election mechanism that ensures fault tolerance and availability even when nodes fail.
+
+Election Timeout: Nodes transition from follower to candidate if they don't hear from a leader within an election timeout period.
+
+RequestVote RPC: Candidates request votes from other nodes, and nodes grant their votes if the candidate's log is at least as up-to-date as their own.
+
+Majority Voting: A candidate becomes a leader if it receives votes from a majority of the nodes.
+This dynamic leader election process ensures that the system can continue to operate even if the current leader fails.
+
+Robustness Compared to 2PC
+---------------------------
+Fault Tolerance
+------------------
+2PC: In the traditional 2PC protocol, a coordinator sends prepare and commit messages to participants. If the coordinator fails, the protocol can block because participants may be waiting indefinitely for a commit decision.
+
+Raft: In Raft, if the leader (coordinator) fails, a new leader can be elected quickly, allowing the system to continue processing new requests and ensuring that ongoing operations can complete.
+
+Consistency and Availability
+----------------------------
+2PC: 2PC is susceptible to blocking issues if the coordinator or any participant fails during the commit phase.
+
+Raft: Raft's leader election and term mechanisms ensure that there's always a clear, current leader to make decisions, providing better consistency and availability guarantees.
+
+Conflict Resolution
+---------------------
+2PC: If a participant fails or disagrees, manual intervention may be required to resolve conflicts.
+
+Raft: Raft uses the term-based system to resolve conflicts automatically. The leader ensures that its log is consistent with the majority of the nodes, and followers always update their logs to match the leader's log.
+
+
+Conclusion on RAFT
+===================
+1. Raft creates fault-tolerant, linerizable storage
+2. Raft is slow, leader is bottleneck (all writes and depending upon RAFT implementation may be all reads) have to
+    go through single node
+3. Raft is fault-tolerant, but it cannot replace 2PC, because it is created to make the distributed logs, here all writes(logs) to replicas(nodes) are same, but in 2PC writes can(may) be hetrogenous, means differnet writes to different nodes. So, if we need to write two different writes to two different partitions i.e. cross-partition 
+distributedd transaction, then we have to use something like 2PC.
+
+
+
+
+============================================
+Coordination services: zookeeper, etcd
+==============================================     
+Zookeeper is a way of acheiving strongly consistent distributed log via consensus, which allows us to have a
+linerizable storage.
+
+
+
+===============================
+SQL databases
+===============================
+Traditional: mysql, postgres
+
+New types of relational dbs: voltdb, spanner
+
+
+-- Mysql executes transaction using 2 phase locking mechanism
+-- Postgres executes transaction using serializable snapshot isolation
+-- Voltdb does actual serial execution, prepares queue of operations and execute all of them on single thread to 
+   acheive the ACID.
+
+   Google spanner: it is a distributed relational db.
+
+
+========================
+Mongodb : single leader replication, b-tree index and acid transaction on demand.
+We can use mongodb when we want data guaranttees of sql dbs and schema flexibility of nosql.
+
+-- In cassandra there is no distributed transaction support so all the reads or writes which are transactional
+in nature  should go to the same partition at a time. Only row level locking, no ACID transaction.
+
+Application of cassandara: Facebook messager, cluseter-key as chatId, sort-key as timestamp, doesnot bother
+if the occassional message get dropped.
+
+
+=========================================
+Hadoop : distributed computing framework.
+==========================================
+1. Data storage: HDFS (Hadoop distributed file system)
+2. Big computations: Map Reduce, Spark
+
+Apache spark:
+------------
+
+Stream based message processing: 
+---------------------------------
+1. Log based message broker : kafka, amazon kinesis
+2. In memory message broker: RabbitMQ, Amazon SQS
+
+
+===========================
+TimeSeries Database
+===========================
+
+TimeScale DB, Influx DB, Druid
+
+========================================================
+Question: How can we speed up the write operations?
+
+1. In-memory Data Structures: Utilize in-memory data structures and then flush the batch. For example, using an LSM Tree or a write-back cache with Redis.
+
+2. Parallel Writes with Multiple Partitions: Employ multiple partitions to write different sets of data in parallel.
+
+
+===================================================
+Tiny Url system Design considerations:
+=======================================================
+1. Link generation: we can use some encoding, like base 36(0-9-a-z), or base 62(0-9-a-z-A-Z)
+this will help us to figure out length of the shortenUrl  62^n : where n represents the length
+
+2. We need more reads than writes
+3. Multi-leader/leaderless 
+
+4 Question: How can we maximize the write throughput for a tiny URL design?
+
+Multi-Leader/Leader-Less Replication: 
+--------------------------------------
+This approach is not ideal because a 'shorten URL' generated by client 'A' might 
+be overwritten by client 'B' using a last-write-wins strategy to resolve concurrent writes. 
+In this scenario, if client 'A' attempts to retrieve the URL, it could end up with the wrong long url redirection, which is incorrect.
+------------------------------------------------------------------------------------------------------------
+So, the rule of thumb for selection is how to avoid incorrect write/read and what the cost of doing so is. 
+-------------------------------------------------------------------------------------------------------------
+
+One way to handle concurrent writes is to tag the write with a client identifier. When retrieving the short URL, use the client identifier tag. This way, even with a last-write-wins strategy, the data retrieved will be correct for the respective client.
+
+Single-Leader replication: 
+--------------------------
+May be ideal for this scenario, beacause all writes goes through the same leader. Along with it we will employ multiple partitions to write different sets of data in parallel.
+
+
+What kind of index should be used for faster lookups on short URLs?
+----------------------------------------------------------------
+For short URLs, we may not need range queries, so a hash index could be a good option. However, hash indexes are typically feasible in-memory, and we should avoid them when the data size is large. Since the data size in this context can grow to terabytes (TBs), we should consider disk-based indexing. We have two main options:
+
+a. LSM Tree + SSTable: Writes will be fast, but reads will be comparatively slower than with a B-tree index.
+
+b. B-tree Index: Writes will be slower, but reads will be significantly faster.
+
+Following decision points that we agreed on for Tiny-Url:
+--------------------------------------------------------
+1. Single Leader replication 
+2. Partitioning
+3. B tree index
+
+We will pick here any RDBMS, where Single leader replication, partitioning and B-tree index is available
+we can avoid document-DB as we don't have requirement to store data in json etc.
+
+
+For hot-links we can use caches:
+--------------------------------
+write-back: initially writing in the cache, then flushing the data in db 
+write-through cache: writing in the db and cache parallely, we may use 2PC for data integrity. 
+write-aroud cache: cache on read path on cache miss. 
+
+write-aroud cache is best for this use case.
+
+
+Analytics for click count:
+------------------------------
+Options to capture click events
+--------------------------------
+1. Concurrently incrementing(read-increment-then-update) in db, will cause in-correct write in absence of
+lock-based/snapshot-based transaction. This is too slow.
+
+2. dump all events in db
+
+3. use any time-series broker:
+  a. in-memory message broker
+  b. log based message broker 
+
+Click Event consumers options:
+=============================
+1. HDFS or S3 + Spark : dump in hdfs and batch job(spark) to aggregate the clicks, may be too infrequent.
+
+2. Apache Flink: Process each event individually, may send too many writes to sink db depending on implementation
+
+3. Spark Streaming: process events in configurable mini-batch, batching is native to spark.
+
+Let's pick the spark streaming on top of kafka for aggregation in mini-batch. 
+ -- Here still we have to deal with race condition while writing in db, along with this race condition
+ we have to deal with duplicate event processing
+
+-- How to deal with race-condition or concurrent-write: we can make sure that different consumers are not writing clicks against the same shortUrl, rather we have assigned the consumer for set of shortUrl, or shorUrl partition.
+
+--How to deal with duplicate event processing: we can use optimistic locking strategy or idempotent-key/write-tagging means we can tag the wirte, if it is same tag then db can understand that the write is duplicate.
+
+So, we have now 4 terms on snapshot:
+1. optimistic locking
+2. write-tagging 
+3. fencing token/term
+4. epoch
+
+Coordination service for discovery of system components: zookeeper
+-------------------------------------------------------------------
+
+Note: MinIO/Ceph can be on-primise alternative to S3
+
+
+========================================================
+TOP K Leaderboard system design considerations
+=========================================================
+
+1. Precise solution no approximation:
+--------------------------------------
+If we want to support ANY time-range, we need to store all the events with time in HADOOP
+
+We can use  kafka + spark_streaming --> Aggregate and convert to parquet files (becasue parquet is coloum
+oriented which is best for analytics, along with compression) --> export the parquet files in HDFS.
+
+For search each HADOOP node will aggregate the events on given key, further we suhffle the data using HASHING
+on key to get the aggregate data (MAP - REDUCE) 
+
+At each node to speed up the process in-memory, we can keep min-heap with k elements(nlogk), instead of sorting
+the all elements(nlogn). with min-heap we will discard all the incoming elements which are smaller then the heap top, we will balance the heap in logk when incoming element is larger than heap top.
+
+2. Speeding things up with approximation:
+-----------------------------------------
+
+2.a: Windowed Top K solution
+-----------------------------
+Let's check the top-K in small time range like hourly window.
+
+
+
+=====================================
+STEPS FOR SYSTEM DESIGN
+=====================================
+1. Problem statement understanding 
+2. Treat solution as black box; now we have visibility of input and output
+3. Finalize the input-output contract 
+4. Now determine the capacity of input/
+     - TPS
+     - Size
+     - Read vs write variation
+         - Read TPS vs Write TPS
+         - Read bandwidth vs write  bandwidth
+5.         
+
+
+==============
+   HADOOP
+==============
+Distributed computing framework; useful for so many things let's pick following two
+
+1. Data storage: HDFS
+2. Big computation : MapReduce, Spark
+
+
+-----------------------------
+HDFS: Distributed File Store with 'rack aware' storage
+----------------------------
+Two types of elements in the system:
+1. NameNode
+2. DataNode
+
+1. NameNode: is metadata store
+ - store location of replica and its version of files.
+ - keeps all the data in memory.
+ - A WAL is maintained for falut tolerance.
+ - when the name-node starts up, ask each data-node which files it contains and replicate files if necessary.
+
+ Reading File in HADOOP:
+ -----------------------
+ In HADOOP it's assumed that read happens more frequently compared to write, writes are quite expensive.
+
+ Client goes to Name-Node and gets the location of nearest-replica node(rack-aware).
+ Further, client may use the same replica for sbsequent calls.
+
+ Writing File in HADOOP:
+ -----------------------
+ Client gets the location of primary-data-node from NameNode(which is rack-aware)
+ Client writes the primary-data-node from there replication happens in pipe-line i.e replication-pipeline.
+ Means it's not strongly consistent.
+
+ High Avaibility HDFS:
+------------------------
+ Name node is single point of failure.
+
+As we know Zookeeper is a way of acheiving strongly consistent distributed log via consensus, which allows us to have a linerizable storage. 
+
+Take the WAL of primary-name-node and create a distributed-log, which can be stored on Zookeeper, 
+now secondary-name-node does the state-machine-replication from distributed-log.
+
+=================================================
+What's HBase and how does it compare to Cassandra
+=================================================
+
+HBase is a database built on top of HADOOP.
+
+HBase is a NoSQL database that provides real-time read/write access to large datasets. 
+It is modeled after Google's Bigtable and is designed to handle large amounts of sparse data.
+
+Dtatstructe used in HBase is LSM tree.
+
+Salient Features of HBase:
+-------------------------
+1. Allows for quick writes/updates via LSM Tree
+2. Allows for good batch processing abilites due to data locality:
+   -- via column oriented storage
+   -- via range based partitioning
+
+ - HBase there is concept of "Row-Key" which is a partition key, here partitioning is range based not hash.
+ -HBase stores data in lexicographical order based on the row key. This means that all rows in an HBase table are sorted by their row key in a bytewise lexicographical order. 
+ - Because HBase stores rows in sorted order, it is highly efficient for range scans.
+
+"Hotspotting:"
+ - A poorly designed row key (e.g., using monotonically increasing values like timestamps as the row key prefix) can lead to hotspotting, where all writes are directed to a single region, overloading a single node.
+
+"Secondary Indexing:"
+Unlike relational databases, HBase does not support secondary indexes out of the box. The primary index is the row key itself. If you need to query by other fields, you either need to design your row key to include those fields or maintain secondary tables with different row key designs.
+
+Hbase Architecture:
+------------------
+- client checks with Master/Name-node(i.e metadata store) where to write to ?
+- Each Data-Node consists of two components:
+  1. Region-Node 2. Data-Node
+  Region-Node runs in-memory as a separate process, on the same node as data-node.
+
+  High-avialability of Master-node is acheived using zookeeper through state-machine replication and secondary master node stays as standby Master-node. Means HBase supports single leader replication.
+
+
+  Let's Examine the write path through the Region-Node:
+  -----------------------------------------------------
+  Region node maintains the LSM Tree index and operatres in-memory and flushes the data
+  into SSTables  on Data-Node. 
+  - WAL is maintained on Region Node for fault-tolerance of in-memory LSM Tree.
+
+ -Hbase uses a column oriented storage
+   -- means benefit of colum-compression
+   -- means suitable for analytical queries & better batch processing because of data locality, similar
+      data stays closer to each other and less n/w bandwidth consumption.
+
+ Comparision with cassandra:
+ ---------------------------\
+ Not as good as cassandra for a typical application level database in terms of speed, it is suitable for
+ runnig analytical batch queries.
+
+
+
+
+=========================
+MAP REDUCE
+==========================
+Allows us to perform batch processing of big data sets!
+-works with data that is already in HDFS.
+
+Main advantages:
+---------------
+1. Can run arbitrary code, just define mapper and reducer.
+2. Runs computation on the same node that holds the data(i.e. data locality)
+3. Failed Mapper or Reducer are restarted independently.
+
+
+Mapper:
+-------
+Object : (Key, Value)
+
+Reducer:
+-------
+(Key,List(Value)) : (Key, Value)
+
+Map Reduce Architecture:
+------------------------
+
+unformated data on disk ==> mapper maps the data ==> sort the data on mapped key ==> Shuffle/merge the data using HASH(KEY)
+
+==> Reduce ==> Materialize the result of dik
+
+Shuffle Step is important: because of HASH(KEY), key with same hash value goes to same node, means
+we have brought the keys together for analytical purpose. Now reducer will operate the aggregation.
+
+=========================================
+Batch job Data Joins: Joins in Batch Job
+========================================
+
+1. Sort Merge Join
+2. Broadcast hash joins
+2.Partitioned Hash Join
+
+
+===============================================
+We should be using Apache Spark not Map Reduce
+================================================
+
+Issues with Map-Reduce:
+----------------------
+1. Chained Jobs don't know about each other: -> lots of waiting
+2. Each job requires a mapper and a reducer : tons of unnecessary sorting  nlogn
+3. Tons of disk usage because jobs materialize intermediate state
+
+
+Why Spark is better:
+-------------------
+- It only writes to disk on input and on output.
+- Spark unlike mapper-reducer uses operator which can run arbitrary code and can do anything.
+- Spark maintain RDD(Resilient Distributed dataset) in-memory for intermediate states.
+
+Spark Fault Tolerance:
+----------------------
+1. Narrow Dependency : All computation stays on one node between two steps of spark job.
+
+2. Wide Dependency: When ever spark sees the wide dependency and finish with dealing with wide dependencies(computations) write the data to disk.
+
+
+===================
+Apache Flink
+====================
+
+
+
+=============================
+Probablistic data-structure
+============================
+
+Count-Min Sketch
+HyperLogLog:
+
+================
+Count-Min Sketch
+=================
+Purpose: The CountMin Sketch is used to estimate the frequency of items in a data stream. It is useful for scenarios where you need to know how often an item appears in a large dataset.
+
+How It Works: It uses multiple hash functions to map each item in the stream to several counters in an array. When an item is seen, all of its corresponding counters are incremented. To estimate the count of an item, the minimum value among its counters is taken.
+
+===============
+HyperLogLog:
+==============
+Purpose: HyperLogLog is used to estimate the cardinality (i.e., the number of distinct elements) in a data stream. It is efficient for counting unique elements in large datasets.
+
+How It Works: It uses hash functions to map items to a bucket in a register array. The position of the leftmost 1-bit in the binary representation of the hash value is recorded in the corresponding register. The final estimate is calculated using the harmonic mean of the recorded positions.
+
+Accuracy: HyperLogLog provides a fixed relative error that is typically quite low (e.g., around 2% with standard parameters). The accuracy improves with the size of the register array.
+
+
+=============================================
+Rest best practices: 
+=============================================
+
+Rihardson Maturity Model 
+
+https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
+
+
+
+
+
+
+
+
+
+
+
